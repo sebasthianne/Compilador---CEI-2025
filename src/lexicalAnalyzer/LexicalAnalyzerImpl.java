@@ -203,10 +203,13 @@ public class LexicalAnalyzerImpl implements LexicalAnalyzer {
         if(currentCharacter=='/'){
             updateCurrentCharacter();
             return initialState();
-        } else throw new WronglyClosedMultiLineCommentException(currentLexeme,multiLineCommentStartingLine,multiLineCommentStartingColumn);
+        } else {
+            updateCurrentCharacter();
+            return multiLineCommentNonAcceptingState();
+        }
     }
 
-    private Token simpleCommentNonAcceptingState() throws IOException {
+    private Token simpleCommentNonAcceptingState() throws LexicalException, IOException {
         if (currentCharacter == '\n' || currentCharacter == SourceManager.END_OF_FILE) {
             return initialState();
         } else{
