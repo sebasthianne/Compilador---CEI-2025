@@ -62,6 +62,6 @@ public class SourceManagerImpl implements SourceManager{
     }
 
     @Override
-    public int getColumnNumber(){ return lineIndexNumber-1; }
+    public int getColumnNumber(){ return lineIndexNumber; }
 
 }

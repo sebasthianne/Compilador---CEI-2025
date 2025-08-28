@@ -1,3 +1,6 @@
+package main;
+
+import injector.Injector;
 import lexicalClient.LexicalClient;
 import sourcemanager.SourceManager;
 
