@@ -214,7 +214,7 @@ public class LexicalAnalyzerImpl implements LexicalAnalyzer {
             return initialState();
         } else{
             updateCurrentCharacter();
-            return stringNonAcceptingState();
+            return simpleCommentNonAcceptingState();
         }
     }
 
