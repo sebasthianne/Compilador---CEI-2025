@@ -1,4 +1,4 @@
-package lexicalAnalyzer;
+package lexicalAnalyzer.lexicalExceptions;
 
 public class LexicalException extends RuntimeException {
     private final ErrorData errorData;
@@ -10,5 +10,4 @@ public class LexicalException extends RuntimeException {
         return errorData;
     }
 
-    //TODO: Make Subclasses for more specific types
 }

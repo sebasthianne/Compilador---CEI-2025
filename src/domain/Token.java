@@ -1,4 +1,4 @@
-package lexicalAnalyzer;
+package domain;
 
 public record Token(String name, String lexeme, int lineNumber) {
     @Override
