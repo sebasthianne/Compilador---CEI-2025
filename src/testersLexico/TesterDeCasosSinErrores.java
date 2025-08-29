@@ -24,65 +24,60 @@ public class TesterDeCasosSinErrores {
     private static final String testFilesDirectoryPath = "resources/sinErrores/";
 
     private static final Main init = null;
-   
+
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
     private boolean fullCompilerOuputPrintingInEachTest = true;
 
 
     @Before
-    public  void setUpClass() {
+    public void setUpClass() {
         System.setOut(new PrintStream(outContent));
     }
-    
+
     @After
-    public  void tearDownClass() {
+    public void tearDownClass() {
         System.setOut(originalOut);
     }
-    
+
     @Parameters(name = "{0}")
     public static Iterable<? extends Object> data() {
         File folder = new File(testFilesDirectoryPath);
         ArrayList<String> names = new ArrayList();
-        for(File f: folder.listFiles()){
+        for (File f : folder.listFiles()) {
             names.add(f.getName());
         }
         names.sort(String::compareTo);
         return names;
-        
+
     }
-    
+
     private String input;
-    
-    public TesterDeCasosSinErrores(String input){
+
+    public TesterDeCasosSinErrores(String input) {
         this.input = input;
     }
 
-       
-        
+
     @Test
     public void testIterado() {
         probarExito(input);
     }
 
-     
-    void probarExito(String name){
-            String path = testFilesDirectoryPath+name;
-            String[] args = {path};
-            init.main(args);
 
-            if(fullCompilerOuputPrintingInEachTest){
-                System.setOut(originalOut);
-                System.out.println(outContent.toString());
-            }
+    void probarExito(String name) {
+        String path = testFilesDirectoryPath + name;
+        String[] args = {path};
+        init.main(args);
 
-            assertThat("Mensaje Incorrecto en: " + path,  outContent.toString(), CoreMatchers.containsString(msgExito));
-           
+        if (fullCompilerOuputPrintingInEachTest) {
+            System.setOut(originalOut);
+            System.out.println(outContent.toString());
+        }
+
+        assertThat("Mensaje Incorrecto en: " + path, outContent.toString(), CoreMatchers.containsString(msgExito));
+
     }
-    
-     
-    
-    
-    
-    
+
+
 }

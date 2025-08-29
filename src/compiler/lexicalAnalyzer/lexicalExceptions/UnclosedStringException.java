@@ -1,4 +1,4 @@
-package lexicalAnalyzer.lexicalExceptions;
+package compiler.lexicalAnalyzer.lexicalExceptions;
 
 public class UnclosedStringException extends LexicalException {
     public UnclosedStringException(String lexeme, int lineNumber, int columnNumber, String currentLine) {
@@ -7,6 +7,6 @@ public class UnclosedStringException extends LexicalException {
 
     @Override
     public String getErrorDetail() {
-        return "El String: "+getErrorData().lexeme()+ " en la línea "+getErrorData().lineNumber()+" no es cerrado correctamente antes de recibir un salto de línea o fin de archivo en la columna "+getErrorData().columnNumber()+".";
+        return "El String: " + getErrorData().lexeme() + " en la línea " + getErrorData().lineNumber() + " no es cerrado correctamente antes de recibir un salto de línea o fin de archivo en la columna " + getErrorData().columnNumber() + ".";
     }
 }

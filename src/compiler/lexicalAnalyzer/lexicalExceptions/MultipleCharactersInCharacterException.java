@@ -1,4 +1,4 @@
-package lexicalAnalyzer.lexicalExceptions;
+package compiler.lexicalAnalyzer.lexicalExceptions;
 
 public class MultipleCharactersInCharacterException extends LexicalException {
     public MultipleCharactersInCharacterException(String lexeme, int lineNumber, int columnNumber, String currentLine) {
@@ -7,6 +7,6 @@ public class MultipleCharactersInCharacterException extends LexicalException {
 
     @Override
     public String getErrorDetail() {
-        return "Durante la creación del literal caracter "+ getErrorData().lexeme() + " en la linea "+getErrorData().lineNumber()+" columna "+getErrorData().columnNumber()+" se recibió un segundo caracter antes de cerrar el literal.";
+        return "Durante la creación del literal caracter " + getErrorData().lexeme() + " en la linea " + getErrorData().lineNumber() + " columna " + getErrorData().columnNumber() + " se recibió un segundo caracter antes de cerrar el literal.";
     }
 }

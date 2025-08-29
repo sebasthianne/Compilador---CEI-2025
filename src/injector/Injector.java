@@ -1,9 +1,9 @@
 package injector;
 
-import lexicalAnalyzer.LexicalAnalyzer;
-import lexicalAnalyzer.LexicalAnalyzerImpl;
-import sourcemanager.SourceManager;
-import sourcemanager.SourceManagerImpl;
+import compiler.lexicalAnalyzer.LexicalAnalyzer;
+import compiler.lexicalAnalyzer.LexicalAnalyzerImpl;
+import input.sourcemanager.SourceManager;
+import input.sourcemanager.SourceManagerImpl;
 
 import java.io.IOException;
 
@@ -11,11 +11,12 @@ public class Injector {
 
     private static Injector injector;
 
-    private Injector(){}
+    private Injector() {
+    }
 
-    public static Injector getInjector(){
-        if(injector==null){
-            injector= new Injector();
+    public static Injector getInjector() {
+        if (injector == null) {
+            injector = new Injector();
         }
         return injector;
     }
@@ -24,7 +25,7 @@ public class Injector {
         return new LexicalAnalyzerImpl(sourceManager);
     }
 
-    public SourceManager getSource(){
+    public SourceManager getSource() {
         return new SourceManagerImpl();
     }
 }

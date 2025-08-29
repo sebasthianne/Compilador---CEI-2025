@@ -1,4 +1,4 @@
-package lexicalAnalyzer.lexicalExceptions;
+package compiler.lexicalAnalyzer.lexicalExceptions;
 
 public class NumberTooLongException extends LexicalException {
     public NumberTooLongException(String lexeme, int lineNumber, int columnNumber, String currentLine) {
@@ -7,6 +7,6 @@ public class NumberTooLongException extends LexicalException {
 
     @Override
     public String getErrorDetail() {
-        return "En la línea "+getErrorData().lineNumber()+" columna "+getErrorData().columnNumber()+" se recibió un dígito después de haber recibido otros 9, creando así un entero demasiado largo.";
+        return "En la línea " + getErrorData().lineNumber() + " columna " + getErrorData().columnNumber() + " se recibió un dígito después de haber recibido otros 9, creando así un entero demasiado largo.";
     }
 }

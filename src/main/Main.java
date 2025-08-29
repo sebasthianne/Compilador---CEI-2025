@@ -1,20 +1,20 @@
 package main;
 
 import injector.Injector;
-import lexicalClient.LexicalClient;
-import sourcemanager.SourceManager;
+import main.lexicalClient.LexicalClient;
+import input.sourcemanager.SourceManager;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class Main {
-    private static final Injector injector=Injector.getInjector();
+    private static final Injector injector = Injector.getInjector();
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         SourceManager source = injector.getSource();
-        boolean open= tryOpen(args, source);
-        LexicalClient lexicalClient= new LexicalClient();
-        if(open) {
+        boolean open = tryOpen(args, source);
+        LexicalClient lexicalClient = new LexicalClient();
+        if (open) {
             tryAnalysis(lexicalClient, source);
         }
     }
@@ -34,8 +34,7 @@ public class Main {
             lexicalClient.executeLexicalAnalysis(injector.getLexicalAnalyzer(source));
         } catch (IOException e) {
             System.out.println("Error, ocurrió un error durante la lectura del archivo");
-        }
-        finally {
+        } finally {
             try {
                 source.close();
             } catch (IOException e) {

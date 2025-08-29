@@ -1,4 +1,4 @@
-package lexicalAnalyzer.lexicalExceptions;
+package compiler.lexicalAnalyzer.lexicalExceptions;
 
 public class NewLineInCharacterException extends LexicalException {
     public NewLineInCharacterException(String lexeme, int lineNumber, int columnNumber, String currentLine) {
@@ -7,6 +7,6 @@ public class NewLineInCharacterException extends LexicalException {
 
     @Override
     public String getErrorDetail() {
-        return "En la línea "+getErrorData().lineNumber()+" columna "+getErrorData().columnNumber()+" se recibió un salto de línea adentro de un literal de caracter.";
+        return "En la línea " + getErrorData().lineNumber() + " columna " + getErrorData().columnNumber() + " se recibió un salto de línea adentro de un literal de caracter.";
     }
 }

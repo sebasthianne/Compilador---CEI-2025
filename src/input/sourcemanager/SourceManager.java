@@ -1,4 +1,4 @@
-package sourcemanager;
+package input.sourcemanager;
 //Author: Juan Dingevan
 
 import java.io.FileNotFoundException;

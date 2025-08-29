@@ -1,10 +1,10 @@
-package sourcemanager;
+package input.sourcemanager;
 //Author: Juan Dingevan
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
-public class SourceManagerImpl implements SourceManager{
+public class SourceManagerImpl implements SourceManager {
     private BufferedReader reader;
     private String currentLine;
     private int lineNumber;
@@ -36,14 +36,14 @@ public class SourceManagerImpl implements SourceManager{
     public char getNextChar() throws IOException {
         char currentChar = ' ';
 
-        if(mustReadNextLine) {
+        if (mustReadNextLine) {
             currentLine = reader.readLine();
             lineNumber++;
             lineIndexNumber = 0;
             mustReadNextLine = false;
         }
 
-        if(lineIndexNumber < currentLine.length()) {
+        if (lineIndexNumber < currentLine.length()) {
             currentChar = currentLine.charAt(lineIndexNumber);
         } else if (reader.ready()) {
             currentChar = '\n';
@@ -62,9 +62,13 @@ public class SourceManagerImpl implements SourceManager{
     }
 
     @Override
-    public int getColumnNumber(){ return lineIndexNumber; }
+    public int getColumnNumber() {
+        return lineIndexNumber;
+    }
 
     @Override
-    public String getCurrentLine(){ return currentLine; }
+    public String getCurrentLine() {
+        return currentLine;
+    }
 
 }
