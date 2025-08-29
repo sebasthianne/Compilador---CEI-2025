@@ -45,7 +45,6 @@ public class SourceManagerImpl implements SourceManager{
 
         if(lineIndexNumber < currentLine.length()) {
             currentChar = currentLine.charAt(lineIndexNumber);
-            lineIndexNumber++;
         } else if (reader.ready()) {
             currentChar = '\n';
             mustReadNextLine = true;
@@ -53,6 +52,7 @@ public class SourceManagerImpl implements SourceManager{
             currentChar = END_OF_FILE;
         }
 
+        lineIndexNumber++;
         return currentChar;
     }
 

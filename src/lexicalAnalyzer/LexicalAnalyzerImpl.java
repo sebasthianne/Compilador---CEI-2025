@@ -435,11 +435,10 @@ public class LexicalAnalyzerImpl implements LexicalAnalyzer {
 
     private Token intLiteralAcceptingState() throws LexicalException,IOException {
         if(Character.isDigit(currentCharacter)){
+            if (lexemeLength()==9) throw new NumberTooLongException(currentLexeme, sourceManager.getLineNumber(), sourceManager.getColumnNumber());
             updateCurrentLexeme();
             updateCurrentCharacter();
             return intLiteralAcceptingState();
-        } else if (lexemeLength()>9) {
-            throw new NumberTooLongException(currentLexeme, sourceManager.getLineNumber(), sourceManager.getColumnNumber());
         } else{
             return new Token("intLiteral",currentLexeme, sourceManager.getLineNumber());
         }
