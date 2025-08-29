@@ -1,8 +1,8 @@
 package lexicalAnalyzer.lexicalExceptions;
 
 public class UnclosedStringException extends LexicalException {
-    public UnclosedStringException(String lexeme, int lineNumber, int columnNumber) {
-        super(lexeme, lineNumber, columnNumber);
+    public UnclosedStringException(String lexeme, int lineNumber, int columnNumber, String currentLine) {
+        super(lexeme, lineNumber, columnNumber, currentLine);
     }
 
     @Override

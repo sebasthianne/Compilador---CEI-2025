@@ -17,24 +17,30 @@ public class LexicalClient {
     public void executeLexicalAnalysis(LexicalAnalyzer analyzer) throws IOException {
         lexicalAnalyzer= analyzer;
         Token currentToken = new Token("","",0);
-        try {
-            while (!currentToken.lexeme().equals("" + SourceManager.END_OF_FILE)) {
+        boolean errorOcurred= false;
+
+        while (!currentToken.lexeme().equals("" + SourceManager.END_OF_FILE)) {
+            try {
                 currentToken = analyzer.getNextToken();
                 System.out.println(currentToken);
+            } catch (LexicalException e) {
+                errorOcurred= true;
+                handleLexicalException(e);
             }
+        }
+        if(!errorOcurred) {
             System.out.println();
             System.out.println("[SinErrores]");
-        } catch (LexicalException e) {
-            handleLexicalException(e);
         }
     }
 
     public void handleLexicalException(LexicalException exception){
         System.out.println(exception.getErrorData());
-        System.out.println("Detalle: "+ exception.getErrorDetail());
+        System.out.println("Error Detallado: "+ exception.getErrorDetail());
+        System.out.println("Detalle: "+exception.getErrorData().currentLine());
+        System.out.println(" ".repeat(exception.getErrorData().columnNumber()+8)+"^");
         System.out.println();
         System.out.println("[Error:"+exception.getErrorData().lexeme()+"|"+exception.getErrorData().lineNumber()+"]");
     }
 
-    //TODO: Implement client for the lexical analyzer
 }

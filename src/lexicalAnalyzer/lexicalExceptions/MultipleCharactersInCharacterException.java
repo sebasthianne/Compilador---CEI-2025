@@ -1,8 +1,8 @@
 package lexicalAnalyzer.lexicalExceptions;
 
 public class MultipleCharactersInCharacterException extends LexicalException {
-    public MultipleCharactersInCharacterException(String lexeme, int lineNumber, int columnNumber) {
-        super(lexeme, lineNumber, columnNumber);
+    public MultipleCharactersInCharacterException(String lexeme, int lineNumber, int columnNumber, String currentLine) {
+        super(lexeme, lineNumber, columnNumber, currentLine);
     }
 
     @Override

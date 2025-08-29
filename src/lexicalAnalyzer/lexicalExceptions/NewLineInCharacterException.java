@@ -1,8 +1,8 @@
 package lexicalAnalyzer.lexicalExceptions;
 
 public class NewLineInCharacterException extends LexicalException {
-    public NewLineInCharacterException(String lexeme, int lineNumber, int columnNumber) {
-        super(lexeme, lineNumber, columnNumber);
+    public NewLineInCharacterException(String lexeme, int lineNumber, int columnNumber, String currentLine) {
+        super(lexeme, lineNumber, columnNumber, currentLine);
     }
 
     @Override

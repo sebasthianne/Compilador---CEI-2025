@@ -1,8 +1,8 @@
 package lexicalAnalyzer.lexicalExceptions;
 
 public class NumberTooLongException extends LexicalException {
-    public NumberTooLongException(String lexeme, int lineNumber, int columnNumber) {
-        super(lexeme, lineNumber, columnNumber);
+    public NumberTooLongException(String lexeme, int lineNumber, int columnNumber, String currentLine) {
+        super(lexeme, lineNumber, columnNumber, currentLine);
     }
 
     @Override

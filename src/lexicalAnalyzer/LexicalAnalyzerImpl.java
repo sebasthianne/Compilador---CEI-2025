@@ -11,8 +11,7 @@ public class LexicalAnalyzerImpl implements LexicalAnalyzer {
     private String currentLexeme;
     private char currentCharacter;
     private static final String[] reservedKeywords ={"class","extends","public","static","void","boolean","char","int","abstract","final","if","else","while","return","var","this","new","null","true","false"};
-    private int multiLineCommentStartingLine;
-    private int multiLineCommentStartingColumn;
+    private ErrorData multiLineCommentErrorData;
     private final SourceManager sourceManager;
 
     public LexicalAnalyzerImpl(SourceManager manager) throws IOException {
@@ -167,9 +166,10 @@ public class LexicalAnalyzerImpl implements LexicalAnalyzer {
             updateCurrentCharacter();
             return stringNonAcceptingState();
         }
-
+        int columnNumber= sourceManager.getColumnNumber();
         updateCurrentLexeme();
-        throw new ForeignCharacterException(currentLexeme,sourceManager.getLineNumber(),sourceManager.getColumnNumber());
+        updateCurrentCharacter();
+        throw new ForeignCharacterException(currentLexeme,sourceManager.getLineNumber(),columnNumber, sourceManager.getCurrentLine());
     }
 
     private Token slashAcceptingState() throws LexicalException,IOException{
@@ -179,8 +179,7 @@ public class LexicalAnalyzerImpl implements LexicalAnalyzer {
             return simpleCommentNonAcceptingState();
         } else if (currentCharacter=='*') {
             currentLexeme="";
-            multiLineCommentStartingLine=sourceManager.getLineNumber();
-            multiLineCommentStartingColumn =sourceManager.getColumnNumber();
+            multiLineCommentErrorData= new ErrorData("",sourceManager.getLineNumber(),sourceManager.getColumnNumber(), sourceManager.getCurrentLine());
             updateCurrentCharacter();
             return multiLineCommentNonAcceptingState();
         }
@@ -189,7 +188,7 @@ public class LexicalAnalyzerImpl implements LexicalAnalyzer {
 
     private Token multiLineCommentNonAcceptingState() throws LexicalException,IOException {
         if (currentCharacter == SourceManager.END_OF_FILE) {
-            throw new UnclosedMultiLineCommentException(currentLexeme, multiLineCommentStartingLine, multiLineCommentStartingColumn);
+            throw new UnclosedMultiLineCommentException(multiLineCommentErrorData);
         } else if(currentCharacter == '*'){
             updateCurrentCharacter();
             return multiLineCommentEndState();
@@ -221,7 +220,7 @@ public class LexicalAnalyzerImpl implements LexicalAnalyzer {
 
     private Token stringNonAcceptingState() throws LexicalException,IOException{
         if(currentCharacter=='\n'||currentCharacter==SourceManager.END_OF_FILE){
-            throw new UnclosedStringException(currentLexeme, sourceManager.getLineNumber(), sourceManager.getColumnNumber());
+            throw new UnclosedStringException(currentLexeme, sourceManager.getLineNumber(), sourceManager.getColumnNumber(), sourceManager.getCurrentLine());
         } else if(currentCharacter=='\\'){
             updateCurrentLexeme();
             updateCurrentCharacter();
@@ -239,7 +238,7 @@ public class LexicalAnalyzerImpl implements LexicalAnalyzer {
 
     private Token escapedOnStringNonAcceptingState() throws LexicalException, IOException{
         if(currentCharacter=='\n'||currentCharacter==SourceManager.END_OF_FILE) {
-            throw new UnclosedStringException(currentLexeme, sourceManager.getLineNumber(), sourceManager.getColumnNumber());
+            throw new UnclosedStringException(currentLexeme, sourceManager.getLineNumber(), sourceManager.getColumnNumber(), sourceManager.getCurrentLine());
         } else {
             updateCurrentLexeme();
             updateCurrentCharacter();
@@ -253,9 +252,9 @@ public class LexicalAnalyzerImpl implements LexicalAnalyzer {
 
     private Token characterNonAcceptingState() throws LexicalException,IOException{
         if(currentCharacter=='\n'){
-            throw new NewLineInCharacterException(currentLexeme, sourceManager.getLineNumber(), sourceManager.getColumnNumber());
+            throw new NewLineInCharacterException(currentLexeme, sourceManager.getLineNumber(), sourceManager.getColumnNumber(), sourceManager.getCurrentLine());
         } else if (currentCharacter==SourceManager.END_OF_FILE) {
-            throw new EndOfFileInCharacterException(currentLexeme,sourceManager.getLineNumber(), sourceManager.getColumnNumber());
+            throw new EndOfFileInCharacterException(currentLexeme,sourceManager.getLineNumber(), sourceManager.getColumnNumber(), sourceManager.getCurrentLine());
         } else if(currentCharacter=='\\'){
             updateCurrentLexeme();
             updateCurrentCharacter();
@@ -269,9 +268,9 @@ public class LexicalAnalyzerImpl implements LexicalAnalyzer {
 
     private Token escapedCharacterNonAcceptingState() throws LexicalException,IOException{
         if(currentCharacter=='\n'){
-            throw new NewLineInCharacterException(currentLexeme, sourceManager.getLineNumber(), sourceManager.getColumnNumber());
+            throw new NewLineInCharacterException(currentLexeme, sourceManager.getLineNumber(), sourceManager.getColumnNumber(), sourceManager.getCurrentLine());
         } else if (currentCharacter==SourceManager.END_OF_FILE) {
-            throw new EndOfFileInCharacterException(currentLexeme,sourceManager.getLineNumber(), sourceManager.getColumnNumber());
+            throw new EndOfFileInCharacterException(currentLexeme,sourceManager.getLineNumber(), sourceManager.getColumnNumber(), sourceManager.getCurrentLine());
         } else{
             updateCurrentLexeme();
             updateCurrentCharacter();
@@ -285,7 +284,7 @@ public class LexicalAnalyzerImpl implements LexicalAnalyzer {
             updateCurrentCharacter();
             return new Token("charLiteral",currentLexeme, sourceManager.getLineNumber());
         } else{
-            throw new MultipleCharactersInCharacterException(currentLexeme, sourceManager.getLineNumber(), sourceManager.getColumnNumber());
+            throw new MultipleCharactersInCharacterException(currentLexeme, sourceManager.getLineNumber(), sourceManager.getColumnNumber(), sourceManager.getCurrentLine());
         }
     }
 
@@ -359,7 +358,7 @@ public class LexicalAnalyzerImpl implements LexicalAnalyzer {
             updateCurrentCharacter();
             return new Token("or",currentLexeme,sourceManager.getLineNumber());
         }
-        else throw new OrNotDoubledException(currentLexeme,sourceManager.getLineNumber(),sourceManager.getColumnNumber());
+        else throw new OrNotDoubledException(currentLexeme,sourceManager.getLineNumber(),sourceManager.getColumnNumber(), sourceManager.getCurrentLine());
     }
 
     private Token andState() throws LexicalException, IOException {
@@ -368,7 +367,7 @@ public class LexicalAnalyzerImpl implements LexicalAnalyzer {
             updateCurrentCharacter();
             return new Token("and",currentLexeme,sourceManager.getLineNumber());
         }
-        else throw new AndNotDoubledException(currentLexeme,sourceManager.getLineNumber(),sourceManager.getColumnNumber());
+        else throw new AndNotDoubledException(currentLexeme,sourceManager.getLineNumber(),sourceManager.getColumnNumber(), sourceManager.getCurrentLine());
     }
 
     private Token assignmentAcceptingState() throws IOException {
@@ -435,7 +434,7 @@ public class LexicalAnalyzerImpl implements LexicalAnalyzer {
 
     private Token intLiteralAcceptingState() throws LexicalException,IOException {
         if(Character.isDigit(currentCharacter)){
-            if (lexemeLength()==9) throw new NumberTooLongException(currentLexeme, sourceManager.getLineNumber(), sourceManager.getColumnNumber());
+            if (lexemeLength()==9) throw new NumberTooLongException(currentLexeme, sourceManager.getLineNumber(), sourceManager.getColumnNumber(), sourceManager.getCurrentLine());
             updateCurrentLexeme();
             updateCurrentCharacter();
             return intLiteralAcceptingState();
