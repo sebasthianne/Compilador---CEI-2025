@@ -42,4 +42,7 @@ public class Main {
             }
         }
     }
+
+    //TODO: Implement command line interface for syntacticAnalyzer (on its own class)
+    //TODO (Optional) : Make shared interface for all command line interfaces and invert dependencies
 }

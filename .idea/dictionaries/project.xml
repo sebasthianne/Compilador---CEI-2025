@@ -5,6 +5,25 @@
       <w>caracter</w>
       <w>lectura</w>
       <w>ocurrió</w>
+      <w>reservadaabstract</w>
+      <w>reservadaboolean</w>
+      <w>reservadachar</w>
+      <w>reservadaclass</w>
+      <w>reservadaextends</w>
+      <w>reservadafalse</w>
+      <w>reservadafinal</w>
+      <w>reservadaif</w>
+      <w>reservadaint</w>
+      <w>reservadanew</w>
+      <w>reservadanull</w>
+      <w>reservadapublic</w>
+      <w>reservadareturn</w>
+      <w>reservadastatic</w>
+      <w>reservadathis</w>
+      <w>reservadatrue</w>
+      <w>reservadavar</w>
+      <w>reservadavoid</w>
+      <w>reservadawhile</w>
       <w>seleccionada</w>
     </words>
   </dictionary>
