@@ -10,7 +10,7 @@ public class SyntacticUtils {
     private static final String[] referencePrimaryFirsts = {"palabraReservadathis","stringLiteral","idMetVar","palabraReservadanew","idClase","abreParéntesis"};
     private static final String[] binaryOperators = {"or","and","igual","desigual","menor","mayor","menorOIgual","mayorOIgual","suma","resta","por", "dividido" ,"modulo"};
     private static final String[] nonExpressionStatementFirsts = {"puntoYComa","palabraReservadavar","palabraReservadareturn","palabraReservadaif","palabraReservadawhile","abreLlave"};
-    private static final String[] types = {"idClase","palabraReservadachar","palabraReservadaboolean","palabraReservadaint"};
+    private static final String[] primitiveTypes = {"palabraReservadachar","palabraReservadaboolean","palabraReservadaint"};
     private static final String[] modifiers = {"palabraReservadastatic","palabraReservadaabstract","palabraReservadafinal"};
     private static final String[] assignmentFirsts= {"asignación","suma","resta"};
 
@@ -39,11 +39,19 @@ public class SyntacticUtils {
     }
 
     public static boolean isStatementFirst(Token token){
-        return isNonExpressionStatementFirst(token)||isOperandFirst(token);
+        return isNonExpressionStatementFirst(token)||isExpressionFirst(token);
+    }
+
+    public static boolean isExpressionFirst(Token token){
+        return isUnaryOperator(token)||isOperandFirst(token);
     }
 
     public static boolean isType(Token token){
-        return Arrays.asList(types).contains(token.name());
+        return token.name().equals("idClase") || isPrimitiveType(token);
+    }
+
+    public static boolean isPrimitiveType(Token token){
+        return Arrays.asList(primitiveTypes).contains(token.name());
     }
 
     public static boolean isModifier(Token token){

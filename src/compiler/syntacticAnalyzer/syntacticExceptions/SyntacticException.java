@@ -9,4 +9,5 @@ public class SyntacticException extends Exception {
         expectedTokenName=expectedName;
         tokenReceived=received;
     }
+
 }
