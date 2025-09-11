@@ -16,8 +16,8 @@ public class SyntacticAnalyzerImpl implements SyntacticAnalyzer {
     Token currentToken;
     LexicalAnalyzer lexicalAnalyzer;
 
-    public SyntacticAnalyzerImpl(LexicalAnalyzer aLEX){
-        lexicalAnalyzer=aLEX;
+    public SyntacticAnalyzerImpl(LexicalAnalyzer ALex){
+        lexicalAnalyzer=ALex;
     }
 
     public void match(String tokenName) throws SyntacticException, LexicalException, IOException {
@@ -297,14 +297,14 @@ public class SyntacticAnalyzerImpl implements SyntacticAnalyzer {
 
     private void composedExpressionNonTerminal() throws SyntacticException, LexicalException, IOException {
         basicExpressionNonTerminal();
-        moreExpressionsNonTerminal();
+        moreBasicExpressionsNonTerminal();
     }
 
-    private void moreExpressionsNonTerminal() throws SyntacticException, LexicalException, IOException {
+    private void moreBasicExpressionsNonTerminal() throws SyntacticException, LexicalException, IOException {
         if(isBinaryOperator(currentToken)){
             binaryOperatorNonTerminal();
             basicExpressionNonTerminal();
-            moreExpressionsNonTerminal();
+            moreBasicExpressionsNonTerminal();
         }
     }
 
@@ -388,9 +388,91 @@ public class SyntacticAnalyzerImpl implements SyntacticAnalyzer {
     }
 
     private void referenceNonTerminal() throws SyntacticException, LexicalException, IOException {
+        primaryNonTerminal();
+        chainedReferenceNonTerminal();
     }
 
+    private void chainedReferenceNonTerminal() throws SyntacticException, LexicalException, IOException {
+        if(currentToken.name().equals("punto")){
+            chainedVariableOrMethodNonTerminal();
+            chainedReferenceNonTerminal();
+        }
+    }
 
-    //TODO: Finnish grammar implementation
+    private void primaryNonTerminal() throws SyntacticException, LexicalException, IOException {
+        switch (currentToken.name()){
+            case "palabraReservadathis": match("palabraReservadathis");
+            break;
+            case "stringLiteral": match("stringLiteral");
+            break;
+            case "idMetVar": variableAccessOrMethodCallNonTerminal();
+            break;
+            case "palabraReservadanew": constructorCallNonTerminal();
+            break;
+            case "idClase": staticMethodCallNonTerminal();
+            break;
+            case "abreParéntesis": parenthesizedExpressionNonTerminal();
+            break;
+            default: throw new UnexpectedSymbolInContextException("this, new, (, id de clase, id de método o variable, o literal string",currentToken,"");
+        }
+    }
+
+    private void variableAccessOrMethodCallNonTerminal() throws SyntacticException, LexicalException, IOException{
+        match("idMetVar");
+        optionalActualArgumentsNonTerminal();
+    }
+
+    private void constructorCallNonTerminal() throws SyntacticException, LexicalException, IOException{
+        match("palabraReservadanew");
+        match("idClase");
+        actualArgumentsNonTerminal();
+    }
+
+    private void parenthesizedExpressionNonTerminal() throws SyntacticException, LexicalException, IOException {
+        match("abreParéntesis");
+        expressionNonTerminal();
+        match("cierraParéntesis");
+    }
+
+    private void staticMethodCallNonTerminal() throws SyntacticException, LexicalException, IOException {
+        match("idClase");
+        match("punto");
+        match("idMetVar");
+        actualArgumentsNonTerminal();
+    }
+
+    private void optionalActualArgumentsNonTerminal() throws SyntacticException, LexicalException, IOException {
+        if(currentToken.name().equals("abreParéntesis")) actualArgumentsNonTerminal();
+    }
+
+    private void actualArgumentsNonTerminal() throws SyntacticException, LexicalException, IOException {
+        match("abreParéntesis");
+        optionalExpressionListNonTerminal();
+        match("cierraParéntesis");
+    }
+
+    private void optionalExpressionListNonTerminal() throws SyntacticException, LexicalException, IOException{
+        if(isExpressionFirst(currentToken)) {
+            expressionListNonTerminal();
+        }
+    }
+
+    private void expressionListNonTerminal() throws SyntacticException, LexicalException, IOException{
+        expressionNonTerminal();
+        moreExpressionsNonTerminal();
+    }
+
+    private void moreExpressionsNonTerminal() throws SyntacticException, LexicalException, IOException{
+        if(currentToken.name().equals("coma")) {
+            match("coma");
+            moreExpressionsNonTerminal();
+        }
+    }
+
+    private void chainedVariableOrMethodNonTerminal() throws SyntacticException, LexicalException, IOException {
+        match("punto");
+        match("idMetVar");
+        optionalActualArgumentsNonTerminal();
+    }
 
 }
