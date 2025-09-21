@@ -186,7 +186,9 @@ public class SyntacticAnalyzerImpl implements SyntacticAnalyzer {
     private void optionalBlockNonTerminal() throws SyntacticException, LexicalException, IOException{
         if(currentToken.name().equals("abreLlave")){
             blockNonTerminal();
-        }
+        } else if (currentToken.name().equals("puntoYComa")) {
+            match("puntoYComa");
+        } else throw new UnexpectedSymbolInContextException("{ o ;",currentToken,"");
     }
 
     private void blockNonTerminal() throws SyntacticException, LexicalException, IOException{
@@ -282,17 +284,9 @@ public class SyntacticAnalyzerImpl implements SyntacticAnalyzer {
     }
 
     private void assignmentOperatorNonTerminal() throws SyntacticException, LexicalException, IOException {
-        switch (currentToken.name()){
-            case "asignación" : match("asignación");
-            break;
-            case "suma" : match("suma");
+        if (currentToken.name().equals("asignación")) {
             match("asignación");
-            break;
-            case "resta" : match("resta");
-            match("asignación");
-            break;
-            default: throw new UnexpectedSymbolInContextException("=, + o -",currentToken,"");
-        }
+        } else throw new UnexpectedSymbolInContextException("=", currentToken, "");
     }
 
     private void composedExpressionNonTerminal() throws SyntacticException, LexicalException, IOException {

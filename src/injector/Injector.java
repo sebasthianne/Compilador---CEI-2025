@@ -2,6 +2,8 @@ package injector;
 
 import compiler.lexicalAnalyzer.LexicalAnalyzer;
 import compiler.lexicalAnalyzer.LexicalAnalyzerImpl;
+import compiler.syntacticAnalyzer.SyntacticAnalyzer;
+import compiler.syntacticAnalyzer.SyntacticAnalyzerImpl;
 import input.sourcemanager.SourceManager;
 import input.sourcemanager.SourceManagerImpl;
 
@@ -25,9 +27,12 @@ public class Injector {
         return new LexicalAnalyzerImpl(sourceManager);
     }
 
+    public SyntacticAnalyzer getSyntacticAnalyzer(LexicalAnalyzer aLex) {
+        return new SyntacticAnalyzerImpl(aLex);
+    }
+
     public SourceManager getSource() {
         return new SourceManagerImpl();
     }
 
-    //TODO: SyntacticAnalyzer Dependency Inversion
 }

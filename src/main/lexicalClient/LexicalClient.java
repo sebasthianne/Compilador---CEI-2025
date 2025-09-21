@@ -4,6 +4,7 @@ import compiler.domain.Token;
 import compiler.lexicalAnalyzer.LexicalAnalyzer;
 import compiler.lexicalAnalyzer.lexicalExceptions.LexicalException;
 import input.sourcemanager.SourceManager;
+import main.ErrorHandlers.ErrorHandlers;
 
 import java.io.IOException;
 
@@ -21,26 +22,17 @@ public class LexicalClient {
 
         while (!currentToken.lexeme().equals("" + SourceManager.END_OF_FILE)) {
             try {
-                currentToken = analyzer.getNextToken();
+                currentToken = lexicalAnalyzer.getNextToken();
                 System.out.println(currentToken);
             } catch (LexicalException e) {
                 errorOcurred = true;
-                handleLexicalException(e);
+                ErrorHandlers.handleLexicalException(e);
             }
         }
         if (!errorOcurred) {
             System.out.println();
             System.out.println("[SinErrores]");
         }
-    }
-
-    public void handleLexicalException(LexicalException exception) {
-        System.out.println(exception.getErrorData());
-        System.out.println("Error Detallado: " + exception.getErrorDetail());
-        System.out.println("Detalle: " + exception.getErrorData().currentLine());
-        System.out.println(" ".repeat(exception.getErrorData().columnNumber() + 8) + "^");
-        System.out.println();
-        System.out.println("[Error:" + exception.getErrorData().lexeme() + "|" + exception.getErrorData().lineNumber() + "]");
     }
 
 }

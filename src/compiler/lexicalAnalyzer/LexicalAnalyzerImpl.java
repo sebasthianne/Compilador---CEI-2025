@@ -259,6 +259,8 @@ public class LexicalAnalyzerImpl implements LexicalAnalyzer {
             throw new NewLineInCharacterException(currentLexeme, sourceManager.getLineNumber(), sourceManager.getColumnNumber(), sourceManager.getCurrentLine());
         } else if (currentCharacter == SourceManager.END_OF_FILE) {
             throw new EndOfFileInCharacterException(currentLexeme, sourceManager.getLineNumber(), sourceManager.getColumnNumber(), sourceManager.getCurrentLine());
+        } else if (currentCharacter == '\'') {
+            throw new EmptyCharacterException(currentLexeme,sourceManager.getLineNumber(),sourceManager.getColumnNumber(),sourceManager.getCurrentLine());
         } else if (currentCharacter == '\\') {
             updateCurrentLexeme();
             updateCurrentCharacter();

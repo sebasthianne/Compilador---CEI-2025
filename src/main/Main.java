@@ -7,15 +7,16 @@ import input.sourcemanager.SourceManager;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import static main.syntacticExecution.SyntacticExecution.executeSyntacticAnalysis;
+
 public class Main {
     private static final Injector injector = Injector.getInjector();
 
     public static void main(String[] args) {
         SourceManager source = injector.getSource();
         boolean open = tryOpen(args, source);
-        LexicalClient lexicalClient = new LexicalClient();
         if (open) {
-            tryAnalysis(lexicalClient, source);
+            tryAnalysis(source);
         }
     }
 
@@ -29,9 +30,9 @@ public class Main {
         }
     }
 
-    private static void tryAnalysis(LexicalClient lexicalClient, SourceManager source) {
+    private static void tryAnalysis(SourceManager source) {
         try {
-            lexicalClient.executeLexicalAnalysis(injector.getLexicalAnalyzer(source));
+            executeSyntacticAnalysis(injector.getSyntacticAnalyzer(injector.getLexicalAnalyzer(source)));
         } catch (IOException e) {
             System.out.println("Error, ocurrió un error durante la lectura del archivo");
         } finally {
@@ -43,6 +44,4 @@ public class Main {
         }
     }
 
-    //TODO: Implement command line interface for syntacticAnalyzer (on its own class)
-    //TODO (Optional) : Make shared interface for all command line interfaces and invert dependencies
 }
