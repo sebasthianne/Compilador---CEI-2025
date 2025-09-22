@@ -205,7 +205,10 @@ public class SyntacticAnalyzerImpl implements SyntacticAnalyzer {
     }
 
     private void statementNonTerminal() throws SyntacticException, LexicalException, IOException{
-        if(isExpressionFirst(currentToken)) assignmentOrCallNonTerminal();
+        if(isExpressionFirst(currentToken)) {
+            assignmentOrCallNonTerminal();
+            match("puntoYComa");
+        }
         else {
             switch (currentToken.name()){
                 case "puntoYComa": match("puntoYComa");
