@@ -4,6 +4,6 @@
 class Prueba1{
     int x;
     int metodo1() {
-        return (new Objeto1()).m1(x);
+        return new Objeto1().m1(x);
     }
 }

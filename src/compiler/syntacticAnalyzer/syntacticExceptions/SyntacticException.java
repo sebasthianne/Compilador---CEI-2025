@@ -5,20 +5,23 @@ import compiler.domain.Token;
 public abstract class SyntacticException extends Exception {
     private final String expectedTokenName;
     private final Token tokenReceived;
-    public SyntacticException(String expectedName,Token received) {
-        expectedTokenName=expectedName;
-        tokenReceived=received;
+
+    public SyntacticException(String expectedName, Token received) {
+        expectedTokenName = expectedName;
+        tokenReceived = received;
     }
 
-    public String getBasicErrorMessage(){ return "Error Sintáctico en la línea "+tokenReceived.lineNumber(); }
+    public String getBasicErrorMessage() {
+        return "Error Sintáctico en la línea " + tokenReceived.lineNumber();
+    }
 
     public abstract String getDetailedErrorMessage();
 
-    public String getExpectedTokenName(){
+    public String getExpectedTokenName() {
         return expectedTokenName;
     }
 
-    public Token getTokenReceived(){
+    public Token getTokenReceived() {
         return tokenReceived;
     }
 

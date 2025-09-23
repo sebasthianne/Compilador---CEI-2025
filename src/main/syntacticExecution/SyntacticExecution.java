@@ -13,15 +13,15 @@ public class SyntacticExecution {
 
     public static void executeSyntacticAnalysis(SyntacticAnalyzer sLex) throws IOException {
         boolean errorOcurred = false;
-            try {
-                sLex.performAnalysis();
-            } catch (LexicalException e) {
-                errorOcurred = true;
-                handleLexicalException(e);
-            } catch (SyntacticException e){
-                errorOcurred = true;
-                handleSyntacticException(e);
-            }
+        try {
+            sLex.performAnalysis();
+        } catch (LexicalException e) {
+            errorOcurred = true;
+            handleLexicalException(e);
+        } catch (SyntacticException e) {
+            errorOcurred = true;
+            handleSyntacticException(e);
+        }
         if (!errorOcurred) {
             System.out.println();
             System.out.println("[SinErrores]");
