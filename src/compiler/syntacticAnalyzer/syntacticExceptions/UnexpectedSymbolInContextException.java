@@ -10,6 +10,7 @@ public class UnexpectedSymbolInContextException extends SyntacticException {
         exceptionContext = context;
     }
 
+    @Override
     public String getDetailedErrorMessage() {
         return "En la línea " + getTokenReceived().lineNumber() + " con el contexto: " + exceptionContext + " se esperaba el token: " + getExpectedTokenName() + " pero se recibió el token: " + getTokenReceived().name() + " con el lexema: " + getTokenReceived().lexeme();
     }
