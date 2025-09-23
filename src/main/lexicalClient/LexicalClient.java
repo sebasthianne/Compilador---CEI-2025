@@ -4,7 +4,7 @@ import compiler.domain.Token;
 import compiler.lexicalAnalyzer.LexicalAnalyzer;
 import compiler.lexicalAnalyzer.lexicalExceptions.LexicalException;
 import input.sourcemanager.SourceManager;
-import main.ErrorHandlers.ErrorHandlers;
+import main.errorHandlers.ErrorHandlers;
 
 import java.io.IOException;
 

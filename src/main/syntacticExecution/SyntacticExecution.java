@@ -1,16 +1,13 @@
 package main.syntacticExecution;
 
-import compiler.domain.Token;
-import compiler.lexicalAnalyzer.LexicalAnalyzer;
 import compiler.lexicalAnalyzer.lexicalExceptions.LexicalException;
 import compiler.syntacticAnalyzer.SyntacticAnalyzer;
 import compiler.syntacticAnalyzer.syntacticExceptions.SyntacticException;
-import input.sourcemanager.SourceManager;
 
 import java.io.IOException;
 
-import static main.ErrorHandlers.ErrorHandlers.handleLexicalException;
-import static main.ErrorHandlers.ErrorHandlers.handleSyntacticException;
+import static main.errorHandlers.ErrorHandlers.handleLexicalException;
+import static main.errorHandlers.ErrorHandlers.handleSyntacticException;
 
 public class SyntacticExecution {
 
