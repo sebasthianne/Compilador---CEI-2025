@@ -1,5 +1,5 @@
 ///[SinErrores]
-// Prueba un bloque con un ciclo while, un incremento, un atributo y un constructor
+// Prueba un bloque con un ciclo while, un incremento, un atributo y una llamada a método estático
 
 class Prueba1{
 
@@ -10,11 +10,9 @@ class Prueba1{
         while(true){
 	    ++i;		
 	}
+	Prueba1.prueba1();
     }
 
-    public Prueba1(int y){
-
-    }
     
 }
 

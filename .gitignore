@@ -29,3 +29,8 @@ bin/
 .DS_Store
 /src/testersLexico/Como utilizar los Testers de JUnit.pdf
 /src/META-INF/
+/src/testsSintactico/Como utilizar los Testers de JUnit.pdf
+/.idea/artifacts/Compilador___CEI_2025_jar.xml
+/.idea/compiler.xml
+/META-INF/MANIFEST.MF
+/.idea/inspectionProfiles/Project_Default.xml
