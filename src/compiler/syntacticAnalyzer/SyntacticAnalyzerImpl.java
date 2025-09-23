@@ -112,7 +112,7 @@ public class SyntacticAnalyzerImpl implements SyntacticAnalyzer {
     private void attributeMethodEndNonTerminal() throws SyntacticException, LexicalException, IOException{
         if(currentToken.name().equals("puntoYComa")) attributeEndNonTerminal();
         else if (currentToken.name().equals("abreParéntesis")) methodEndNonTerminal();
-            else throw new UnexpectedSymbolInContextException("; o (",currentToken,"Declaración de atributo o método");
+            else throw new UnexpectedSymbolInContextException("; o (",currentToken,"Declaración de atributo o método, requiere lista de parámetros (caso método) o punto y coma (caso atributo)");
     }
 
     private void attributeEndNonTerminal() throws SyntacticException, LexicalException, IOException{
@@ -140,7 +140,7 @@ public class SyntacticAnalyzerImpl implements SyntacticAnalyzer {
     private void typeNonTerminal() throws SyntacticException, LexicalException, IOException {
         if(isPrimitiveType(currentToken)) primitiveTypeNonTerminal();
         else if (currentToken.name().equals("idClase")) match("idClase");
-        else throw new UnexpectedSymbolInContextException("class o tipo primitivo",currentToken,"");
+        else throw new UnexpectedSymbolInContextException("class o tipo primitivo",currentToken,"Dentro de la declaración de un atributo, método o parámetro formal, se espera un tipo");
     }
 
     private void primitiveTypeNonTerminal() throws SyntacticException, LexicalException, IOException{
@@ -188,7 +188,7 @@ public class SyntacticAnalyzerImpl implements SyntacticAnalyzer {
             blockNonTerminal();
         } else if (currentToken.name().equals("puntoYComa")) {
             match("puntoYComa");
-        } else throw new UnexpectedSymbolInContextException("{ o ;",currentToken,"");
+        } else throw new UnexpectedSymbolInContextException("{ o ;",currentToken,"Un método requiere un bloque como cuerpo o punto y coma");
     }
 
     private void blockNonTerminal() throws SyntacticException, LexicalException, IOException{
@@ -225,7 +225,7 @@ public class SyntacticAnalyzerImpl implements SyntacticAnalyzer {
                 break;
                 case "abreLlave": blockNonTerminal();
                 break;
-                default: throw new UnexpectedSymbolInContextException("while, if, return, var, {, ; o primero de operando",currentToken,"");
+                default: throw new UnexpectedSymbolInContextException("while, if, return, var, {, ; o primero de operando",currentToken,"Dentro de un bloque o como cuerpo de una expresión while if o else se espera una sentencia");
             }
         }
     }
@@ -343,7 +343,7 @@ public class SyntacticAnalyzerImpl implements SyntacticAnalyzer {
             operandNonTerminal();
         } else if (isOperandFirst(currentToken)) {
             operandNonTerminal();
-        } else throw new UnexpectedSymbolInContextException("operador unario o primero de operando",currentToken,"");
+        } else throw new UnexpectedSymbolInContextException("operador unario o primero de operando",currentToken,"Dentro de una declaración de variable, asignación, o expresión como sentencia, una expresión básica debe comenzar con un operador unario u operando");
     }
 
     private void unaryOperatorNonTerminal() throws SyntacticException, LexicalException, IOException {
@@ -462,7 +462,7 @@ public class SyntacticAnalyzerImpl implements SyntacticAnalyzer {
     private void moreExpressionsNonTerminal() throws SyntacticException, LexicalException, IOException{
         if(currentToken.name().equals("coma")) {
             match("coma");
-            moreExpressionsNonTerminal();
+            expressionListNonTerminal();
         }
     }
 
