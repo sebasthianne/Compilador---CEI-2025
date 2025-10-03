@@ -2,6 +2,8 @@ package injector;
 
 import compiler.lexicalAnalyzer.LexicalAnalyzer;
 import compiler.lexicalAnalyzer.LexicalAnalyzerImpl;
+import compiler.symbolTable.SymbolTable;
+import compiler.symbolTable.SymbolTableImpl;
 import compiler.syntacticAnalyzer.SyntacticAnalyzer;
 import compiler.syntacticAnalyzer.SyntacticAnalyzerImpl;
 import input.sourcemanager.SourceManager;
@@ -13,6 +15,8 @@ public class Injector {
 
     private static Injector injector;
 
+    private SymbolTable symbolTable;
+
     private Injector() {
     }
 
@@ -21,6 +25,13 @@ public class Injector {
             injector = new Injector();
         }
         return injector;
+    }
+
+    public SymbolTable getSymbolTable(){
+        if(symbolTable==null){
+            symbolTable=new SymbolTableImpl();
+        }
+        return symbolTable;
     }
 
     public LexicalAnalyzer getLexicalAnalyzer(SourceManager sourceManager) throws IOException {
