@@ -1,14 +1,20 @@
 package compiler.domain;
 
-public class Class extends Callable{
+import java.util.HashMap;
+
+public class Class{
     private final Token name;
     private Token inheritsFrom;
     private final Token modifier;
+    private HashMap<String,Constructor> constructorTable;
+    private HashMap<String,Method> methodTable;
 
     public Class(Token name, Token modifier) {
         this.name = name;
         this.modifier=modifier;
         this.inheritsFrom=null;
+        constructorTable=new HashMap<String, Constructor>(997);
+        methodTable=new HashMap<String, Method>(997);
     }
 
     public Token getName() {
@@ -19,7 +25,35 @@ public class Class extends Callable{
         this.inheritsFrom = inheritsFrom;
     }
 
+    public Token getModifier(){
+        return modifier;
+    }
+
     public Token getInheritsFrom() {
         return inheritsFrom;
+    }
+
+    public Iterable<Constructor> getConstructorTable() {
+        return constructorTable.values();
+    }
+
+    public Constructor getConstructor(Token name){
+        return constructorTable.get(name.lexeme());
+    }
+
+    public void addConstructor(Constructor constructor){
+        constructorTable.put(constructor.getName().lexeme(),constructor);
+    }
+
+    public Iterable<Method> getMethodTable() {
+        return methodTable.values();
+    }
+
+    public Method getMethod(Token name){
+        return methodTable.get(name.lexeme());
+    }
+
+    public void addMethod(Method method){
+        methodTable.put(method.getName().lexeme(),method);
     }
 }

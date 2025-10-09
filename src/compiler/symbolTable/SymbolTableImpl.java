@@ -6,26 +6,27 @@ import compiler.domain.Class;
 import java.util.HashMap;
 
 public class SymbolTableImpl implements SymbolTable {
-    private final HashMap<Token,Class> classTable;
+    private final HashMap<String,Class> classTable;
     private Class currentClass;
     private Callable currentMethodOrConstructor;
     private boolean currentCallableIsConstructor;
 
     public SymbolTableImpl(){
-        classTable=new HashMap<Token, Class>(9973);
+        classTable=new HashMap<String, Class>(9973);
     }
 
     @Override
     public void addClass(Class c) {
         if(currentClass!=null){
-            classTable.put(currentClass.getName(),currentClass);
+            classTable.put(currentClass.getName().lexeme(),currentClass);
         }
         currentClass=c;
     }
 
     @Override
     public void addMethod(Method m) {
-
+        currentMethodOrConstructor=m;
+        currentCallableIsConstructor=false;
     }
 
     @Override
@@ -35,7 +36,8 @@ public class SymbolTableImpl implements SymbolTable {
 
     @Override
     public void addConstructor(Constructor c) {
-
+        currentMethodOrConstructor=c;
+        currentCallableIsConstructor=true;
     }
 
     @Override
@@ -44,7 +46,7 @@ public class SymbolTableImpl implements SymbolTable {
     }
 
     @Override
-    public Class getClass(Token t) {
-        return classTable.get(t);
+    public Class getClass(String name) {
+        return classTable.get(name);
     }
 }

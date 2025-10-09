@@ -11,5 +11,5 @@ public interface SymbolTable {
     public Class getCurrentClass();
     public void addConstructor(Constructor c);
     public Iterable<Class> getTable();
-    public Class getClass(Token t);
+    public Class getClass(String name);
 }
