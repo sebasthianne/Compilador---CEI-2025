@@ -1,8 +1,6 @@
 package compiler.symbolTable;
+import compiler.domain.*;
 import compiler.domain.Class;
-import compiler.domain.Constructor;
-import compiler.domain.Method;
-import compiler.domain.Token;
 
 
 public interface SymbolTable {
@@ -12,4 +10,6 @@ public interface SymbolTable {
     public void addConstructor(Constructor c);
     public Iterable<Class> getTable();
     public Class getClass(String name);
+    public Callable getCurrentMethodOrConstructor();
+    public void insertCurrentMethodOrConstructorInTable();
 }

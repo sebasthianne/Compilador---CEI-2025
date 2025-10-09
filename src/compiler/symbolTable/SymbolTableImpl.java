@@ -49,4 +49,18 @@ public class SymbolTableImpl implements SymbolTable {
     public Class getClass(String name) {
         return classTable.get(name);
     }
+
+    @Override
+    public Callable getCurrentMethodOrConstructor() {
+        return currentMethodOrConstructor;
+    }
+
+    @Override
+    public void insertCurrentMethodOrConstructorInTable() {
+        if(currentCallableIsConstructor){
+            currentClass.addConstructor((Constructor) currentMethodOrConstructor);
+        } else {
+            currentClass.addMethod((Method) currentMethodOrConstructor);
+        }
+    }
 }

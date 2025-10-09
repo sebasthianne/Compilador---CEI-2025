@@ -1,7 +1,7 @@
 package compiler.syntacticAnalyzer;
 
+import compiler.domain.*;
 import compiler.domain.Class;
-import compiler.domain.Token;
 import compiler.lexicalAnalyzer.LexicalAnalyzer;
 import compiler.lexicalAnalyzer.lexicalExceptions.LexicalException;
 import compiler.symbolTable.SymbolTable;
@@ -18,7 +18,7 @@ import java.io.IOException;
 public class SyntacticAnalyzerImpl implements SyntacticAnalyzer {
     private Token currentToken;
     private final LexicalAnalyzer lexicalAnalyzer;
-    private SymbolTable symbolTable;
+    private final SymbolTable symbolTable;
 
     public SyntacticAnalyzerImpl(LexicalAnalyzer ALex) {
         lexicalAnalyzer = ALex;
@@ -71,18 +71,15 @@ public class SyntacticAnalyzerImpl implements SyntacticAnalyzer {
     }
 
     private Token modifierNonTerminal() throws SyntacticException, LexicalException, IOException {
-        Token modifier=null;
+        Token modifier=currentToken;
         switch (currentToken.name()) {
             case "palabraReservadastatic":
-                modifier=currentToken;
                 match("palabraReservadastatic");
                 break;
             case "palabraReservadaabstract":
-                modifier=currentToken;
                 match("palabraReservadaabstract");
                 break;
             case "palabraReservadafinal":
-                modifier=currentToken;
                 match("palabraReservadafinal");
                 break;
             default:
@@ -113,59 +110,80 @@ public class SyntacticAnalyzerImpl implements SyntacticAnalyzer {
     }
 
     private void attributeOrMethodNonTerminal() throws SyntacticException, LexicalException, IOException {
+        Token modifier= null;
+        Type type = null;
+        Token name = null;
         if (isModifier(currentToken)) {
-            modifierNonTerminal();
-            methodTypeNonTerminal();
+            modifier = modifierNonTerminal();
+            type = methodTypeNonTerminal();
+            name = currentToken;
             match("idMetVar");
-            methodEndNonTerminal();
+            methodEndNonTerminal(modifier, type, name);
         } else if (currentToken.name().equals("palabraReservadavoid")) {
             match("palabraReservadavoid");
+            name= currentToken;
             match("idMetVar");
-            methodEndNonTerminal();
+            methodEndNonTerminal(modifier, type, name);
         } else if (isType(currentToken)) {
-            typeNonTerminal();
+            type = typeNonTerminal();
+            name = currentToken;
             match("idMetVar");
-            attributeMethodEndNonTerminal();
+            attributeMethodEndNonTerminal(type, name);
         } else throw new UnexpectedSymbolInContextException("modificador, void o tipo", currentToken, "");
     }
 
-    private void attributeMethodEndNonTerminal() throws SyntacticException, LexicalException, IOException {
-        if (currentToken.name().equals("puntoYComa")) attributeEndNonTerminal();
-        else if (currentToken.name().equals("abreParéntesis")) methodEndNonTerminal();
+    private void attributeMethodEndNonTerminal(Type type, Token name) throws SyntacticException, LexicalException, IOException {
+        if (currentToken.name().equals("puntoYComa")) attributeEndNonTerminal(type, name);
+        else if (currentToken.name().equals("abreParéntesis")) methodEndNonTerminal(null, type, name);
         else
             throw new UnexpectedSymbolInContextException("; o (", currentToken, "Declaración de atributo o método, requiere lista de parámetros (caso método) o punto y coma (caso atributo)");
     }
 
-    private void attributeEndNonTerminal() throws SyntacticException, LexicalException, IOException {
+    private void attributeEndNonTerminal(Type type, Token name) throws SyntacticException, LexicalException, IOException {
+        symbolTable.getCurrentClass().addAttribute(new Attribute(name,type));
         match("puntoYComa");
     }
 
-    private void methodEndNonTerminal() throws SyntacticException, LexicalException, IOException {
+    private void methodEndNonTerminal(Token modifier, Type type, Token name) throws SyntacticException, LexicalException, IOException {
+        symbolTable.addMethod(new Method(name,modifier,type));
         formalArgumentsNonTerminal();
         optionalBlockNonTerminal();
+        symbolTable.insertCurrentMethodOrConstructorInTable();
     }
 
     private void constructorNonTerminal() throws SyntacticException, LexicalException, IOException {
         match("palabraReservadapublic");
+        symbolTable.addConstructor(new Constructor(currentToken));
         match("idClase");
         formalArgumentsNonTerminal();
         blockNonTerminal();
+        symbolTable.insertCurrentMethodOrConstructorInTable();
     }
 
-    private void methodTypeNonTerminal() throws SyntacticException, LexicalException, IOException {
-        if (currentToken.name().equals("palabraReservadavoid")) match("palabraReservadavoid");
-        else if (isType(currentToken)) typeNonTerminal();
+    private Type methodTypeNonTerminal() throws SyntacticException, LexicalException, IOException {
+        if (currentToken.name().equals("palabraReservadavoid")) {
+            match("palabraReservadavoid");
+            return null;
+        }
+        else if (isType(currentToken)) return typeNonTerminal();
         else throw new UnexpectedSymbolInContextException("void o tipo", currentToken, "");
     }
 
-    private void typeNonTerminal() throws SyntacticException, LexicalException, IOException {
-        if (isPrimitiveType(currentToken)) primitiveTypeNonTerminal();
-        else if (currentToken.name().equals("idClase")) match("idClase");
+    private Type typeNonTerminal() throws SyntacticException, LexicalException, IOException {
+        if (isPrimitiveType(currentToken)) return primitiveTypeNonTerminal();
+        else if (currentToken.name().equals("idClase")) return referenceTypeNonTerminal();
         else
             throw new UnexpectedSymbolInContextException("class o tipo primitivo", currentToken, "Dentro de la declaración de un atributo, método o parámetro formal, se espera un tipo");
     }
 
-    private void primitiveTypeNonTerminal() throws SyntacticException, LexicalException, IOException {
+    private Type referenceTypeNonTerminal() throws SyntacticException, LexicalException, IOException {
+        Type type = new ReferenceType(currentToken);
+        match("idClase");
+        return type;
+    }
+
+    private Type primitiveTypeNonTerminal() throws SyntacticException, LexicalException, IOException {
+        Type type=new PrimitiveType(currentToken);
         switch (currentToken.name()) {
             case "palabraReservadachar":
                 match("palabraReservadachar");
@@ -179,6 +197,7 @@ public class SyntacticAnalyzerImpl implements SyntacticAnalyzer {
             default:
                 throw new UnexpectedSymbolInContextException("tipo primitivo", currentToken, "");
         }
+        return type;
     }
 
     private void formalArgumentsNonTerminal() throws SyntacticException, LexicalException, IOException {
@@ -205,7 +224,8 @@ public class SyntacticAnalyzerImpl implements SyntacticAnalyzer {
     }
 
     private void formalArgumentNonTerminal() throws SyntacticException, LexicalException, IOException {
-        typeNonTerminal();
+        Type type = typeNonTerminal();
+        symbolTable.getCurrentMethodOrConstructor().addParameter(new Parameter(currentToken,type));
         match("idMetVar");
     }
 
