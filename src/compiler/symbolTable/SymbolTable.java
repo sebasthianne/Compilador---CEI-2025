@@ -8,6 +8,7 @@ import compiler.domain.Token;
 public interface SymbolTable {
     public void addClass(Class c);
     public void addMethod(Method m);
+    public Class getCurrentClass();
     public void addConstructor(Constructor c);
     public Iterable<Class> getTable();
     public Class getClass(Token t);

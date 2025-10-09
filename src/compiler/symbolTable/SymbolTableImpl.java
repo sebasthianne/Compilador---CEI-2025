@@ -29,6 +29,11 @@ public class SymbolTableImpl implements SymbolTable {
     }
 
     @Override
+    public Class getCurrentClass() {
+        return currentClass;
+    }
+
+    @Override
     public void addConstructor(Constructor c) {
 
     }

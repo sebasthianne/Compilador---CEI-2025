@@ -1,11 +1,14 @@
 package compiler.syntacticAnalyzer;
 
+import compiler.domain.Class;
 import compiler.domain.Token;
 import compiler.lexicalAnalyzer.LexicalAnalyzer;
 import compiler.lexicalAnalyzer.lexicalExceptions.LexicalException;
+import compiler.symbolTable.SymbolTable;
 import compiler.syntacticAnalyzer.syntacticExceptions.MismatchException;
 import compiler.syntacticAnalyzer.syntacticExceptions.UnexpectedSymbolInContextException;
 import compiler.syntacticAnalyzer.syntacticExceptions.SyntacticException;
+import injector.Injector;
 
 import static compiler.syntacticAnalyzer.SyntacticUtils.*;
 
@@ -13,11 +16,13 @@ import java.io.IOException;
 
 
 public class SyntacticAnalyzerImpl implements SyntacticAnalyzer {
-    Token currentToken;
-    LexicalAnalyzer lexicalAnalyzer;
+    private Token currentToken;
+    private final LexicalAnalyzer lexicalAnalyzer;
+    private SymbolTable symbolTable;
 
     public SyntacticAnalyzerImpl(LexicalAnalyzer ALex) {
         lexicalAnalyzer = ALex;
+        symbolTable= Injector.getInjector().getSymbolTable();
     }
 
     public void match(String tokenName) throws SyntacticException, LexicalException, IOException {
@@ -45,8 +50,9 @@ public class SyntacticAnalyzerImpl implements SyntacticAnalyzer {
     }
 
     private void classNonTerminal() throws SyntacticException, LexicalException, IOException {
-        optionalModifierNonTerminal();
+        Token modifier=optionalModifierNonTerminal();
         match("palabraReservadaclass");
+        symbolTable.addClass(new Class(currentToken,modifier));
         match("idClase");
         optionalInheritanceNonTerminal();
         match("abreLlave");
@@ -54,31 +60,38 @@ public class SyntacticAnalyzerImpl implements SyntacticAnalyzer {
         match("cierraLlave");
     }
 
-    private void optionalModifierNonTerminal() throws SyntacticException, LexicalException, IOException {
+    private Token optionalModifierNonTerminal() throws SyntacticException, LexicalException, IOException {
         if (isModifier(currentToken)) {
-            modifierNonTerminal();
+            return modifierNonTerminal();
         }
+        return null;
     }
 
-    private void modifierNonTerminal() throws SyntacticException, LexicalException, IOException {
+    private Token modifierNonTerminal() throws SyntacticException, LexicalException, IOException {
+        Token modifier=null;
         switch (currentToken.name()) {
             case "palabraReservadastatic":
+                modifier=currentToken;
                 match("palabraReservadastatic");
                 break;
             case "palabraReservadaabstract":
+                modifier=currentToken;
                 match("palabraReservadaabstract");
                 break;
             case "palabraReservadafinal":
+                modifier=currentToken;
                 match("palabraReservadafinal");
                 break;
             default:
                 throw new UnexpectedSymbolInContextException("modificador", currentToken, "");
         }
+        return modifier;
     }
 
     private void optionalInheritanceNonTerminal() throws SyntacticException, LexicalException, IOException {
         if (currentToken.name().equals("palabraReservadaextends")) {
             match("palabraReservadaextends");
+            symbolTable.getCurrentClass().setInheritsFrom(currentToken);
             match("idClase");
         }
     }
