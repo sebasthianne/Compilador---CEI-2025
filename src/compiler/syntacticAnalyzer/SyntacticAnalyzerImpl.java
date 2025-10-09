@@ -55,6 +55,9 @@ public class SyntacticAnalyzerImpl implements SyntacticAnalyzer {
         symbolTable.addClass(new Class(currentToken,modifier));
         match("idClase");
         optionalInheritanceNonTerminal();
+        if(symbolTable.getCurrentClass().getInheritsFrom()==null){
+            symbolTable.getCurrentClass().setInheritsFrom(new Token("idClase","Object",-1));
+        }
         match("abreLlave");
         memberListNonTerminal();
         match("cierraLlave");
