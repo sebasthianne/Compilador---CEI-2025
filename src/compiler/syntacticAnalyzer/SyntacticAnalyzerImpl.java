@@ -4,7 +4,9 @@ import compiler.domain.*;
 import compiler.domain.Class;
 import compiler.lexicalAnalyzer.LexicalAnalyzer;
 import compiler.lexicalAnalyzer.lexicalExceptions.LexicalException;
-import compiler.symbolTable.SymbolTable;
+import compiler.semanticAnalyzer.SymbolTable;
+import compiler.semanticAnalyzer.semanticExceptions.ReusedAttributeNameInClassException;
+import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
 import compiler.syntacticAnalyzer.syntacticExceptions.MismatchException;
 import compiler.syntacticAnalyzer.syntacticExceptions.UnexpectedSymbolInContextException;
 import compiler.syntacticAnalyzer.syntacticExceptions.SyntacticException;
@@ -32,24 +34,24 @@ public class SyntacticAnalyzerImpl implements SyntacticAnalyzer {
     }
 
     @Override
-    public void performAnalysis() throws SyntacticException, LexicalException, IOException {
+    public void performAnalysis() throws SyntacticException, LexicalException, IOException, SemanticException {
         currentToken = lexicalAnalyzer.getNextToken();
         initialNonTerminal();
     }
 
-    private void initialNonTerminal() throws SyntacticException, LexicalException, IOException {
+    private void initialNonTerminal() throws SyntacticException, LexicalException, IOException, SemanticException {
         classListNonTerminal();
         match("endOfFile");
     }
 
-    private void classListNonTerminal() throws SyntacticException, LexicalException, IOException {
+    private void classListNonTerminal() throws SyntacticException, LexicalException, IOException, SemanticException {
         if (currentToken.name().equals("palabraReservadaclass") || isModifier(currentToken)) {
             classNonTerminal();
             classListNonTerminal();
         }
     }
 
-    private void classNonTerminal() throws SyntacticException, LexicalException, IOException {
+    private void classNonTerminal() throws SyntacticException, LexicalException, IOException, SemanticException {
         Token modifier=optionalModifierNonTerminal();
         match("palabraReservadaclass");
         symbolTable.addClass(new Class(currentToken,modifier));
@@ -96,20 +98,20 @@ public class SyntacticAnalyzerImpl implements SyntacticAnalyzer {
         }
     }
 
-    private void memberListNonTerminal() throws SyntacticException, LexicalException, IOException {
+    private void memberListNonTerminal() throws SyntacticException, LexicalException, IOException, SemanticException {
         if (isMemberFirst(currentToken)) {
             memberNonTerminal();
             memberListNonTerminal();
         }
     }
 
-    private void memberNonTerminal() throws SyntacticException, LexicalException, IOException {
+    private void memberNonTerminal() throws SyntacticException, LexicalException, IOException, SemanticException {
         if (isMethodOrAttributeFirst(currentToken)) attributeOrMethodNonTerminal();
         else if (currentToken.name().equals("palabraReservadapublic")) constructorNonTerminal();
         else throw new UnexpectedSymbolInContextException("public, modificador, void o tipo", currentToken, "");
     }
 
-    private void attributeOrMethodNonTerminal() throws SyntacticException, LexicalException, IOException {
+    private void attributeOrMethodNonTerminal() throws SyntacticException, LexicalException, IOException, SemanticException {
         Token modifier= null;
         Type type = null;
         Token name = null;
@@ -132,26 +134,27 @@ public class SyntacticAnalyzerImpl implements SyntacticAnalyzer {
         } else throw new UnexpectedSymbolInContextException("modificador, void o tipo", currentToken, "");
     }
 
-    private void attributeMethodEndNonTerminal(Type type, Token name) throws SyntacticException, LexicalException, IOException {
+    private void attributeMethodEndNonTerminal(Type type, Token name) throws SyntacticException, LexicalException, IOException, SemanticException {
         if (currentToken.name().equals("puntoYComa")) attributeEndNonTerminal(type, name);
         else if (currentToken.name().equals("abreParéntesis")) methodEndNonTerminal(null, type, name);
         else
             throw new UnexpectedSymbolInContextException("; o (", currentToken, "Declaración de atributo o método, requiere lista de parámetros (caso método) o punto y coma (caso atributo)");
     }
 
-    private void attributeEndNonTerminal(Type type, Token name) throws SyntacticException, LexicalException, IOException {
+    private void attributeEndNonTerminal(Type type, Token name) throws SyntacticException, LexicalException, IOException, SemanticException {
+        if(symbolTable.getCurrentClass().getAttribute(name)!=null) throw new ReusedAttributeNameInClassException(name,symbolTable.getCurrentClass().getName());
         symbolTable.getCurrentClass().addAttribute(new Attribute(name,type));
         match("puntoYComa");
     }
 
-    private void methodEndNonTerminal(Token modifier, Type type, Token name) throws SyntacticException, LexicalException, IOException {
+    private void methodEndNonTerminal(Token modifier, Type type, Token name) throws SyntacticException, LexicalException, IOException, SemanticException {
         symbolTable.addMethod(new Method(name,modifier,type));
         formalArgumentsNonTerminal();
         optionalBlockNonTerminal();
         symbolTable.insertCurrentMethodOrConstructorInTable();
     }
 
-    private void constructorNonTerminal() throws SyntacticException, LexicalException, IOException {
+    private void constructorNonTerminal() throws SyntacticException, LexicalException, IOException, SemanticException {
         match("palabraReservadapublic");
         symbolTable.addConstructor(new Constructor(currentToken));
         match("idClase");

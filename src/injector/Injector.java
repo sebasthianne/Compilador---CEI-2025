@@ -2,8 +2,8 @@ package injector;
 
 import compiler.lexicalAnalyzer.LexicalAnalyzer;
 import compiler.lexicalAnalyzer.LexicalAnalyzerImpl;
-import compiler.symbolTable.SymbolTable;
-import compiler.symbolTable.SymbolTableImpl;
+import compiler.semanticAnalyzer.SymbolTable;
+import compiler.semanticAnalyzer.SymbolTableImpl;
 import compiler.syntacticAnalyzer.SyntacticAnalyzer;
 import compiler.syntacticAnalyzer.SyntacticAnalyzerImpl;
 import input.sourcemanager.SourceManager;

@@ -1,10 +1,11 @@
 package compiler.syntacticAnalyzer;
 
 import compiler.lexicalAnalyzer.lexicalExceptions.LexicalException;
+import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
 import compiler.syntacticAnalyzer.syntacticExceptions.SyntacticException;
 
 import java.io.IOException;
 
 public interface SyntacticAnalyzer {
-    void performAnalysis() throws SyntacticException, LexicalException, IOException;
+    void performAnalysis() throws SyntacticException, LexicalException, IOException, SemanticException;
 }
