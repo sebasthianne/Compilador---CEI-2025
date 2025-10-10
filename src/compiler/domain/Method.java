@@ -1,7 +1,9 @@
 package compiler.domain;
 
-import java.util.ArrayList;
-import java.util.List;
+import compiler.semanticAnalyzer.semanticExceptions.AbstractMethodInConcreteClassException;
+import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
+import injector.Injector;
+
 
 public class Method extends Callable{
     private final Type returnType;
@@ -13,5 +15,17 @@ public class Method extends Callable{
         this.modifier=modifier;
     }
 
+    public boolean isAbstract(){
+        return (modifier != null && modifier.name().equals("palabraReservadaabstract"));
+    }
 
+
+    public void checkMethod() throws SemanticException {
+        Class currentClass = Injector.getInjector().getSymbolTable().getCurrentClass();
+        if(isAbstract()&&!currentClass.isAbstract()) throw new AbstractMethodInConcreteClassException(getName(),currentClass.getName());
+        returnType.checkType();
+        for(Parameter p:getParameterList()){
+            p.checkParameter();
+        }
+    }
 }

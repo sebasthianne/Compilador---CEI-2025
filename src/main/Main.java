@@ -1,13 +1,12 @@
 package main;
 
 import injector.Injector;
-import main.lexicalClient.LexicalClient;
 import input.sourcemanager.SourceManager;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import static main.syntacticExecution.SyntacticExecution.executeSyntacticAnalysis;
+import static main.syntacticExecutionAndDeclarationChecks.SyntacticExecutionAndDeclarationChecks.executeSyntacticAnalysis;
 
 public class Main {
     private static final Injector injector = Injector.getInjector();

@@ -18,18 +18,18 @@ public class LexicalClient {
     public void executeLexicalAnalysis(LexicalAnalyzer analyzer) throws IOException {
         lexicalAnalyzer = analyzer;
         Token currentToken = new Token("", "", 0);
-        boolean errorOcurred = false;
+        boolean errorOccurred = false;
 
         while (!currentToken.lexeme().equals("" + SourceManager.END_OF_FILE)) {
             try {
                 currentToken = lexicalAnalyzer.getNextToken();
                 System.out.println(currentToken);
             } catch (LexicalException e) {
-                errorOcurred = true;
+                errorOccurred = true;
                 ErrorHandlers.handleLexicalException(e);
             }
         }
-        if (!errorOcurred) {
+        if (!errorOccurred) {
             System.out.println();
             System.out.println("[SinErrores]");
         }

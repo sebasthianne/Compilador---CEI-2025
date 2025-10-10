@@ -3,7 +3,7 @@ package compiler.semanticAnalyzer.semanticExceptions;
 import compiler.domain.Token;
 
 public abstract class SemanticException extends Exception {
-    Token errorToken;
+    final Token errorToken;
     public SemanticException(Token token) {
         errorToken=token;
     }

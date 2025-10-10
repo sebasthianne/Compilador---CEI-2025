@@ -5,12 +5,13 @@ import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
 
 
 public interface SymbolTable {
-    public void addClass(Class c) throws SemanticException;
-    public void addMethod(Method m);
-    public Class getCurrentClass();
-    public void addConstructor(Constructor c);
-    public Iterable<Class> getTable();
-    public Class getClass(String name);
-    public Callable getCurrentMethodOrConstructor();
-    public void insertCurrentMethodOrConstructorInTable() throws SemanticException;
+    void addClass(Class c) throws SemanticException;
+    void addMethod(Method m);
+    Class getCurrentClass();
+    void addConstructor(Constructor c);
+    Iterable<Class> getTable();
+    Class getClass(Token name);
+    Callable getCurrentMethodOrConstructor();
+    void insertCurrentMethodOrConstructorInTable() throws SemanticException;
+    void checkSymbolTable() throws SemanticException;
 }

@@ -1,5 +1,7 @@
 package compiler.domain;
 
+import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
+
 public class Attribute {
     private final Token name;
     private final Type type;
@@ -11,5 +13,9 @@ public class Attribute {
 
     public Token getName() {
         return name;
+    }
+
+    public void checkAttribute() throws SemanticException {
+        type.checkType();
     }
 }

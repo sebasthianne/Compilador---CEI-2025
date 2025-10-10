@@ -125,6 +125,7 @@ public class SyntacticAnalyzerImpl implements SyntacticAnalyzer {
             match("palabraReservadavoid");
             name= currentToken;
             match("idMetVar");
+            //noinspection ConstantValue
             methodEndNonTerminal(modifier, type, name);
         } else if (isType(currentToken)) {
             type = typeNonTerminal();

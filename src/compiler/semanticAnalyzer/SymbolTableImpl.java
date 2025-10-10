@@ -16,7 +16,71 @@ public class SymbolTableImpl implements SymbolTable {
     private boolean currentCallableIsConstructor;
 
     public SymbolTableImpl(){
-        classTable=new HashMap<String, Class>(9973);
+        classTable= new HashMap<>(9973);
+        addPredefinedClasses();
+    }
+
+    private void addPredefinedClasses() {
+        createObject();
+        createString();
+        createSystem();
+    }
+
+    private void createSystem() {
+        try {
+            addClass(new Class(new Token("idClase","System",-1),new Token("palabraReservadafinal","final",-1)));
+            getCurrentClass().setInheritsFrom(new Token("idClase","Object",-1));
+            addMethod(new Method(new Token("idMetVar","read",-1),new Token("palabraReservadastatic","static",-1),new PrimitiveType(new Token("palabraReservadaint","int",-1))));
+            insertCurrentMethodOrConstructorInTable();
+            addMethod(new Method(new Token("idMetVar","printI",-1),new Token("palabraReservadastatic","static",-1),null));
+            getCurrentMethodOrConstructor().addParameter(new Parameter(new Token("idMetVar","i",-1),new PrimitiveType(new Token("palabraReservadaint","int",-1))));
+            insertCurrentMethodOrConstructorInTable();
+            addMethod(new Method(new Token("idMetVar","printB",-1),new Token("palabraReservadastatic","static",-1),null));
+            getCurrentMethodOrConstructor().addParameter(new Parameter(new Token("idMetVar","b",-1),new PrimitiveType(new Token("palabraReservadaboolean","boolean",-1))));
+            insertCurrentMethodOrConstructorInTable();
+            addMethod(new Method(new Token("idMetVar","printC",-1),new Token("palabraReservadastatic","static",-1),null));
+            getCurrentMethodOrConstructor().addParameter(new Parameter(new Token("idMetVar","c",-1),new PrimitiveType(new Token("palabraReservadachar","char",-1))));
+            insertCurrentMethodOrConstructorInTable();
+            addMethod(new Method(new Token("idMetVar","printS",-1),new Token("palabraReservadastatic","static",-1),null));
+            getCurrentMethodOrConstructor().addParameter(new Parameter(new Token("idMetVar","s",-1),new ReferenceType(new Token("idClase","String",-1))));
+            insertCurrentMethodOrConstructorInTable();
+            addMethod(new Method(new Token("idMetVar","println",-1),new Token("palabraReservadastatic","static",-1),null));
+            insertCurrentMethodOrConstructorInTable();
+            addMethod(new Method(new Token("idMetVar","printIln",-1),new Token("palabraReservadastatic","static",-1),null));
+            getCurrentMethodOrConstructor().addParameter(new Parameter(new Token("idMetVar","i",-1),new PrimitiveType(new Token("palabraReservadaint","int",-1))));
+            insertCurrentMethodOrConstructorInTable();
+            addMethod(new Method(new Token("idMetVar","printBln",-1),new Token("palabraReservadastatic","static",-1),null));
+            getCurrentMethodOrConstructor().addParameter(new Parameter(new Token("idMetVar","b",-1),new PrimitiveType(new Token("palabraReservadaboolean","boolean",-1))));
+            insertCurrentMethodOrConstructorInTable();
+            addMethod(new Method(new Token("idMetVar","printCln",-1),new Token("palabraReservadastatic","static",-1),null));
+            getCurrentMethodOrConstructor().addParameter(new Parameter(new Token("idMetVar","c",-1),new PrimitiveType(new Token("palabraReservadachar","char",-1))));
+            insertCurrentMethodOrConstructorInTable();
+            addMethod(new Method(new Token("idMetVar","printSln",-1),new Token("palabraReservadastatic","static",-1),null));
+            getCurrentMethodOrConstructor().addParameter(new Parameter(new Token("idMetVar","s",-1),new ReferenceType(new Token("idClase","String",-1))));
+            insertCurrentMethodOrConstructorInTable();
+        } catch (SemanticException e) {
+            System.out.println("Está excepción nunca debería ocurrir acá");
+        }
+    }
+
+    private void createString() {
+        try {
+            addClass(new Class(new Token("idClase","String",-1),new Token("palabraReservadafinal","final",-1)));
+            getCurrentClass().setInheritsFrom(new Token("idClase","Object",-1));
+        } catch (SemanticException e) {
+            System.out.println("Está excepción nunca debería ocurrir acá");
+        }
+    }
+
+    private void createObject() {
+        try {
+            addClass(new Class(new Token("idClase","Object",-1),null));
+            addMethod(new Method(new Token("idMetVar","debugPrint",-1),new Token("palabraReservadastatic","static",-1),null));
+            getCurrentMethodOrConstructor().addParameter(new Parameter(new Token("idMetVar","i",-1),new PrimitiveType(new Token("palabraReservadaint","int",-1))));
+            insertCurrentMethodOrConstructorInTable();
+        } catch (SemanticException e) {
+            System.out.println("Está excepción nunca debería ocurrir acá");
+        }
     }
 
     @Override
@@ -51,8 +115,8 @@ public class SymbolTableImpl implements SymbolTable {
     }
 
     @Override
-    public Class getClass(String name) {
-        return classTable.get(name);
+    public Class getClass(Token name) {
+        return classTable.get(name.lexeme());
     }
 
     @Override
@@ -70,6 +134,14 @@ public class SymbolTableImpl implements SymbolTable {
                 throw new ReusedMethodNameInClassException(currentMethodOrConstructor.getName(),currentClass.getName());
             }
             currentClass.addMethod((Method) currentMethodOrConstructor);
+        }
+    }
+
+    @Override
+    public void checkSymbolTable() throws SemanticException {
+        for(Class c : this.getTable()){
+            currentClass=c;
+            currentClass.checkClass();
         }
     }
 
