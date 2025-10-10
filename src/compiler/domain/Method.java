@@ -23,7 +23,7 @@ public class Method extends Callable{
     public void checkMethod() throws SemanticException {
         Class currentClass = Injector.getInjector().getSymbolTable().getCurrentClass();
         if(isAbstract()&&!currentClass.isAbstract()) throw new AbstractMethodInConcreteClassException(getName(),currentClass.getName());
-        returnType.checkType();
+        if(returnType!=null) returnType.checkType();
         for(Parameter p:getParameterList()){
             p.checkParameter();
         }
