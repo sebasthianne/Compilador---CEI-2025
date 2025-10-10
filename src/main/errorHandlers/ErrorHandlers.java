@@ -1,6 +1,7 @@
 package main.errorHandlers;
 
 import compiler.lexicalAnalyzer.lexicalExceptions.LexicalException;
+import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
 import compiler.syntacticAnalyzer.syntacticExceptions.SyntacticException;
 import input.sourcemanager.SourceManager;
 
@@ -22,5 +23,11 @@ public class ErrorHandlers {
         System.out.println("Error Detallado: " + exception.getDetailedErrorMessage());
         if (lexema.equals(SourceManager.END_OF_FILE + "")) lexema = "";
         System.out.println("[Error:" + lexema + "|" + exception.getTokenReceived().lineNumber() + "]");
+    }
+
+    public static void handleSemanticException(SemanticException exception) {
+        String lexema = exception.getErrorToken().lexeme();
+        System.out.println(exception.getErrorMessage());
+        System.out.println("[Error:" + lexema + "|" + exception.getErrorToken().lineNumber() + "]");
     }
 }
