@@ -1,5 +1,9 @@
 package compiler.domain;
 
+import compiler.semanticAnalyzer.semanticExceptions.ReusedParameterException;
+import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
+import injector.Injector;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +25,10 @@ public class Callable {
         return parameterList;
     }
 
-    public void addParameter(Parameter parameter){
+    public void addParameter(Parameter parameter) throws SemanticException {
+        for(Parameter p : parameterList){
+            if(p.getName().lexeme().equals(parameter.getName().lexeme())) throw new ReusedParameterException(parameter.getName(), Injector.getInjector().getSymbolTable().getCurrentClass().getName(),name);
+        }
         parameterList.add(parameter);
     }
 }

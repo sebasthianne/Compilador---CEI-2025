@@ -5,6 +5,7 @@ import compiler.semanticAnalyzer.semanticExceptions.*;
 import injector.Injector;
 
 import java.util.HashMap;
+import java.util.Iterator;
 
 public class Class{
     private final Token name;
@@ -13,6 +14,7 @@ public class Class{
     private final HashMap<String,Constructor> constructorTable;
     private final HashMap<String,Method> methodTable;
     private final HashMap<String, Attribute> attributeTable;
+    private boolean isConsolidated;
 
     public Class(Token name, Token modifier) {
         this.name = name;
@@ -21,6 +23,7 @@ public class Class{
         constructorTable= new HashMap<>(997);
         methodTable= new HashMap<>(997);
         attributeTable = new HashMap<>(997);
+        isConsolidated= false;
     }
 
     public Token getName() {
@@ -43,8 +46,8 @@ public class Class{
         return constructorTable.values();
     }
 
-    public Constructor getConstructor(Token name){
-        return constructorTable.get(name.lexeme());
+    public Constructor getConstructor(Constructor c){
+        return constructorTable.get(c.getName().lexeme());
     }
 
     public void addConstructor(Constructor constructor){
@@ -55,8 +58,8 @@ public class Class{
         return methodTable.values();
     }
 
-    public Method getMethod(Token name){
-        return methodTable.get(name.lexeme());
+    public Method getMethod(Method m){
+        return methodTable.get(m.getName().lexeme());
     }
 
     public void addMethod(Method method){
@@ -154,6 +157,64 @@ public class Class{
         if (isAbstract()) {
             if (!classInheritsFrom.isAbstract()) throw new AbstractClassInheritsFromConcreteClassException(inheritsFrom,name);
         }
+    }
+
+    public void consolidate() throws SemanticException {
+
+        if(!isConsolidated()&&!isObject()){
+            Class inheritsFrom= Injector.getInjector().getSymbolTable().getClass(getInheritsFrom());
+            recursivelyConsolidate(inheritsFrom);
+            consolidateAttributes(inheritsFrom);
+            consolidateMethods(inheritsFrom);
+        }
+        isConsolidated=true;
+    }
+
+    private void consolidateMethods(Class inheritsFrom) throws SemanticException{
+        for(Method m : inheritsFrom.getMethodTable()){
+            Method method=getMethod(m);
+            if(method!=null) {
+                checkParameters(m,method);
+            } else{
+                if(m.isAbstract()) throw new AbstractMethodNotRedefinedException(name,m.getName());
+                addMethod(m);
+            }
+        }
+    }
+
+    private void checkParameters(Method m, Method method) throws SemanticException {
+        Iterator<Parameter> parentParameters = m.getParameterList().iterator();
+        Iterator<Parameter> currentParameters = method.getParameterList().iterator();
+        while(parentParameters.hasNext() && currentParameters.hasNext()){
+            Parameter parentParameter = parentParameters.next();
+            Parameter currentParameter = currentParameters.next();
+            compare(parentParameter,currentParameter,method);
+        }
+    }
+
+    private void compare(Parameter parentParameter, Parameter currentParameter,Method method) throws SemanticException {
+        if(!parentParameter.getType().getTypeName().lexeme().equals(currentParameter.getType().getTypeName().lexeme())) throw new ParameterTypeMismatchInMethodRedefinition(currentParameter.getType().getTypeName(),name,method.getName());
+        if(!parentParameter.getName().lexeme().equals(currentParameter.getName().lexeme())) throw new ParameterNameMismatchInMethodRedefinition(currentParameter.getName(),name,method.getName());
+    }
+
+    private void consolidateAttributes(Class inheritsFrom) throws SemanticException{
+        for(Attribute a : inheritsFrom.getAttributeTable()){
+            Attribute attribute=getAttribute(a.getName());
+            if(attribute!=null) throw new RedefinedAttributeException(attribute.getName(),name);
+            else{
+                addAttribute(a);
+            }
+        }
+    }
+
+    private void recursivelyConsolidate(Class inheritsFrom) throws SemanticException {
+        if(!inheritsFromObject()) {
+            inheritsFrom.consolidate();
+        }
+    }
+
+    private boolean isConsolidated() {
+        return isConsolidated;
     }
 
 }

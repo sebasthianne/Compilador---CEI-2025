@@ -130,7 +130,7 @@ public class SymbolTableImpl implements SymbolTable {
             currentClass.addConstructor((Constructor) currentMethodOrConstructor);
             if(!currentMethodOrConstructor.getName().lexeme().equals(currentClass.getName().lexeme())) throw new ConstructorNameClassMismatchException(currentMethodOrConstructor.getName());
         } else {
-            if(currentClass.getMethod(currentMethodOrConstructor.getName())!=null){
+            if(currentClass.getMethod((Method) currentMethodOrConstructor)!=null){
                 throw new ReusedMethodNameInClassException(currentMethodOrConstructor.getName(),currentClass.getName());
             }
             currentClass.addMethod((Method) currentMethodOrConstructor);
@@ -142,6 +142,14 @@ public class SymbolTableImpl implements SymbolTable {
         for(Class c : this.getTable()){
             currentClass=c;
             currentClass.checkClass();
+        }
+    }
+
+    @Override
+    public void consolidate() throws SemanticException {
+        for(Class c : this.getTable()){
+            currentClass=c;
+            currentClass.consolidate();
         }
     }
 

@@ -125,7 +125,6 @@ public class SyntacticAnalyzerImpl implements SyntacticAnalyzer {
             match("palabraReservadavoid");
             name= currentToken;
             match("idMetVar");
-            //noinspection ConstantValue
             methodEndNonTerminal(modifier, type, name);
         } else if (isType(currentToken)) {
             type = typeNonTerminal();
@@ -204,22 +203,22 @@ public class SyntacticAnalyzerImpl implements SyntacticAnalyzer {
         return type;
     }
 
-    private void formalArgumentsNonTerminal() throws SyntacticException, LexicalException, IOException {
+    private void formalArgumentsNonTerminal() throws SyntacticException, LexicalException, IOException, SemanticException {
         match("abreParéntesis");
         optionalFormalArgumentListNonTerminal();
         match("cierraParéntesis");
     }
 
-    private void optionalFormalArgumentListNonTerminal() throws SyntacticException, LexicalException, IOException {
+    private void optionalFormalArgumentListNonTerminal() throws SyntacticException, LexicalException, IOException, SemanticException {
         if (isType(currentToken)) formalArgumentListNonTerminal();
     }
 
-    private void formalArgumentListNonTerminal() throws SyntacticException, LexicalException, IOException {
+    private void formalArgumentListNonTerminal() throws SyntacticException, LexicalException, IOException, SemanticException {
         formalArgumentNonTerminal();
         moreArgumentsNonTerminal();
     }
 
-    private void moreArgumentsNonTerminal() throws SyntacticException, LexicalException, IOException {
+    private void moreArgumentsNonTerminal() throws SyntacticException, LexicalException, IOException, SemanticException {
         if (currentToken.name().equals("coma")) {
             match("coma");
             formalArgumentNonTerminal();
@@ -227,7 +226,7 @@ public class SyntacticAnalyzerImpl implements SyntacticAnalyzer {
         }
     }
 
-    private void formalArgumentNonTerminal() throws SyntacticException, LexicalException, IOException {
+    private void formalArgumentNonTerminal() throws SyntacticException, LexicalException, IOException, SemanticException {
         Type type = typeNonTerminal();
         symbolTable.getCurrentMethodOrConstructor().addParameter(new Parameter(currentToken,type));
         match("idMetVar");
@@ -237,6 +236,8 @@ public class SyntacticAnalyzerImpl implements SyntacticAnalyzer {
         if (currentToken.name().equals("abreLlave")) {
             blockNonTerminal();
         } else if (currentToken.name().equals("puntoYComa")) {
+            Method m = (Method) symbolTable.getCurrentMethodOrConstructor();
+            m.setEmptyBody(true);
             match("puntoYComa");
         } else
             throw new UnexpectedSymbolInContextException("{ o ;", currentToken, "Un método requiere un bloque como cuerpo o punto y coma");

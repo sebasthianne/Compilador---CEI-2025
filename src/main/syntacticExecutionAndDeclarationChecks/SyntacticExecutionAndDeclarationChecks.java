@@ -19,7 +19,7 @@ public class SyntacticExecutionAndDeclarationChecks {
             SymbolTable symbolTable= Injector.getInjector().getSymbolTable();
             sLex.performAnalysis();
             symbolTable.checkSymbolTable();
-            //TODO: Consolidation
+            symbolTable.consolidate();
         } catch (LexicalException e) {
             errorOccurred = true;
             handleLexicalException(e);

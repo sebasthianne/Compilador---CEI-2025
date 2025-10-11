@@ -14,4 +14,5 @@ public interface SymbolTable {
     Callable getCurrentMethodOrConstructor();
     void insertCurrentMethodOrConstructorInTable() throws SemanticException;
     void checkSymbolTable() throws SemanticException;
+    void consolidate() throws SemanticException;
 }

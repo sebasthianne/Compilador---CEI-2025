@@ -15,6 +15,10 @@ public class Parameter {
         return name;
     }
 
+    public Type getType(){
+        return type;
+    }
+
     public void checkParameter() throws SemanticException {
         type.checkType();
     }
