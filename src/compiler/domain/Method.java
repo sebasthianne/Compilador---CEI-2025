@@ -44,4 +44,8 @@ public class Method extends Callable{
     public void setEmptyBody(boolean emptyBody) {
         this.emptyBody = emptyBody;
     }
+
+    public Type getReturnType() {
+        return returnType;
+    }
 }

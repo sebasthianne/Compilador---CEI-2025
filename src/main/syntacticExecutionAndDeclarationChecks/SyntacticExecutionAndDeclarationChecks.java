@@ -34,6 +34,7 @@ public class SyntacticExecutionAndDeclarationChecks {
             System.out.println();
             System.out.println("[SinErrores]");
         }
+        Injector.getInjector().flushSymbolTable();
     }
 
 }

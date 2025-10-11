@@ -175,11 +175,20 @@ public class Class{
             Method method=getMethod(m);
             if(method!=null) {
                 checkParameters(m,method);
+                checkReturnType(m,method);
             } else{
                 if(m.isAbstract()) throw new AbstractMethodNotRedefinedException(name,m.getName());
                 addMethod(m);
             }
         }
+    }
+
+    private void checkReturnType(Method m, Method method) throws SemanticException{
+        if(m.getReturnType()==null){
+            if(method.getReturnType()!=null) throw new ReturnTypeMismatchInMethodRedefinition(method.getName(),name);
+        } else  if(method.getReturnType()==null) throw new ReturnTypeMismatchInMethodRedefinition(method.getName(),name);
+                else if (!m.getReturnType().getTypeName().lexeme().equals(method.getReturnType().getTypeName().lexeme()))
+                throw new ReturnTypeMismatchInMethodRedefinition(method.getName(),name);
     }
 
     private void checkParameters(Method m, Method method) throws SemanticException {
@@ -190,10 +199,11 @@ public class Class{
             Parameter currentParameter = currentParameters.next();
             compare(parentParameter,currentParameter,method);
         }
+        if(parentParameters.hasNext()||currentParameters.hasNext()) throw new NumberOfParametersMismatchInMethodRedefinitionException(method.getName(),name);
     }
 
     private void compare(Parameter parentParameter, Parameter currentParameter,Method method) throws SemanticException {
-        if(!parentParameter.getType().getTypeName().lexeme().equals(currentParameter.getType().getTypeName().lexeme())) throw new ParameterTypeMismatchInMethodRedefinition(currentParameter.getType().getTypeName(),name,method.getName());
+        if(!parentParameter.getType().getTypeName().lexeme().equals(currentParameter.getType().getTypeName().lexeme())) throw new ParameterTypeMismatchInMethodRedefinition(currentParameter.getName(),name,method.getName());
         if(!parentParameter.getName().lexeme().equals(currentParameter.getName().lexeme())) throw new ParameterNameMismatchInMethodRedefinition(currentParameter.getName(),name,method.getName());
     }
 

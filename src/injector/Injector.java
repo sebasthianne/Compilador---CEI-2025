@@ -34,6 +34,10 @@ public class Injector {
         return symbolTable;
     }
 
+    public void flushSymbolTable(){
+        symbolTable=null;
+    }
+
     public LexicalAnalyzer getLexicalAnalyzer(SourceManager sourceManager) throws IOException {
         return new LexicalAnalyzerImpl(sourceManager);
     }
