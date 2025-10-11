@@ -23,6 +23,14 @@ public class Method extends Callable{
         return (modifier != null && modifier.name().equals("palabraReservadaabstract"));
     }
 
+    public boolean isStatic(){
+        return (modifier != null && modifier.name().equals("palabraReservadastatic"));
+    }
+
+    public boolean isFinal(){
+        return (modifier != null && modifier.name().equals("palabraReservadafinal"));
+    }
+
 
     public void checkMethod() throws SemanticException {
         Class currentClass = Injector.getInjector().getSymbolTable().getCurrentClass();

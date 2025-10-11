@@ -160,7 +160,6 @@ public class Class{
     }
 
     public void consolidate() throws SemanticException {
-
         if(!isConsolidated()&&!isObject()){
             Class inheritsFrom= Injector.getInjector().getSymbolTable().getClass(getInheritsFrom());
             recursivelyConsolidate(inheritsFrom);
@@ -174,13 +173,18 @@ public class Class{
         for(Method m : inheritsFrom.getMethodTable()){
             Method method=getMethod(m);
             if(method!=null) {
-                checkParameters(m,method);
-                checkReturnType(m,method);
+                redefinitionChecks(m, method);
             } else{
                 if(m.isAbstract()) throw new AbstractMethodNotRedefinedException(name,m.getName());
                 addMethod(m);
             }
         }
+    }
+
+    private void redefinitionChecks(Method m, Method method) throws SemanticException {
+        if(m.isFinal()) throw new RedefiningFinalMethodException(method.getName(),name);
+        checkParameters(m, method);
+        checkReturnType(m, method);
     }
 
     private void checkReturnType(Method m, Method method) throws SemanticException{

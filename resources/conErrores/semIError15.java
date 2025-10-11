@@ -2,7 +2,7 @@
 //Tambien podria ser el token abstract
 
 class A{
-    abstract void m1();
+    void m1();
 }
 
 
