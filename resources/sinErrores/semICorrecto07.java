@@ -1,8 +1,8 @@
-///[Error:A|5]
+///[SinErrores]
 
 class A{
     public A(){}
-    public A(){}
+    public A(int a){}
 }
 
 

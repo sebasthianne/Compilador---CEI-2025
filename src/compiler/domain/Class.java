@@ -46,24 +46,36 @@ public class Class{
         return constructorTable.values();
     }
 
-    public Constructor getConstructor(Constructor c){
-        return constructorTable.get(c.getName().lexeme());
+    public boolean containsConstructor(Constructor c){
+        String constKey= c.getName().lexeme()+"/"+c.getArity();
+        return constructorTable.get(constKey)!=null;
+    }
+
+    public Constructor getConstructor(int arity){
+        return constructorTable.get(name.lexeme()+"/"+arity);
     }
 
     public void addConstructor(Constructor constructor){
-        constructorTable.put(constructor.getName().lexeme(),constructor);
+        String constKey= constructor.getName().lexeme()+"/"+constructor.getArity();
+        constructorTable.put(constKey,constructor);
     }
 
     public Iterable<Method> getMethodTable() {
         return methodTable.values();
     }
 
-    public Method getMethod(Method m){
-        return methodTable.get(m.getName().lexeme());
+    public boolean containsMethod(Method m){
+        String methodKey= m.getName().lexeme()+"/"+m.getArity();
+        return methodTable.get(methodKey)!=null;
+    }
+
+    public Method getMethod(String lexeme, int arity) {
+        return methodTable.get(lexeme+"/"+arity);
     }
 
     public void addMethod(Method method){
-        methodTable.put(method.getName().lexeme(),method);
+        String methodKey= method.getName().lexeme()+"/"+method.getArity();
+        methodTable.put(methodKey,method);
     }
 
     public Iterable<Attribute> getAttributeTable() {
@@ -171,8 +183,9 @@ public class Class{
 
     private void consolidateMethods(Class inheritsFrom) throws SemanticException{
         for(Method m : inheritsFrom.getMethodTable()){
-            Method method=getMethod(m);
-            if(method!=null) {
+
+            if(containsMethod(m)) {
+                Method method=getMethod(m.getName().lexeme(),m.getArity());
                 redefinitionChecks(m, method);
             } else{
                 if(m.isAbstract()) throw new AbstractMethodNotRedefinedException(name,m.getName());
@@ -180,6 +193,7 @@ public class Class{
             }
         }
     }
+
 
     private void redefinitionChecks(Method m, Method method) throws SemanticException {
         if(m.isFinal()) throw new RedefiningFinalMethodException(method.getName(),name);
@@ -203,7 +217,7 @@ public class Class{
             Parameter currentParameter = currentParameters.next();
             compare(parentParameter,currentParameter,method);
         }
-        if(parentParameters.hasNext()||currentParameters.hasNext()) throw new NumberOfParametersMismatchInMethodRedefinitionException(method.getName(),name);
+        if(parentParameters.hasNext()||currentParameters.hasNext()) throw new NumberOfParametersMismatchInMethodRedefinitionException(method.getName(),name); //This exception shouldn't happen anymore, but i'll leave it just in case
     }
 
     private void compare(Parameter parentParameter, Parameter currentParameter,Method method) throws SemanticException {

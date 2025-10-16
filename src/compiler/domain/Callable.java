@@ -10,11 +10,13 @@ import java.util.List;
 public class Callable {
     private final Token name;
     private final List<Parameter> parameterList;
+    private int arity;
 
 
     public Callable(Token name) {
         this.name = name;
         parameterList= new ArrayList<>(50);
+        arity=0;
     }
 
     public Token getName() {
@@ -30,5 +32,10 @@ public class Callable {
             if(p.getName().lexeme().equals(parameter.getName().lexeme())) throw new ReusedParameterException(parameter.getName(), Injector.getInjector().getSymbolTable().getCurrentClass().getName(),name);
         }
         parameterList.add(parameter);
+        arity++;
+    }
+
+    public int getArity() {
+        return arity;
     }
 }

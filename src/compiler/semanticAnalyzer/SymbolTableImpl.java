@@ -2,10 +2,7 @@ package compiler.semanticAnalyzer;
 
 import compiler.domain.*;
 import compiler.domain.Class;
-import compiler.semanticAnalyzer.semanticExceptions.ConstructorNameClassMismatchException;
-import compiler.semanticAnalyzer.semanticExceptions.ReusedClassNameException;
-import compiler.semanticAnalyzer.semanticExceptions.ReusedMethodNameInClassException;
-import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
+import compiler.semanticAnalyzer.semanticExceptions.*;
 
 import java.util.HashMap;
 
@@ -127,11 +124,13 @@ public class SymbolTableImpl implements SymbolTable {
     @Override
     public void insertCurrentMethodOrConstructorInTable() throws SemanticException {
         if(currentCallableIsConstructor){
-            currentClass.addConstructor((Constructor) currentMethodOrConstructor);
+            Constructor currentConstructor=(Constructor) currentMethodOrConstructor;
             if(!currentMethodOrConstructor.getName().lexeme().equals(currentClass.getName().lexeme())) throw new ConstructorNameClassMismatchException(currentMethodOrConstructor.getName());
+            if(currentClass.containsConstructor(currentConstructor)) throw new ReusedConstructorInClassException(currentMethodOrConstructor.getName(),currentClass.getName(),currentConstructor.getArity());
+            currentClass.addConstructor(currentConstructor);
         } else {
-            if(currentClass.getMethod((Method) currentMethodOrConstructor)!=null){
-                throw new ReusedMethodNameInClassException(currentMethodOrConstructor.getName(),currentClass.getName());
+            if(currentClass.containsMethod((Method) currentMethodOrConstructor)){
+                throw new ReusedMethodInClassException(currentMethodOrConstructor.getName(),currentClass.getName(), currentMethodOrConstructor.getArity());
             }
             currentClass.addMethod((Method) currentMethodOrConstructor);
         }
