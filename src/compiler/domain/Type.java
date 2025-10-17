@@ -14,4 +14,6 @@ public abstract class Type {
     public Token getTypeName() {
         return typeName;
     }
+
+    public abstract boolean isBoolean();
 }

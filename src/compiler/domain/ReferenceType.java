@@ -16,4 +16,9 @@ public class ReferenceType extends Type {
         if(symbolTable.getClass(getTypeName())==null) throw new MissingReferenceTypeClassException(getTypeName(),symbolTable.getCurrentClass().getName());
     }
 
+    @Override
+    public boolean isBoolean() {
+        return false;
+    }
+
 }
