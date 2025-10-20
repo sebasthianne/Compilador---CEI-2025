@@ -188,7 +188,7 @@ public class Class{
                 Method method=getMethod(m.getName().lexeme(),m.getArity());
                 redefinitionChecks(m, method);
             } else{
-                if(m.isAbstract()) throw new AbstractMethodNotRedefinedException(name,m.getName());
+                if(m.isAbstract()&&!isAbstract()) throw new AbstractMethodNotRedefinedException(name,m.getName());
                 addMethod(m);
             }
         }
@@ -222,7 +222,6 @@ public class Class{
 
     private void compare(Parameter parentParameter, Parameter currentParameter,Method method) throws SemanticException {
         if(!parentParameter.getType().getTypeName().lexeme().equals(currentParameter.getType().getTypeName().lexeme())) throw new ParameterTypeMismatchInMethodRedefinition(currentParameter.getName(),name,method.getName());
-        if(!parentParameter.getName().lexeme().equals(currentParameter.getName().lexeme())) throw new ParameterNameMismatchInMethodRedefinition(currentParameter.getName(),name,method.getName());
     }
 
     private void consolidateAttributes(Class inheritsFrom) throws SemanticException{
