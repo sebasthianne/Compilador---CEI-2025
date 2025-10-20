@@ -25,7 +25,7 @@ public class SymbolTableImpl implements SymbolTable {
 
     private void createSystem() {
         try {
-            addClass(new Class(new Token("idClase","System",-1),new Token("palabraReservadafinal","final",-1)));
+            addClass(new Class(new Token("idClase","System",-1),null));
             getCurrentClass().setInheritsFrom(new Token("idClase","Object",-1));
             addMethod(new Method(new Token("idMetVar","read",-1),new Token("palabraReservadastatic","static",-1),new PrimitiveType(new Token("palabraReservadaint","int",-1))));
             insertCurrentMethodOrConstructorInTable();
@@ -62,7 +62,7 @@ public class SymbolTableImpl implements SymbolTable {
 
     private void createString() {
         try {
-            addClass(new Class(new Token("idClase","String",-1),new Token("palabraReservadafinal","final",-1)));
+            addClass(new Class(new Token("idClase","String",-1),null));
             getCurrentClass().setInheritsFrom(new Token("idClase","Object",-1));
         } catch (SemanticException e) {
             System.out.println("Está excepción nunca debería ocurrir acá");

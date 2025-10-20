@@ -188,7 +188,7 @@ public class Class{
                 Method method=getMethod(m.getName().lexeme(),m.getArity());
                 redefinitionChecks(m, method);
             } else{
-                if(m.isAbstract()) throw new AbstractMethodNotRedefinedException(name,m.getName());
+                if(m.isAbstract()&&!isAbstract()) throw new AbstractMethodNotRedefinedException(name,m.getName());
                 addMethod(m);
             }
         }
@@ -197,6 +197,8 @@ public class Class{
 
     private void redefinitionChecks(Method m, Method method) throws SemanticException {
         if(m.isFinal()) throw new RedefiningFinalMethodException(method.getName(),name);
+        if(m.isStatic()) throw new RedefiningStaticMethodException(method.getName(),name);
+        if(method.isStatic()) throw new RedefiningStaticMethodException(method.getName(),name);
         checkParameters(m, method);
         checkReturnType(m, method);
     }
@@ -215,14 +217,8 @@ public class Class{
         while(parentParameters.hasNext() && currentParameters.hasNext()){
             Parameter parentParameter = parentParameters.next();
             Parameter currentParameter = currentParameters.next();
-            compare(parentParameter,currentParameter,method);
+            if(!parentParameter.getType().getTypeName().lexeme().equals(currentParameter.getType().getTypeName().lexeme())) throw new ParameterTypeMismatchInMethodRedefinition(currentParameter.getName(),name, method.getName());
         }
-        if(parentParameters.hasNext()||currentParameters.hasNext()) throw new NumberOfParametersMismatchInMethodRedefinitionException(method.getName(),name); //This exception shouldn't happen anymore, but i'll leave it just in case
-    }
-
-    private void compare(Parameter parentParameter, Parameter currentParameter,Method method) throws SemanticException {
-        if(!parentParameter.getType().getTypeName().lexeme().equals(currentParameter.getType().getTypeName().lexeme())) throw new ParameterTypeMismatchInMethodRedefinition(currentParameter.getName(),name,method.getName());
-        if(!parentParameter.getName().lexeme().equals(currentParameter.getName().lexeme())) throw new ParameterNameMismatchInMethodRedefinition(currentParameter.getName(),name,method.getName());
     }
 
     private void consolidateAttributes(Class inheritsFrom) throws SemanticException{
