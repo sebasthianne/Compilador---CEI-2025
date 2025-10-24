@@ -1,24 +1,26 @@
 package compiler.domain.abstractSyntaxTree;
 
 import compiler.domain.Callable;
-import compiler.domain.Constructor;
 import compiler.domain.Parameter;
+import compiler.domain.Type;
 import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
+
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 public class ParameterListNode extends ASTNode {
-    private final List<Parameter> parameterList;
+    private final List<ExpressionNode> parameterList;
+    private List<Type> parameterTypeList;
 
     public ParameterListNode() {
         this.parameterList = new ArrayList<>();
     }
 
 
-    public void addParameter(Parameter p){
-        parameterList.add(p);
+    public void addParameter(ExpressionNode expressionNode){
+        parameterList.add(expressionNode);
     }
 
     public int size() {
@@ -27,18 +29,19 @@ public class ParameterListNode extends ASTNode {
 
     @Override
     public void checkNode() throws SemanticException {
-        for(Parameter p : parameterList){
-            p.checkParameter();
+        parameterTypeList= new ArrayList<>();
+        for(ExpressionNode expressionNode : parameterList){
+            parameterTypeList.add(expressionNode.checkExpression());
         }
     }
 
     public void checkParameterMatch(Callable methodOrConstructor) throws SemanticException {
         Iterator<Parameter> formalParameters = methodOrConstructor.getParameterList().iterator();
-        Iterator<Parameter> actualParameters = parameterList.iterator();
-        while(formalParameters.hasNext() && actualParameters.hasNext()){
+        Iterator<Type> actualParametersTypes = parameterTypeList.iterator();
+        while(formalParameters.hasNext() && actualParametersTypes.hasNext()){
             Parameter currentFormalParameter = formalParameters.next();
-            Parameter currentActualParameter = actualParameters.next();
-            if(!currentFormalParameter.getType().compareType(currentActualParameter.getType())) throw new SemanticException(currentActualParameter.getName()) {
+            Type currentActualParameterType = actualParametersTypes.next();
+            if(!currentFormalParameter.getType().compareType(currentActualParameterType)) throw new SemanticException(currentActualParameterType.getTypeName()) {
                 @Override
                 public String getDetailedErrorMessage() {
                     return "";
@@ -47,5 +50,5 @@ public class ParameterListNode extends ASTNode {
         }
     }
 
-    //TODO: Complete rewrite after I solve name resolution
+    //TODO: Minor rewrite, fixed main issues
 }
