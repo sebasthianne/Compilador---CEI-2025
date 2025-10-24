@@ -11,6 +11,7 @@ public class SymbolTableImpl implements SymbolTable {
     private Class currentClass;
     private Callable currentMethodOrConstructor;
     private boolean currentCallableIsConstructor;
+    private Block currentBlock;
 
     public SymbolTableImpl(){
         classTable= new HashMap<>(9973);
@@ -152,4 +153,26 @@ public class SymbolTableImpl implements SymbolTable {
         }
     }
 
+    @Override
+    public Constructor resolveConstructor(Token className, int arity) throws SemanticException {
+        Class constructorsClass = getClass(className);
+        Constructor constructor = constructorsClass.getConstructor(arity);
+        if(constructor==null) throw new SemanticException(className) {
+            @Override
+            public String getDetailedErrorMessage() {
+                return "";
+            }
+        };
+        return constructor;
+    }
+
+    @Override
+    public Block getCurrentBlock() {
+        return currentBlock;
+    }
+
+    @Override
+    public void setCurrentBlock(Block currentBlock) {
+        this.currentBlock = currentBlock;
+    }
 }

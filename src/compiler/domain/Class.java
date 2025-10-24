@@ -207,7 +207,7 @@ public class Class{
         if(m.getReturnType()==null){
             if(method.getReturnType()!=null) throw new ReturnTypeMismatchInMethodRedefinition(method.getName(),name);
         } else  if(method.getReturnType()==null) throw new ReturnTypeMismatchInMethodRedefinition(method.getName(),name);
-                else if (!m.getReturnType().getTypeName().lexeme().equals(method.getReturnType().getTypeName().lexeme()))
+                else if (!m.getReturnType().compareType(method.getReturnType()))
                 throw new ReturnTypeMismatchInMethodRedefinition(method.getName(),name);
     }
 
@@ -217,7 +217,7 @@ public class Class{
         while(parentParameters.hasNext() && currentParameters.hasNext()){
             Parameter parentParameter = parentParameters.next();
             Parameter currentParameter = currentParameters.next();
-            if(!parentParameter.getType().getTypeName().lexeme().equals(currentParameter.getType().getTypeName().lexeme())) throw new ParameterTypeMismatchInMethodRedefinition(currentParameter.getName(),name, method.getName());
+            if(!parentParameter.getType().compareType(currentParameter.getType())) throw new ParameterTypeMismatchInMethodRedefinition(currentParameter.getName(),name, method.getName());
         }
     }
 
@@ -239,6 +239,17 @@ public class Class{
 
     private boolean isConsolidated() {
         return isConsolidated;
+    }
+
+    public Method resolveMethod(Token methodName, int arity) throws SemanticException{
+        Method method = getMethod(methodName.lexeme(),arity);
+        if(method == null) throw new SemanticException(methodName) {
+            @Override
+            public String getDetailedErrorMessage() {
+                return "";
+            }
+        };
+        return method;
     }
 
 }

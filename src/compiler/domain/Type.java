@@ -16,4 +16,8 @@ public abstract class Type {
     }
 
     public abstract boolean isBoolean();
+
+    public boolean compareType(Type type){
+        return type.getTypeName().lexeme().equals(typeName.lexeme());
+    }
 }

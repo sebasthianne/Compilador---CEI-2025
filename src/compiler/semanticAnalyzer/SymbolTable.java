@@ -15,4 +15,9 @@ public interface SymbolTable {
     void insertCurrentMethodOrConstructorInTable() throws SemanticException;
     void checkSymbolTable() throws SemanticException;
     void consolidate() throws SemanticException;
+    Constructor resolveConstructor(Token className, int arity) throws SemanticException;
+
+    Block getCurrentBlock();
+
+    void setCurrentBlock(Block currentBlock);
 }
