@@ -27,6 +27,13 @@ public class Callable {
         return parameterList;
     }
 
+    public Parameter getParameter(Token parameterName){
+        for (Parameter p : parameterList){
+            if(p.getName().lexeme().equals(parameterName.lexeme())) return p;
+        }
+        return null;
+    }
+
     public void addParameter(Parameter parameter) throws SemanticException {
         for(Parameter p : parameterList){
             if(p.getName().lexeme().equals(parameter.getName().lexeme())) throw new ReusedParameterException(parameter.getName(), Injector.getInjector().getSymbolTable().getCurrentClass().getName(),name);

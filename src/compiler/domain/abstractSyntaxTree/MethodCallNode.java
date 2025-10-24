@@ -13,7 +13,7 @@ public class MethodCallNode extends PrimaryNode {
 
     public MethodCallNode(Token calledMethodName, int calledConstructorArity) {
         this.calledMethodName = calledMethodName;
-        this.parameterList = new ParameterListNode();
+        this.parameterList = new ParameterListNode(calledMethodName);
     }
 
     @Override

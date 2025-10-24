@@ -2,6 +2,7 @@ package compiler.domain.abstractSyntaxTree;
 
 import compiler.domain.Callable;
 import compiler.domain.Parameter;
+import compiler.domain.Token;
 import compiler.domain.Type;
 import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
 
@@ -12,9 +13,11 @@ import java.util.List;
 
 public class ParameterListNode extends ASTNode {
     private final List<ExpressionNode> parameterList;
+    private final Token callableName;
     private List<Type> parameterTypeList;
 
-    public ParameterListNode() {
+    public ParameterListNode(Token callableName) {
+        this.callableName = callableName;
         this.parameterList = new ArrayList<>();
     }
 
@@ -41,7 +44,7 @@ public class ParameterListNode extends ASTNode {
         while(formalParameters.hasNext() && actualParametersTypes.hasNext()){
             Parameter currentFormalParameter = formalParameters.next();
             Type currentActualParameterType = actualParametersTypes.next();
-            if(!currentFormalParameter.getType().compareType(currentActualParameterType)) throw new SemanticException(currentActualParameterType.getTypeName()) {
+            if(!currentFormalParameter.getType().compareType(currentActualParameterType)) throw new SemanticException(callableName) {
                 @Override
                 public String getDetailedErrorMessage() {
                     return "";

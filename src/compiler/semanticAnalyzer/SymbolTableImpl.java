@@ -2,6 +2,7 @@ package compiler.semanticAnalyzer;
 
 import compiler.domain.*;
 import compiler.domain.Class;
+import compiler.domain.abstractSyntaxTree.BlockNode;
 import compiler.semanticAnalyzer.semanticExceptions.*;
 
 import java.util.HashMap;
@@ -11,7 +12,7 @@ public class SymbolTableImpl implements SymbolTable {
     private Class currentClass;
     private Callable currentMethodOrConstructor;
     private boolean currentCallableIsConstructor;
-    private Block currentBlock;
+    private BlockNode currentBlock;
 
     public SymbolTableImpl(){
         classTable= new HashMap<>(9973);
@@ -167,12 +168,12 @@ public class SymbolTableImpl implements SymbolTable {
     }
 
     @Override
-    public Block getCurrentBlock() {
+    public BlockNode getCurrentBlock() {
         return currentBlock;
     }
 
     @Override
-    public void setCurrentBlock(Block currentBlock) {
+    public void setCurrentBlock(BlockNode currentBlock) {
         this.currentBlock = currentBlock;
     }
 }

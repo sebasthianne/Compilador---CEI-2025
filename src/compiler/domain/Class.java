@@ -252,4 +252,15 @@ public class Class{
         return method;
     }
 
+    public Type resolveAttribute(Token attributeName) throws SemanticException{
+        Attribute attribute = getAttribute(attributeName);
+        if(attribute == null) throw new SemanticException(attributeName) {
+            @Override
+            public String getDetailedErrorMessage() {
+                return "";
+            }
+        };
+        return attribute.getType();
+    }
+
 }

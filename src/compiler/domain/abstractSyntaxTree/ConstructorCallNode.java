@@ -11,7 +11,7 @@ public class ConstructorCallNode extends PrimaryNode {
 
     public ConstructorCallNode(Token calledConstructorName, int calledConstructorArity) {
         this.calledConstructorName = calledConstructorName;
-        this.parameterList = new ParameterListNode();
+        this.parameterList = new ParameterListNode(calledConstructorName);
     }
 
     @Override

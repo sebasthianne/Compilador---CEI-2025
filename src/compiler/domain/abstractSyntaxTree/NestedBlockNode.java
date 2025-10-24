@@ -3,14 +3,20 @@ package compiler.domain.abstractSyntaxTree;
 
 import compiler.domain.Token;
 import compiler.domain.Type;
+import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
 
 public class NestedBlockNode extends BlockNode {
-    BlockNode parentBlock;
+    private final BlockNode parentBlock;
 
-    @Override
-    public Type resolveNameExternal(Token variableName) {
-        return parentBlock.resolveName(variableName);
+    public NestedBlockNode(BlockNode parentBlock) {
+        super();
+        this.parentBlock = parentBlock;
     }
 
-    //TODO: Ask if it's preferable for the parent-child relationship to be on blocks or on nodes.
+
+    @Override
+    public Type resolveNameExternal(Token name) throws SemanticException {
+        return parentBlock.resolveName(name);
+    }
+
 }
