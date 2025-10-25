@@ -21,4 +21,11 @@ public class ReferenceType extends Type {
         return false;
     }
 
+    @Override
+    public boolean conformsTo(Type type) {
+        Class classOfType = Injector.getInjector().getSymbolTable().getClass(type.getTypeName());
+        return (classOfType!=null)&&(compareType(type)||classOfType.isAncestor(getTypeName()));
+    }
+
+
 }

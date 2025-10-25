@@ -14,4 +14,11 @@ public class PrimitiveType extends Type {
     public boolean isBoolean() {
         return getTypeName().name().equals("palabraReservadaboolean");
     }
+
+    @Override
+    public boolean conformsTo(Type t) {
+        return compareType(t);
+    }
+
+
 }

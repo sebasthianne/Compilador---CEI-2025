@@ -20,4 +20,6 @@ public abstract class Type {
     public boolean compareType(Type type){
         return type.getTypeName().lexeme().equals(typeName.lexeme());
     }
+
+    public abstract boolean conformsTo(Type t);
 }
