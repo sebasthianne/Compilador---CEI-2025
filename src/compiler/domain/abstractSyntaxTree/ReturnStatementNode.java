@@ -22,10 +22,28 @@ public class ReturnStatementNode extends StatementNode {
             public String getDetailedErrorMessage() {
                 return "";
             }
-        }; else {
-            Method currentMethod = (Method) currentMethodOrConstructor;
+        }; else methodReturnChecks((Method) currentMethodOrConstructor);
+    }
+
+    private void methodReturnChecks(Method currentMethodOrConstructor) throws SemanticException {
+        Type methodReturnType = currentMethodOrConstructor.getReturnType();
+        if (expressionToReturn != null) {
             Type returnType = expressionToReturn.checkExpression();
-            if (!returnType.getTypeName().lexeme().equals(currentMethod.getReturnType().getTypeName().lexeme())) throw new SemanticException(returnType.getTypeName()) {
+            if (methodReturnType == null) throw new SemanticException(returnType.getTypeName()) {
+                @Override
+                public String getDetailedErrorMessage() {
+                    return "";
+                }
+            };
+            if (!returnType.getTypeName().lexeme().equals(methodReturnType.getTypeName().lexeme()))
+                throw new SemanticException(returnType.getTypeName()) {
+                    @Override
+                    public String getDetailedErrorMessage() {
+                        return "";
+                    }
+                };
+        } else {
+            if (methodReturnType != null) throw new SemanticException(methodReturnType.getTypeName()) {
                 @Override
                 public String getDetailedErrorMessage() {
                     return "";

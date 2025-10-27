@@ -19,4 +19,9 @@ public class NestedBlockNode extends BlockNode {
         return parentBlock.resolveName(name);
     }
 
+    @Override
+    public void declarationChecks(Token declaredVariableName) throws SemanticException {
+        super.declarationChecks(declaredVariableName);
+        parentBlock.declarationChecks(declaredVariableName);
+    }
 }

@@ -19,4 +19,16 @@ public class CallableBodyBlockNode extends BlockNode {
             return currentClass.resolveAttribute(name);
         }
     }
+
+    @Override
+    public void declarationChecks(Token declaredVariableName) throws SemanticException {
+        super.declarationChecks(declaredVariableName);
+        Callable currentMethodOrConstructor = Injector.getInjector().getSymbolTable().getCurrentMethodOrConstructor();
+        if(currentMethodOrConstructor.getParameter(declaredVariableName)!=null) throw new SemanticException(declaredVariableName) {
+            @Override
+            public String getDetailedErrorMessage() {
+                return "";
+            }
+        };
+    }
 }

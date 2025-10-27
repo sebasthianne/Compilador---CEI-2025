@@ -47,6 +47,15 @@ public abstract class BlockNode extends StatementNode {
         return getLocalVariable(variableName);
     }
 
+    public void declarationChecks(Token declaredVariableName) throws SemanticException{
+        if(getLocalVariable(declaredVariableName)!=null) throw new SemanticException(declaredVariableName) {
+            @Override
+            public String getDetailedErrorMessage() {
+                return "";
+            }
+        };
+    }
+
     protected abstract Type resolveNameExternal(Token name) throws SemanticException;
 
 }
