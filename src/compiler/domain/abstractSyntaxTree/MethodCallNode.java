@@ -25,4 +25,8 @@ public class MethodCallNode extends PrimaryNode {
     }
 
 
+    @Override
+    public boolean isAssignable() {
+        return false;
+    }
 }

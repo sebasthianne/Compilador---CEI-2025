@@ -1,4 +1,4 @@
 package compiler.domain.abstractSyntaxTree;
 
-public abstract class BasicExpressionNode extends ExpressionNode {
+public abstract class BasicExpressionNode extends ComposedExpressionNode {
 }

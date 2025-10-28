@@ -25,4 +25,8 @@ public class ConstructorCallNode extends PrimaryNode {
     }
 
 
+    @Override
+    public boolean isAssignable() {
+        return false;
+    }
 }
