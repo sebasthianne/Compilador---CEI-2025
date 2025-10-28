@@ -1,10 +1,7 @@
 package compiler.domain.abstractSyntaxTree;
 
-import compiler.domain.Callable;
+import compiler.domain.*;
 import compiler.domain.Class;
-import compiler.domain.Parameter;
-import compiler.domain.Token;
-import compiler.domain.Type;
 import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
 import injector.Injector;
 
@@ -15,6 +12,12 @@ public class CallableBodyBlockNode extends BlockNode {
         Parameter parameter = currentMethodOrConstructor.getParameter(name);
         if(parameter != null) return parameter.getType();
         else {
+            if(currentMethodOrConstructor instanceof Method method && method.isStatic()) throw new SemanticException(name) {
+                @Override
+                public String getDetailedErrorMessage() {
+                    return "";
+                }
+            };
             Class currentClass = Injector.getInjector().getSymbolTable().getCurrentClass();
             return currentClass.resolveAttribute(name);
         }
