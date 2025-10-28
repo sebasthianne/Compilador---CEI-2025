@@ -1,4 +1,4 @@
-///[Error:String|3]
+///[SinErrores]
 // 
 class A extends String{
 
