@@ -1,0 +1,39 @@
+package compiler.domain.abstractSyntaxTree;
+
+import compiler.domain.NullType;
+import compiler.domain.PrimitiveType;
+import compiler.domain.Token;
+import compiler.domain.Type;
+import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
+
+public abstract class ChainedReferenceNode extends ReferenceNode {
+    private final Token pointToken;
+
+    protected ChainedReferenceNode(Token pointToken) {
+        this.pointToken = pointToken;
+    }
+
+    protected void checkTypeChainable(Type chainedTo) throws SemanticException {
+        chainedTo.checkType();
+        if(chainedTo instanceof PrimitiveType) throw new SemanticException(pointToken) {
+            @Override
+            public String getDetailedErrorMessage() {
+                return "";
+            }
+        };
+        if(chainedTo instanceof NullType) throw new SemanticException(pointToken) {
+            @Override
+            public String getDetailedErrorMessage() {
+                return "";
+            }
+        };
+    }
+
+    @Override
+    public Type checkExpression() throws SemanticException {
+        throw new RuntimeException("Excepción de Prueba, encadenado requiere referencia. No debería ocurrir durante la ejecución normal del programa.");
+    }
+
+    public abstract Type checkChainedReference(Type chainedTo) throws SemanticException;
+
+}

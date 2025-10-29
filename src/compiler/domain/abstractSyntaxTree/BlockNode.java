@@ -1,6 +1,5 @@
 package compiler.domain.abstractSyntaxTree;
 
-import compiler.domain.Block;
 import compiler.domain.LocalVariable;
 import compiler.domain.Token;
 import compiler.domain.Type;
@@ -16,7 +15,6 @@ public abstract class BlockNode extends StatementNode {
     private final List<StatementNode> statementsTable;
 
     public BlockNode(){
-        Injector.getInjector().getSymbolTable().setCurrentBlock(this);
         this.localVariablesTable = new HashMap<>(47);
         this.statementsTable = new ArrayList<>(50);
     }
@@ -54,6 +52,10 @@ public abstract class BlockNode extends StatementNode {
                 return "";
             }
         };
+    }
+
+    public void addStatement(StatementNode statement){
+        statementsTable.add(statement);
     }
 
     protected abstract Type resolveNameExternal(Token name) throws SemanticException;

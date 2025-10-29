@@ -2,6 +2,9 @@ package compiler.syntacticAnalyzer;
 
 import compiler.domain.*;
 import compiler.domain.Class;
+import compiler.domain.abstractSyntaxTree.BlockNode;
+import compiler.domain.abstractSyntaxTree.CallableBodyBlockNode;
+import compiler.domain.abstractSyntaxTree.NestedBlockNode;
 import compiler.lexicalAnalyzer.LexicalAnalyzer;
 import compiler.lexicalAnalyzer.lexicalExceptions.LexicalException;
 import compiler.semanticAnalyzer.SymbolTable;
@@ -159,7 +162,11 @@ public class SyntacticAnalyzerImpl implements SyntacticAnalyzer {
         symbolTable.addConstructor(new Constructor(currentToken));
         match("idClase");
         formalArgumentsNonTerminal();
-        blockNonTerminal();
+        Constructor m = (Constructor) symbolTable.getCurrentMethodOrConstructor();
+        CallableBodyBlockNode methodOrConstructorBody = new CallableBodyBlockNode();
+        m.setBody(methodOrConstructorBody);
+        Injector.getInjector().getSymbolTable().setCurrentBlock(methodOrConstructorBody);
+        blockNonTerminal(methodOrConstructorBody);
         symbolTable.insertCurrentMethodOrConstructorInTable();
     }
 
@@ -234,16 +241,18 @@ public class SyntacticAnalyzerImpl implements SyntacticAnalyzer {
 
     private void optionalBlockNonTerminal() throws SyntacticException, LexicalException, IOException {
         if (currentToken.name().equals("abreLlave")) {
-            blockNonTerminal();
-        } else if (currentToken.name().equals("puntoYComa")) {
             Method m = (Method) symbolTable.getCurrentMethodOrConstructor();
-            m.setEmptyBody(true);
+            CallableBodyBlockNode methodOrConstructorBody = new CallableBodyBlockNode();
+            m.setBody(methodOrConstructorBody);
+            Injector.getInjector().getSymbolTable().setCurrentBlock(methodOrConstructorBody);
+            blockNonTerminal(methodOrConstructorBody);
+        } else if (currentToken.name().equals("puntoYComa")) {
             match("puntoYComa");
         } else
             throw new UnexpectedSymbolInContextException("{ o ;", currentToken, "Un método requiere un bloque como cuerpo o punto y coma");
     }
 
-    private void blockNonTerminal() throws SyntacticException, LexicalException, IOException {
+    private void blockNonTerminal(BlockNode blockNode) throws SyntacticException, LexicalException, IOException {
         match("abreLlave");
         statementListNonTerminal();
         match("cierraLlave");
@@ -280,7 +289,10 @@ public class SyntacticAnalyzerImpl implements SyntacticAnalyzer {
                     whileNonTerminal();
                     break;
                 case "abreLlave":
-                    blockNonTerminal();
+                    BlockNode parentBlock = Injector.getInjector().getSymbolTable().getCurrentBlock();
+                    NestedBlockNode newNestedBlock = new NestedBlockNode(parentBlock);
+                    Injector.getInjector().getSymbolTable().setCurrentBlock(newNestedBlock);
+                    blockNonTerminal(newNestedBlock);
                     break;
                 default:
                     throw new UnexpectedSymbolInContextException("while, if, return, var, {, ; o primero de operando", currentToken, "Dentro de un bloque o como cuerpo de una expresión while if o else se espera una sentencia");

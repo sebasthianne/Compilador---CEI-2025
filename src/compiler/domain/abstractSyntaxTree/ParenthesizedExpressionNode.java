@@ -16,7 +16,7 @@ public class ParenthesizedExpressionNode extends PrimaryNode {
     }
 
     @Override
-    public Type checkExpression() throws SemanticException {
+    public Type checkExpressionWithoutReference() throws SemanticException {
         return subExpression.checkExpression();
     }
 }

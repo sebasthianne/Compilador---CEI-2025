@@ -18,4 +18,8 @@ public class Literal {
     public Type getType() {
         return type;
     }
+
+    public Token getLiteralValue() {
+        return literalValue;
+    }
 }

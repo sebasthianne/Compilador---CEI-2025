@@ -11,13 +11,13 @@ public class MethodCallNode extends PrimaryNode {
     private final ParameterListNode parameterList;
 
 
-    public MethodCallNode(Token calledMethodName, int calledConstructorArity) {
+    public MethodCallNode(Token calledMethodName) {
         this.calledMethodName = calledMethodName;
         this.parameterList = new ParameterListNode(calledMethodName);
     }
 
     @Override
-    public Type checkExpression() throws SemanticException {
+    public Type checkExpressionWithoutReference() throws SemanticException {
         if(Injector.getInjector().getSymbolTable().getCurrentMethodOrConstructor() instanceof Method method && method.isStatic()) throw new SemanticException(calledMethodName) {
             @Override
             public String getDetailedErrorMessage() {

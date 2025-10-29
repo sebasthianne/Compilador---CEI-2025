@@ -10,13 +10,11 @@ import injector.Injector;
 public class Method extends Callable{
     private final Type returnType;
     private final Token modifier;
-    private boolean emptyBody;
 
     public Method(Token name, Token modifier, Type returnType) {
         super(name);
         this.returnType=returnType;
         this.modifier=modifier;
-        emptyBody=false;
     }
 
     public boolean isAbstract(){
@@ -43,14 +41,6 @@ public class Method extends Callable{
         for(Parameter p:getParameterList()){
             p.checkParameter();
         }
-    }
-
-    public boolean isEmptyBody() {
-        return emptyBody;
-    }
-
-    public void setEmptyBody(boolean emptyBody) {
-        this.emptyBody = emptyBody;
     }
 
     public Type getReturnType() {

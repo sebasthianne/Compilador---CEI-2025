@@ -1,5 +1,6 @@
 package compiler.domain;
 
+import compiler.domain.abstractSyntaxTree.CallableBodyBlockNode;
 import compiler.semanticAnalyzer.semanticExceptions.ReusedParameterException;
 import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
 import injector.Injector;
@@ -11,6 +12,7 @@ public class Callable {
     private final Token name;
     private final List<Parameter> parameterList;
     private int arity;
+    private CallableBodyBlockNode body;
 
 
     public Callable(Token name) {
@@ -44,5 +46,17 @@ public class Callable {
 
     public int getArity() {
         return arity;
+    }
+
+    public CallableBodyBlockNode getBody() {
+        return body;
+    }
+
+    public void setBody(CallableBodyBlockNode body) {
+        this.body = body;
+    }
+
+    public boolean isEmptyBody(){
+        return body == null;
     }
 }

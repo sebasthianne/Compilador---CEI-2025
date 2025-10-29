@@ -18,7 +18,7 @@ public class VariableNode extends PrimaryNode {
     }
 
     @Override
-    public Type checkExpression() throws SemanticException {
+    public Type checkExpressionWithoutReference() throws SemanticException {
         BlockNode currentBlock = Injector.getInjector().getSymbolTable().getCurrentBlock();
         return currentBlock.resolveName(variableName);
     }

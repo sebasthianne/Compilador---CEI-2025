@@ -13,14 +13,14 @@ public class StaticMethodCallNode extends PrimaryNode {
     private final ParameterListNode parameterList;
 
 
-    public StaticMethodCallNode(Token calledMethodName, int calledConstructorArity, Token calledMethodClassName) {
+    public StaticMethodCallNode(Token calledMethodName, Token calledMethodClassName) {
         this.calledMethodName = calledMethodName;
         this.parameterList = new ParameterListNode(calledMethodName);
         this.calledMethodClassName = calledMethodClassName;
     }
 
     @Override
-    public Type checkExpression() throws SemanticException {
+    public Type checkExpressionWithoutReference() throws SemanticException {
         Class foundClass = Injector.getInjector().getSymbolTable().getClass(calledMethodClassName);
         if(foundClass == null) throw new SemanticException(calledMethodClassName) {
             @Override

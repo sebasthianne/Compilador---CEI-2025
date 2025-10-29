@@ -17,7 +17,7 @@ public class ThisNode extends PrimaryNode {
     }
 
     @Override
-    public Type checkExpression() throws SemanticException {
+    public Type checkExpressionWithoutReference() throws SemanticException {
         Callable currentMethodOrConstructor = Injector.getInjector().getSymbolTable().getCurrentMethodOrConstructor();
         if(currentMethodOrConstructor instanceof Method currentMethod && currentMethod.isStatic()) throw new SemanticException(thisToken) {
             @Override
