@@ -1,4 +1,4 @@
-///[Error:b|19]
+///[SinErrores]
 
 class A {
     void m1(int a)
