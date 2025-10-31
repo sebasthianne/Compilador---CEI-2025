@@ -18,10 +18,16 @@ public class IntUnaryOperatorExpressionNode extends UnaryOperatorExpressionNode 
     @Override
     public Type checkExpression() throws SemanticException {
         Type typeToReturn= new PrimitiveType(new Token("palabraReservadaint","int", operator.lineNumber()));
-        if(!expression.checkExpression().compareType(typeToReturn)) {
-            throw new IntUnaryNotIntOperatorException(operator);
+        Type type = expression.checkExpression();
+        if(!type.compareType(typeToReturn)) {
+            throw new IntUnaryNotIntOperatorException(operator,type.getTypeName());
         }
         return typeToReturn;
+    }
+
+    @Override
+    public boolean isCall() {
+        return false;
     }
 
 }

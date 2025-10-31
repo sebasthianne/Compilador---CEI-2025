@@ -9,6 +9,6 @@ public class WhileConditionNotBooleanException extends SemanticException {
 
     @Override
     public String getDetailedErrorMessage() {
-        return "";
+        return "En la línea "+getErrorToken().lineNumber()+" en el contexto de la expresión de la condición de while se recibe algo del tipo "+getErrorToken().lexeme()+" que no es boolean";
     }
 }

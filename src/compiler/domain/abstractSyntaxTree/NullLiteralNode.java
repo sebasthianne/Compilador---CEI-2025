@@ -17,4 +17,9 @@ public class NullLiteralNode extends PrimitiveLiteralNode {
     public Type checkExpression() throws SemanticException {
         return new NullType(nullToken);
     }
+
+    @Override
+    public boolean isCall() {
+        return false;
+    }
 }

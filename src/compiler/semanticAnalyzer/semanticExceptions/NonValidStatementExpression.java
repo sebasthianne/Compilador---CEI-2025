@@ -9,6 +9,6 @@ public class NonValidStatementExpression extends SemanticException {
 
     @Override
     public String getDetailedErrorMessage() {
-        return "";
+        return "En la línea "+getErrorToken().lexeme()+" se recibe el token "+getErrorToken().lexeme()+" cuando la expresión que le precede no conforma una sentencia válida";
     }
 }

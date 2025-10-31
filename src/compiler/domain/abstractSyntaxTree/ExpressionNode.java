@@ -10,4 +10,6 @@ public abstract class ExpressionNode extends StatementNode{
     public void checkNode() throws SemanticException {
         checkExpression();
     }
+
+    public abstract boolean isCall();
 }

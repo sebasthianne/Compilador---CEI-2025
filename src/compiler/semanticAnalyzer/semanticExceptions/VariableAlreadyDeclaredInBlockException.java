@@ -9,6 +9,6 @@ public class VariableAlreadyDeclaredInBlockException extends SemanticException {
 
     @Override
     public String getDetailedErrorMessage() {
-        return "";
+        return "En la línea "+getErrorToken().lineNumber()+" se intenta declara una variable con nombre "+getErrorToken().lexeme()+" cuando esa variable ya se declaró en el bloque actual o en un bloque que lo contiene";
     }
 }

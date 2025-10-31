@@ -245,7 +245,7 @@ public class Class{
 
     public Method resolveMethod(Token methodName, int arity) throws SemanticException{
         Method method = getMethod(methodName.lexeme(),arity);
-        if(method == null) throw new MethodNotFoundException(methodName);
+        if(method == null) throw new MethodNotFoundException(methodName, name);
         return method;
     }
 

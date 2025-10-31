@@ -13,7 +13,7 @@ public class VariableNode extends PrimaryNode {
     }
 
     @Override
-    public boolean isAssignable() {
+    public boolean isAssignableWithoutReference() {
         return true;
     }
 
@@ -21,5 +21,10 @@ public class VariableNode extends PrimaryNode {
     public Type checkExpressionWithoutReference() throws SemanticException {
         BlockNode currentBlock = Injector.getInjector().getSymbolTable().getCurrentBlock();
         return currentBlock.resolveName(variableName);
+    }
+
+    @Override
+    public boolean isCallWithoutReference() {
+        return false;
     }
 }

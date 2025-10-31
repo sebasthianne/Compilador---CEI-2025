@@ -16,10 +16,17 @@ public class IntToBooleanExpressionNode extends BinaryOperatorExpressionNode {
     public Type checkExpression() throws SemanticException {
         PrimitiveType typeToCheck = new PrimitiveType(new Token("palabraReservadaint", "int", getOperator().lineNumber()));
         PrimitiveType typeToReturn = new PrimitiveType(new Token("palabraReservadaboolean", "boolean", getOperator().lineNumber()));
-        if(!getLeftExpression().checkExpression().compareType(typeToCheck)||!getRightExpression().checkExpression().compareType(typeToCheck)) {
-            throw new IntComparisonOperatorNotIntException(getOperator());
+        Type type1 = getLeftExpression().checkExpression();
+        Type type2 = getRightExpression().checkExpression();
+        if(!type1.compareType(typeToCheck)||!type2.compareType(typeToCheck)) {
+            throw new IntComparisonOperatorNotIntException(getOperator(),type1.getTypeName(),type2.getTypeName());
         }
         return typeToReturn;
+    }
+
+    @Override
+    public boolean isCall() {
+        return false;
     }
 
 }

@@ -5,6 +5,7 @@ import compiler.domain.Type;
 import compiler.semanticAnalyzer.semanticExceptions.AssignedTypeDoesNotConformException;
 import compiler.semanticAnalyzer.semanticExceptions.AssigningToNonAssignableException;
 import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
+import injector.Injector;
 
 public class AssignmentNode extends ExpressionNode {
     private final ComposedExpressionNode variableAssignedTo;
@@ -21,11 +22,17 @@ public class AssignmentNode extends ExpressionNode {
     public Type checkExpression() throws SemanticException {
         if(!variableAssignedTo.isAssignable()) throw new AssigningToNonAssignableException(assignmentToken);
         Type assignedToType = variableAssignedTo.checkExpression();
-        if(!assignedExpression.checkExpression().conformsTo(assignedToType)) {
+        Type assignedType = assignedExpression.checkExpression();
+        if(!assignedType.conformsTo(assignedToType)) {
             Token semicolonToken = this.semicolonToken;
-            throw new AssignedTypeDoesNotConformException(semicolonToken);
+            throw new AssignedTypeDoesNotConformException(semicolonToken, Injector.getInjector().getSymbolTable().getCurrentClass().getName(), Injector.getInjector().getSymbolTable().getCurrentMethodOrConstructor().getName(),assignedToType.getTypeName(),assignedType.getTypeName());
         }
         return assignedToType;
+    }
+
+    @Override
+    public boolean isCall() {
+        return false;
     }
 
 }

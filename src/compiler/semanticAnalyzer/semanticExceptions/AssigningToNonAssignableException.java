@@ -10,6 +10,6 @@ public class AssigningToNonAssignableException extends SemanticException {
 
     @Override
     public String getDetailedErrorMessage() {
-        return "";
+        return "En la línea "+getErrorToken().lineNumber()+" se intenta asignar un valor a una expresión que no es asignable";
     }
 }

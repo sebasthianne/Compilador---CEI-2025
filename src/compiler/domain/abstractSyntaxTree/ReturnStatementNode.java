@@ -25,11 +25,11 @@ public class ReturnStatementNode extends StatementNode {
         Type methodReturnType = currentMethodOrConstructor.getReturnType();
         if (expressionToReturn != null) {
             Type returnType = expressionToReturn.checkExpression();
-            if (methodReturnType == null) throw new ReturnedValueInVoidMethodException(returnType);
-            if (!returnType.getTypeName().lexeme().equals(methodReturnType.getTypeName().lexeme()))
-                throw new ReturnTypeMismatchException(returnType);
+            if (methodReturnType == null) throw new ReturnedValueInVoidMethodException(returnType,Injector.getInjector().getSymbolTable().getCurrentClass().getName(),Injector.getInjector().getSymbolTable().getCurrentMethodOrConstructor().getName());
+            if (!returnType.conformsTo(methodReturnType))
+                throw new ReturnTypeMismatchException(returnType,methodReturnType.getTypeName());
         } else {
-            if (methodReturnType != null) throw new EmptyReturnInNonVoidMethodException(methodReturnType);
+            if (methodReturnType != null) throw new EmptyReturnInNonVoidMethodException(methodReturnType,Injector.getInjector().getSymbolTable().getCurrentClass().getName(), Injector.getInjector().getSymbolTable().getCurrentMethodOrConstructor().getName());
         }
     }
 

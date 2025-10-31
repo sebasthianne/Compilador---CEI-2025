@@ -26,7 +26,7 @@ public abstract class BlockNode extends StatementNode {
         setBlockAsCurrent();
         for (StatementNode s : statementsTable){
             s.checkNode();
-            if(s instanceof ExpressionNode && !(s instanceof AssignmentNode || s instanceof MethodCallNode || s instanceof ConstructorCallNode)) throw new NonValidStatementExpression(s);
+            if(s instanceof ExpressionNode e && !(s instanceof AssignmentNode || e.isCall())) throw new NonValidStatementExpression(s);
             setBlockAsCurrent();
         }
     }

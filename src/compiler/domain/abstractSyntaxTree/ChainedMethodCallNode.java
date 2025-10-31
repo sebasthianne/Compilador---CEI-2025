@@ -25,7 +25,12 @@ public class ChainedMethodCallNode extends ChainedReferenceNode {
     }
 
     @Override
-    public boolean isAssignable() {
+    public boolean isAssignableWithoutReference() {
         return false;
+    }
+
+    @Override
+    public boolean isCallWithoutReference() {
+        return true;
     }
 }

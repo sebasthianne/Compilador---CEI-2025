@@ -9,6 +9,6 @@ public class NonBooleanExpressionWithBooleanOperator extends SemanticException {
 
     @Override
     public String getDetailedErrorMessage() {
-        return "";
+        return "En la línea "+getErrorToken().lineNumber()+" aparece una expresión con el operador "+getErrorToken().lexeme()+" con al menos un operando no booleano";
     }
 }

@@ -17,4 +17,9 @@ public class CharLiteralNode extends PrimitiveLiteralNode {
     public Type checkExpression() throws SemanticException {
         return charLiteral.getType();
     }
+
+    @Override
+    public boolean isCall() {
+        return false;
+    }
 }

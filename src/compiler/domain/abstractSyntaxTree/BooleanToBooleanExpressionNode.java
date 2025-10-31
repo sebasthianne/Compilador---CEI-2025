@@ -22,4 +22,9 @@ public class BooleanToBooleanExpressionNode extends BinaryOperatorExpressionNode
         return typeToReturn;
     }
 
+    @Override
+    public boolean isCall() {
+        return false;
+    }
+
 }

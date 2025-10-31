@@ -6,6 +6,7 @@ import compiler.domain.Token;
 import compiler.domain.Type;
 import compiler.semanticAnalyzer.semanticExceptions.ActualParameterDoesNotConformException;
 import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
+import injector.Injector;
 
 
 import java.util.ArrayList;
@@ -46,7 +47,7 @@ public class ParameterListNode extends ASTNode {
             Parameter currentFormalParameter = formalParameters.next();
             Type currentActualParameterType = actualParametersTypes.next();
             if(!currentActualParameterType.conformsTo(currentFormalParameter.getType())) {
-                throw new ActualParameterDoesNotConformException(callableName);
+                throw new ActualParameterDoesNotConformException(callableName, Injector.getInjector().getSymbolTable().getCurrentClass().getName(),Injector.getInjector().getSymbolTable().getCurrentMethodOrConstructor().getName(),currentFormalParameter.getName(),currentFormalParameter.getType().getTypeName(),currentActualParameterType.getTypeName());
             }
         }
     }

@@ -14,6 +14,6 @@ public class ComparingNonConformingTypesException extends InCallableException {
 
     @Override
     public String getDetailedErrorMessage() {
-        return "En el método o constructor "+getMethodOrConstructorName().lexeme()+" en la clase "+getClassName().lexeme()+" se intenta comparar con el operador "+getErrorToken().lexeme()+" do expresiones de los tipos "+type1.lexeme()+" y "+type2.lexeme()+" cuando esos tipos no conforman";
+        return "En el método o constructor "+getMethodOrConstructorName().lexeme()+" en la clase "+getClassName().lexeme()+" en la línea "+getErrorToken().lineNumber()+" se intenta comparar con el operador "+getErrorToken().lexeme()+" do expresiones de los tipos "+type1.lexeme()+" y "+type2.lexeme()+" cuando esos tipos no conforman";
     }
 }

@@ -15,10 +15,17 @@ public class IntToIntExpressionNode extends BinaryOperatorExpressionNode {
     @Override
     public Type checkExpression() throws SemanticException {
         PrimitiveType typeToReturn = new PrimitiveType(new Token("palabraReservadaint", "int", getOperator().lineNumber()));
-        if(!getLeftExpression().checkExpression().compareType(typeToReturn)||!getRightExpression().checkExpression().compareType(typeToReturn)) {
-            throw new ArithmeticOperatorNotIntException(getOperator());
+        Type type1 = getLeftExpression().checkExpression();
+        Type type2 = getRightExpression().checkExpression();
+        if(!type1.compareType(typeToReturn)||!type2.compareType(typeToReturn)) {
+            throw new ArithmeticOperatorNotIntException(getOperator(),type1.getTypeName(),type2.getTypeName());
         }
         return typeToReturn;
+    }
+
+    @Override
+    public boolean isCall() {
+        return false;
     }
 
 }

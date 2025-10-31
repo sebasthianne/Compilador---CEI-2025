@@ -9,6 +9,6 @@ public class ConstructorNotFoundException extends SemanticException {
 
     @Override
     public String getDetailedErrorMessage() {
-        return "";
+        return "En la línea "+getErrorToken().lineNumber()+" se llama al constructor "+getErrorToken().lexeme()+" pero ese constructor no se pudo resolver";
     }
 }

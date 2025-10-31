@@ -17,4 +17,9 @@ public class BooleanLiteralNode extends PrimitiveLiteralNode {
     public Type checkExpression() throws SemanticException {
         return booleanLiteral.getType();
     }
+
+    @Override
+    public boolean isCall() {
+        return false;
+    }
 }

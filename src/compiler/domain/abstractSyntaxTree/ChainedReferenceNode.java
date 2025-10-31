@@ -14,7 +14,7 @@ public abstract class ChainedReferenceNode extends ReferenceNode {
     protected void checkTypeChainable(Type chainedTo) throws SemanticException {
         chainedTo.checkType();
         if(chainedTo instanceof PrimitiveType) {
-            throw new ChainedToPrimitiveException(pointToken);
+            throw new ChainedToPrimitiveException(pointToken,chainedTo.getTypeName());
         }
         if(chainedTo instanceof NullType) throw new ChainedToNullException(pointToken);
     }

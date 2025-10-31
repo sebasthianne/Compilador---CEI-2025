@@ -11,12 +11,17 @@ public class ParenthesizedExpressionNode extends PrimaryNode {
     }
 
     @Override
-    public boolean isAssignable() {
+    public boolean isAssignableWithoutReference() {
         return false;
     }
 
     @Override
     public Type checkExpressionWithoutReference() throws SemanticException {
         return subExpression.checkExpression();
+    }
+
+    @Override
+    public boolean isCallWithoutReference() {
+        return false;
     }
 }

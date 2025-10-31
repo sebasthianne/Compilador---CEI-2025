@@ -13,7 +13,7 @@ public class ThisNode extends PrimaryNode {
     }
 
     @Override
-    public boolean isAssignable() {
+    public boolean isAssignableWithoutReference() {
         return false;
     }
 
@@ -21,9 +21,13 @@ public class ThisNode extends PrimaryNode {
     public Type checkExpressionWithoutReference() throws SemanticException {
         Callable currentMethodOrConstructor = Injector.getInjector().getSymbolTable().getCurrentMethodOrConstructor();
         if(currentMethodOrConstructor instanceof Method currentMethod && currentMethod.isStatic()) {
-            throw new ThisOnStaticMethodException(this.thisToken);
+            throw new ThisOnStaticMethodException(this.thisToken,Injector.getInjector().getSymbolTable().getCurrentClass().getName(),currentMethodOrConstructor.getName());
         }
         return new ReferenceType(Injector.getInjector().getSymbolTable().getCurrentClass().getName());
     }
 
+    @Override
+    public boolean isCallWithoutReference() {
+        return false;
+    }
 }

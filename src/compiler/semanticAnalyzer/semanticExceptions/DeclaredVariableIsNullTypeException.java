@@ -9,6 +9,6 @@ public class DeclaredVariableIsNullTypeException extends SemanticException {
 
     @Override
     public String getDetailedErrorMessage() {
-        return "";
+        return "En la línea "+getErrorToken().lexeme()+" se recibe null luego de "+getErrorToken().lexeme()+" en el contexto de la declaración de una variable, pero no se puede declarar una variable como tipo null";
     }
 }

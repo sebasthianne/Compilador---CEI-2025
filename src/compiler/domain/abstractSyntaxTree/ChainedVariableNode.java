@@ -22,7 +22,12 @@ public class ChainedVariableNode extends ChainedReferenceNode {
     }
 
     @Override
-    public boolean isAssignable() {
+    public boolean isAssignableWithoutReference() {
         return true;
+    }
+
+    @Override
+    public boolean isCallWithoutReference() {
+        return false;
     }
 }

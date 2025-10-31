@@ -21,4 +21,9 @@ public class BooleanUnaryOperatorExpressionNode extends UnaryOperatorExpressionN
         if(!expression.checkExpression().compareType(typeToReturn)) throw new NonBooleanExpressionWithBooleanOperator(operator);
         return typeToReturn;
     }
+
+    @Override
+    public boolean isCall() {
+        return false;
+    }
 }

@@ -2,13 +2,13 @@ package compiler.semanticAnalyzer.semanticExceptions;
 
 import compiler.domain.Token;
 
-public class ThisOnStaticMethodException extends SemanticException {
-    public ThisOnStaticMethodException(Token thisToken) {
-        super(thisToken);
+public class ThisOnStaticMethodException extends InCallableException {
+    public ThisOnStaticMethodException(Token thisToken,Token className,Token methodOrConstructorName) {
+        super(thisToken,className,methodOrConstructorName);
     }
 
     @Override
     public String getDetailedErrorMessage() {
-        return "";
+        return "En la clase "+getClassName().lexeme()+" en la línea "+getErrorToken().lineNumber()+" en el método estático "+getMethodOrConstructorName().lexeme()+" se hace una referencia a "+getErrorToken().lexeme();
     }
 }

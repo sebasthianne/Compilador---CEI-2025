@@ -9,6 +9,6 @@ public class ReturnStatementInConstructorException extends SemanticException {
 
     @Override
     public String getDetailedErrorMessage() {
-        return "";
+        return "En la línea "+getErrorToken().lexeme()+" se recibe una sentencia return dentro de un Constructor";
     }
 }

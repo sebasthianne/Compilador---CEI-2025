@@ -24,7 +24,7 @@ public class CallableBodyBlockNode extends BlockNode {
     public void declarationChecks(Token declaredVariableName) throws SemanticException {
         super.declarationChecks(declaredVariableName);
         Callable currentMethodOrConstructor = Injector.getInjector().getSymbolTable().getCurrentMethodOrConstructor();
-        if(currentMethodOrConstructor.getParameter(declaredVariableName)!=null) throw new DeclaredVariableSharesNameWithParameterException(declaredVariableName);
+        if(currentMethodOrConstructor.getParameter(declaredVariableName)!=null) throw new DeclaredVariableSharesNameWithParameterException(declaredVariableName,Injector.getInjector().getSymbolTable().getCurrentClass().getName(),currentMethodOrConstructor.getName());
     }
 
 }
