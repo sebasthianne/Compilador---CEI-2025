@@ -16,12 +16,6 @@ public class ConstructorCallNode extends PrimaryNode {
 
     @Override
     public Type checkExpressionWithoutReference() throws SemanticException {
-        if(Injector.getInjector().getSymbolTable().getCurrentMethodOrConstructor() instanceof Method method && method.isStatic()) throw new SemanticException(calledConstructorName) {
-            @Override
-            public String getDetailedErrorMessage() {
-                return "";
-            }
-        };
         Type returnType = new ReferenceType(calledConstructorName);
         returnType.checkType();
         Constructor constructor = Injector.getInjector().getSymbolTable().resolveConstructor(calledConstructorName,parameterList.size());
@@ -35,4 +29,5 @@ public class ConstructorCallNode extends PrimaryNode {
     public boolean isAssignable() {
         return false;
     }
+
 }

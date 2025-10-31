@@ -315,9 +315,10 @@ public class SyntacticAnalyzerImpl implements SyntacticAnalyzer {
         match("palabraReservadavar");
         Token variableName = currentToken;
         match("idMetVar");
+        Token assignmentToken = currentToken;
         match("asignación");
         ExpressionNode assignedExpression= composedExpressionNonTerminal();
-        return new LocalVariableDeclarationNode(variableName,assignedExpression);
+        return new LocalVariableDeclarationNode(variableName,assignedExpression,assignmentToken);
     }
 
     private ReturnStatementNode returnNonTerminal() throws SyntacticException, LexicalException, IOException {

@@ -3,6 +3,7 @@ package compiler.domain.abstractSyntaxTree;
 import compiler.domain.PrimitiveType;
 import compiler.domain.Token;
 import compiler.domain.Type;
+import compiler.semanticAnalyzer.semanticExceptions.NonBooleanExpressionWithBooleanOperator;
 import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
 
 public class BooleanToBooleanExpressionNode extends BinaryOperatorExpressionNode {
@@ -14,12 +15,11 @@ public class BooleanToBooleanExpressionNode extends BinaryOperatorExpressionNode
     @Override
     public Type checkExpression() throws SemanticException {
         PrimitiveType typeToReturn = new PrimitiveType(new Token("palabraReservadaboolean", "boolean", getOperator().lineNumber()));
-        if(!getLeftExpression().checkExpression().compareType(typeToReturn)||!getRightExpression().checkExpression().compareType(typeToReturn)) throw new SemanticException(getOperator()) {
-            @Override
-            public String getDetailedErrorMessage() {
-                return "";
-            }
-        };
+        if(!getLeftExpression().checkExpression().compareType(typeToReturn)||!getRightExpression().checkExpression().compareType(typeToReturn)) {
+            Token operator = getOperator();
+            throw new NonBooleanExpressionWithBooleanOperator(operator);
+        }
         return typeToReturn;
     }
+
 }

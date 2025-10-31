@@ -245,23 +245,13 @@ public class Class{
 
     public Method resolveMethod(Token methodName, int arity) throws SemanticException{
         Method method = getMethod(methodName.lexeme(),arity);
-        if(method == null) throw new SemanticException(methodName) {
-            @Override
-            public String getDetailedErrorMessage() {
-                return "";
-            }
-        };
+        if(method == null) throw new MethodNotFoundException(methodName);
         return method;
     }
 
     public Type resolveAttribute(Token attributeName) throws SemanticException{
         Attribute attribute = getAttribute(attributeName);
-        if(attribute == null) throw new SemanticException(attributeName) {
-            @Override
-            public String getDetailedErrorMessage() {
-                return "";
-            }
-        };
+        if(attribute == null) throw new AttributeCouldNotBeResolvedException(attributeName);
         return attribute.getType();
     }
 

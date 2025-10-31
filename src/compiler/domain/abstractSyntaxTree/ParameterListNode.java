@@ -4,6 +4,7 @@ import compiler.domain.Callable;
 import compiler.domain.Parameter;
 import compiler.domain.Token;
 import compiler.domain.Type;
+import compiler.semanticAnalyzer.semanticExceptions.ActualParameterDoesNotConformException;
 import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
 
 
@@ -44,14 +45,10 @@ public class ParameterListNode extends ASTNode {
         while(formalParameters.hasNext() && actualParametersTypes.hasNext()){
             Parameter currentFormalParameter = formalParameters.next();
             Type currentActualParameterType = actualParametersTypes.next();
-            if(!currentFormalParameter.getType().compareType(currentActualParameterType)) throw new SemanticException(callableName) {
-                @Override
-                public String getDetailedErrorMessage() {
-                    return "";
-                }
-            };
+            if(!currentActualParameterType.conformsTo(currentFormalParameter.getType())) {
+                throw new ActualParameterDoesNotConformException(callableName);
+            }
         }
     }
 
-    //TODO: Minor rewrite, fixed main issues
 }

@@ -2,6 +2,8 @@ package compiler.domain.abstractSyntaxTree;
 
 import compiler.domain.Token;
 import compiler.domain.Type;
+import compiler.semanticAnalyzer.semanticExceptions.AssignedTypeDoesNotConformException;
+import compiler.semanticAnalyzer.semanticExceptions.AssigningToNonAssignableException;
 import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
 
 public class AssignmentNode extends ExpressionNode {
@@ -17,19 +19,13 @@ public class AssignmentNode extends ExpressionNode {
 
     @Override
     public Type checkExpression() throws SemanticException {
-        if(!variableAssignedTo.isAssignable()) throw new SemanticException(assignmentToken) {
-            @Override
-            public String getDetailedErrorMessage() {
-                return "";
-            }
-        };
+        if(!variableAssignedTo.isAssignable()) throw new AssigningToNonAssignableException(assignmentToken);
         Type assignedToType = variableAssignedTo.checkExpression();
-        if(!assignedToType.compareType(assignedExpression.checkExpression())) throw new SemanticException(semicolonToken) {
-            @Override
-            public String getDetailedErrorMessage() {
-                return "";
-            }
-        };
+        if(!assignedExpression.checkExpression().conformsTo(assignedToType)) {
+            Token semicolonToken = this.semicolonToken;
+            throw new AssignedTypeDoesNotConformException(semicolonToken);
+        }
         return assignedToType;
     }
+
 }

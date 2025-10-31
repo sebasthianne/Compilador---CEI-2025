@@ -3,7 +3,9 @@ package compiler.domain.abstractSyntaxTree;
 import compiler.domain.LocalVariable;
 import compiler.domain.Token;
 import compiler.domain.Type;
+import compiler.semanticAnalyzer.semanticExceptions.NonValidStatementExpression;
 import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
+import compiler.semanticAnalyzer.semanticExceptions.VariableAlreadyDeclaredInBlockException;
 import injector.Injector;
 
 import java.util.ArrayList;
@@ -24,12 +26,7 @@ public abstract class BlockNode extends StatementNode {
         setBlockAsCurrent();
         for (StatementNode s : statementsTable){
             s.checkNode();
-            if(s instanceof ExpressionNode && !(s instanceof AssignmentNode || s instanceof MethodCallNode || s instanceof ConstructorCallNode)) throw new SemanticException(s.getSemicolonToken()) {
-                @Override
-                public String getDetailedErrorMessage() {
-                    return "";
-                }
-            };
+            if(s instanceof ExpressionNode && !(s instanceof AssignmentNode || s instanceof MethodCallNode || s instanceof ConstructorCallNode)) throw new NonValidStatementExpression(s);
             setBlockAsCurrent();
         }
     }
@@ -57,12 +54,7 @@ public abstract class BlockNode extends StatementNode {
     }
 
     public void declarationChecks(Token declaredVariableName) throws SemanticException{
-        if(getLocalVariable(declaredVariableName)!=null) throw new SemanticException(declaredVariableName) {
-            @Override
-            public String getDetailedErrorMessage() {
-                return "";
-            }
-        };
+        if(getLocalVariable(declaredVariableName)!=null) throw new VariableAlreadyDeclaredInBlockException(declaredVariableName);
     }
 
     public void addStatement(StatementNode statement){
@@ -70,4 +62,5 @@ public abstract class BlockNode extends StatementNode {
     }
 
     protected abstract Type resolveNameExternal(Token name) throws SemanticException;
+
 }

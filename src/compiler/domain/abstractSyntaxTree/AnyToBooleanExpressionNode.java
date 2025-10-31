@@ -3,7 +3,10 @@ package compiler.domain.abstractSyntaxTree;
 import compiler.domain.PrimitiveType;
 import compiler.domain.Token;
 import compiler.domain.Type;
+import compiler.semanticAnalyzer.SymbolTable;
+import compiler.semanticAnalyzer.semanticExceptions.ComparingNonConformingTypesException;
 import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
+import injector.Injector;
 
 public class AnyToBooleanExpressionNode extends BinaryOperatorExpressionNode {
 
@@ -15,13 +18,12 @@ public class AnyToBooleanExpressionNode extends BinaryOperatorExpressionNode {
     public Type checkExpression() throws SemanticException {
         PrimitiveType typeToReturn = new PrimitiveType(new Token("palabraReservadaboolean", "boolean", getOperator().lineNumber()));
         Type leftType = getLeftExpression().checkExpression();
-        Type rightType = getLeftExpression().checkExpression();
-        if(!leftType.conformsTo(rightType)&&!rightType.conformsTo(leftType)) throw new SemanticException(getOperator()) {
-            @Override
-            public String getDetailedErrorMessage() {
-                return "";
-            }
-        };
+        Type rightType = getRightExpression().checkExpression();
+        if(!leftType.conformsTo(rightType)&&!rightType.conformsTo(leftType)) {
+            SymbolTable symbolTable = Injector.getInjector().getSymbolTable();
+            throw new ComparingNonConformingTypesException(getOperator(), symbolTable.getCurrentClass().getName(), symbolTable.getCurrentMethodOrConstructor().getName(),leftType.getTypeName(),rightType.getTypeName());
+        }
         return typeToReturn;
     }
+
 }

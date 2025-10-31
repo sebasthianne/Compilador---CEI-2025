@@ -22,12 +22,9 @@ public class StaticMethodCallNode extends PrimaryNode {
     @Override
     public Type checkExpressionWithoutReference() throws SemanticException {
         Class foundClass = Injector.getInjector().getSymbolTable().getClass(calledMethodClassName);
-        if(foundClass == null) throw new SemanticException(calledMethodClassName) {
-            @Override
-            public String getDetailedErrorMessage() {
-                return "";
-            }
-        };
+        if(foundClass == null) {
+            throw new StaticMethodCallClassNotFoundException(calledMethodClassName);
+        }
         Method method = foundClass.resolveMethod(calledMethodName, parameterList.size());
         parameterList.checkNode();
         parameterList.checkParameterMatch(method);
@@ -38,5 +35,16 @@ public class StaticMethodCallNode extends PrimaryNode {
     @Override
     public boolean isAssignable() {
         return false;
+    }
+
+    private static class StaticMethodCallClassNotFoundException extends SemanticException {
+        public StaticMethodCallClassNotFoundException(Token calledMethodClassName) {
+            super(calledMethodClassName);
+        }
+
+        @Override
+        public String getDetailedErrorMessage() {
+            return "";
+        }
     }
 }

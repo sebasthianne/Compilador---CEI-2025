@@ -1,6 +1,7 @@
 package compiler.domain.abstractSyntaxTree;
 
 import compiler.domain.Type;
+import compiler.semanticAnalyzer.semanticExceptions.IfCheckNotBooleanException;
 import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
 
 public class IfStatementNode extends StatementNode {
@@ -15,12 +16,7 @@ public class IfStatementNode extends StatementNode {
     @Override
     public void checkNode() throws SemanticException {
         Type ifCheckExpressionReturnType = ifCheckExpression.checkExpression();
-        if(!ifCheckExpressionReturnType.isBoolean()) throw new SemanticException(ifCheckExpressionReturnType.getTypeName()) {
-            @Override
-            public String getDetailedErrorMessage() {
-                return "";
-            }
-        };
+        if(!ifCheckExpressionReturnType.isBoolean()) throw new IfCheckNotBooleanException(ifCheckExpressionReturnType);
         else ifBody.checkNode();
     }
 

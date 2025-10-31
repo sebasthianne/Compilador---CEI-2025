@@ -2,6 +2,7 @@ package compiler.domain.abstractSyntaxTree;
 
 import compiler.domain.Type;
 import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
+import compiler.semanticAnalyzer.semanticExceptions.WhileConditionNotBooleanException;
 
 public class WhileStatementNode extends StatementNode {
     private final ExpressionNode whileConditionExpression;
@@ -15,12 +16,7 @@ public class WhileStatementNode extends StatementNode {
     @Override
     public void checkNode() throws SemanticException {
         Type ifCheckExpressionReturnType = whileConditionExpression.checkExpression();
-        if(!ifCheckExpressionReturnType.isBoolean()) throw new SemanticException(ifCheckExpressionReturnType.getTypeName()) {
-            @Override
-            public String getDetailedErrorMessage() {
-                return "";
-            }
-        };
+        if(!ifCheckExpressionReturnType.isBoolean()) throw new WhileConditionNotBooleanException(ifCheckExpressionReturnType);
         else whileBody.checkNode();
     }
 

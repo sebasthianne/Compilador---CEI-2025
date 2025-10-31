@@ -1,9 +1,9 @@
 package compiler.domain.abstractSyntaxTree;
 
-import compiler.domain.Literal;
 import compiler.domain.PrimitiveType;
 import compiler.domain.Token;
 import compiler.domain.Type;
+import compiler.semanticAnalyzer.semanticExceptions.IntUnaryNotIntOperatorException;
 import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
 
 public class IntUnaryOperatorExpressionNode extends UnaryOperatorExpressionNode {
@@ -18,12 +18,10 @@ public class IntUnaryOperatorExpressionNode extends UnaryOperatorExpressionNode 
     @Override
     public Type checkExpression() throws SemanticException {
         Type typeToReturn= new PrimitiveType(new Token("palabraReservadaint","int", operator.lineNumber()));
-        if(!expression.checkExpression().compareType(typeToReturn)) throw new SemanticException(operator) {
-            @Override
-            public String getDetailedErrorMessage() {
-                return "";
-            }
-        };
+        if(!expression.checkExpression().compareType(typeToReturn)) {
+            throw new IntUnaryNotIntOperatorException(operator);
+        }
         return typeToReturn;
     }
+
 }

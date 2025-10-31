@@ -172,12 +172,7 @@ public class SymbolTableImpl implements SymbolTable {
     public Constructor resolveConstructor(Token className, int arity) throws SemanticException {
         Class constructorsClass = getClass(className);
         Constructor constructor = constructorsClass.getConstructor(arity);
-        if(constructor==null) throw new SemanticException(className) {
-            @Override
-            public String getDetailedErrorMessage() {
-                return "";
-            }
-        };
+        if(constructor==null) throw new ConstructorNotFoundException(className);
         return constructor;
     }
 
@@ -207,4 +202,5 @@ public class SymbolTableImpl implements SymbolTable {
             c.statementChecks();
         }
     }
+
 }
