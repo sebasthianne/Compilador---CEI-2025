@@ -7,14 +7,16 @@ import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
 import injector.Injector;
 
 public class MethodCallNode extends PrimaryNode {
-    private final Token calledMethodName;
-    private final ParameterListNode parameterList;
 
 
-    public MethodCallNode(Token calledMethodName) {
+    protected final Token calledMethodName;
+    protected final ParameterListNode parameterList;
+
+    public MethodCallNode(Token calledMethodName, ParameterListNode parameterList) {
         this.calledMethodName = calledMethodName;
-        this.parameterList = new ParameterListNode(calledMethodName);
+        this.parameterList = parameterList;
     }
+
 
     @Override
     public Type checkExpressionWithoutReference() throws SemanticException {

@@ -13,10 +13,10 @@ public class StaticMethodCallNode extends PrimaryNode {
     private final ParameterListNode parameterList;
 
 
-    public StaticMethodCallNode(Token calledMethodName, Token calledMethodClassName) {
+    public StaticMethodCallNode(Token calledMethodName, Token calledMethodClassName, ParameterListNode parameterList) {
         this.calledMethodName = calledMethodName;
-        this.parameterList = new ParameterListNode(calledMethodName);
         this.calledMethodClassName = calledMethodClassName;
+        this.parameterList = parameterList;
     }
 
     @Override

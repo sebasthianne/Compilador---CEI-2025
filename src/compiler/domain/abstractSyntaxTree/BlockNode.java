@@ -24,6 +24,12 @@ public abstract class BlockNode extends StatementNode {
         Injector.getInjector().getSymbolTable().setCurrentBlock(this);
         for (StatementNode s : statementsTable){
             s.checkNode();
+            if(s instanceof ExpressionNode && !(s instanceof AssignmentNode || s instanceof MethodCallNode || s instanceof ConstructorCallNode)) throw new SemanticException(s.getSemicolonToken()) {
+                @Override
+                public String getDetailedErrorMessage() {
+                    return "";
+                }
+            };
         }
     }
 
@@ -59,5 +65,4 @@ public abstract class BlockNode extends StatementNode {
     }
 
     protected abstract Type resolveNameExternal(Token name) throws SemanticException;
-
 }

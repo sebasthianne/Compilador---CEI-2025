@@ -7,11 +7,7 @@ import compiler.domain.Type;
 import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
 
 public abstract class ChainedReferenceNode extends ReferenceNode {
-    private final Token pointToken;
-
-    protected ChainedReferenceNode(Token pointToken) {
-        this.pointToken = pointToken;
-    }
+    private Token pointToken;
 
     protected void checkTypeChainable(Type chainedTo) throws SemanticException {
         chainedTo.checkType();
@@ -36,4 +32,7 @@ public abstract class ChainedReferenceNode extends ReferenceNode {
 
     public abstract Type checkChainedReference(Type chainedTo) throws SemanticException;
 
+    public void setPointToken(Token pointToken) {
+        this.pointToken = pointToken;
+    }
 }

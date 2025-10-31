@@ -6,11 +6,10 @@ import injector.Injector;
 
 
 public class ReturnStatementNode extends StatementNode {
-    private final ExpressionNode expressionToReturn;
+    private ExpressionNode expressionToReturn;
     private final Token returnToken;
 
-    public ReturnStatementNode(ExpressionNode expressionToReturn, Token returnToken) {
-        this.expressionToReturn = expressionToReturn;
+    public ReturnStatementNode(Token returnToken) {
         this.returnToken = returnToken;
     }
 
@@ -50,5 +49,9 @@ public class ReturnStatementNode extends StatementNode {
                 }
             };
         }
+    }
+
+    public void setExpressionToReturn(ExpressionNode expressionToReturn) {
+        this.expressionToReturn = expressionToReturn;
     }
 }

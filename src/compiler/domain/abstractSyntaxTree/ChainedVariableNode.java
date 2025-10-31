@@ -8,8 +8,7 @@ import injector.Injector;
 
 public class ChainedVariableNode extends ChainedReferenceNode {
     private final Token variableName;
-    protected ChainedVariableNode(Token pointToken, Token variableName) {
-        super(pointToken);
+    public ChainedVariableNode(Token variableName) {
         this.variableName = variableName;
     }
 

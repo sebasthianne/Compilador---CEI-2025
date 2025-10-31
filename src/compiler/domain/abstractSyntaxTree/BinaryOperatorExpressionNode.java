@@ -29,4 +29,5 @@ public abstract class BinaryOperatorExpressionNode extends ComposedExpressionNod
     public ComposedExpressionNode getRightExpression() {
         return rightExpression;
     }
+
 }

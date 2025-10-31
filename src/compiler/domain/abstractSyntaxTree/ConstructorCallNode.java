@@ -9,9 +9,9 @@ public class ConstructorCallNode extends PrimaryNode {
     private final ParameterListNode parameterList;
 
 
-    public ConstructorCallNode(Token calledConstructorName) {
+    public ConstructorCallNode(Token calledConstructorName, ParameterListNode parameterList) {
         this.calledConstructorName = calledConstructorName;
-        this.parameterList = new ParameterListNode(calledConstructorName);
+        this.parameterList = parameterList;
     }
 
     @Override

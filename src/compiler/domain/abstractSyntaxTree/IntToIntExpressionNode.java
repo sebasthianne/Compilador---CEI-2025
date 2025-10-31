@@ -7,7 +7,7 @@ import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
 
 public class IntToIntExpressionNode extends BinaryOperatorExpressionNode {
 
-    protected IntToIntExpressionNode(Token operator, BasicExpressionNode leftExpression, ComposedExpressionNode rightExpression) {
+    public IntToIntExpressionNode(Token operator, BasicExpressionNode leftExpression, ComposedExpressionNode rightExpression) {
         super(operator, leftExpression, rightExpression);
     }
 

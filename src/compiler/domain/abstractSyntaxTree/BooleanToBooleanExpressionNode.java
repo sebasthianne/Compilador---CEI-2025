@@ -7,7 +7,7 @@ import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
 
 public class BooleanToBooleanExpressionNode extends BinaryOperatorExpressionNode {
 
-    protected BooleanToBooleanExpressionNode(Token operator, BasicExpressionNode leftExpression, ComposedExpressionNode rightExpression) {
+    public BooleanToBooleanExpressionNode(Token operator, BasicExpressionNode leftExpression, ComposedExpressionNode rightExpression) {
         super(operator, leftExpression, rightExpression);
     }
 

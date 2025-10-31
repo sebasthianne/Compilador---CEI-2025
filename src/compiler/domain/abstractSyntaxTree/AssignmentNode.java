@@ -8,13 +8,11 @@ public class AssignmentNode extends ExpressionNode {
     private final ComposedExpressionNode variableAssignedTo;
     private final ComposedExpressionNode assignedExpression;
     private final Token assignmentToken;
-    private final Token semicolonToken;
 
-    public AssignmentNode(ComposedExpressionNode variableAssignedTo, ComposedExpressionNode assignedExpression, Token assignmentToken, Token semicolonToken) {
+    public AssignmentNode(ComposedExpressionNode variableAssignedTo, ComposedExpressionNode assignedExpression, Token assignmentToken) {
         this.variableAssignedTo = variableAssignedTo;
         this.assignedExpression = assignedExpression;
         this.assignmentToken = assignmentToken;
-        this.semicolonToken = semicolonToken;
     }
 
     @Override

@@ -8,10 +8,9 @@ public class ChainedMethodCallNode extends ChainedReferenceNode {
     private final Token calledMethodName;
     private final ParameterListNode parameterList;
 
-    public ChainedMethodCallNode(Token calledMethodName,Token pointToken) {
-        super(pointToken);
+    public ChainedMethodCallNode(Token calledMethodName, ParameterListNode parameterList) {
         this.calledMethodName = calledMethodName;
-        this.parameterList = new ParameterListNode(calledMethodName);
+        this.parameterList = parameterList;
     }
 
     @Override
