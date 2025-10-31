@@ -524,7 +524,9 @@ public class SyntacticAnalyzerImpl implements SyntacticAnalyzer {
 
     private ReferenceNode chainedReferenceNonTerminal(ReferenceNode referencedObject) throws SyntacticException, LexicalException, IOException {
         if (currentToken.name().equals("punto")) {
-             referencedObject.setChainedReference(chainedVariableOrMethodNonTerminal());
+            ChainedReferenceNode chainedReference = chainedVariableOrMethodNonTerminal();
+            referencedObject.setChainedReference(chainedReference);
+            chainedReferenceNonTerminal(chainedReference);
         }
         return referencedObject;
     }
