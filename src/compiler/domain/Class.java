@@ -1,5 +1,6 @@
 package compiler.domain;
 
+import compiler.domain.abstractSyntaxTree.CallableBodyBlockNode;
 import compiler.semanticAnalyzer.SymbolTable;
 import compiler.semanticAnalyzer.semanticExceptions.*;
 import injector.Injector;
@@ -148,7 +149,9 @@ public class Class{
     }
 
     private void addDefaultConstructor() {
-        addConstructor(new Constructor(name));
+        Constructor newConstructor = new Constructor(name);
+        newConstructor.setBody(new CallableBodyBlockNode());
+        addConstructor(newConstructor);
     }
 
     private boolean inheritsFromObject() {
@@ -183,7 +186,6 @@ public class Class{
 
     private void consolidateMethods(Class inheritsFrom) throws SemanticException{
         for(Method m : inheritsFrom.getMethodTable()){
-
             if(containsMethod(m)) {
                 Method method=getMethod(m.getName().lexeme(),m.getArity());
                 redefinitionChecks(m, method);
@@ -261,6 +263,15 @@ public class Class{
             }
         };
         return attribute.getType();
+    }
+
+    public void statementChecks() throws SemanticException{
+        for(Constructor c : getConstructorTable()){
+            c.checkBody();
+        }
+        for(Method m : getMethodTable()){
+            if(!m.isStatementChecked()&&!m.isAbstract()) m.checkBody();
+        }
     }
 
 }

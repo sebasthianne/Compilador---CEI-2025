@@ -143,10 +143,12 @@ public class SymbolTableImpl implements SymbolTable {
             if(currentClass.containsConstructor(currentConstructor)) throw new ReusedConstructorInClassException(currentMethodOrConstructor.getName(),currentClass.getName(),currentConstructor.getArity());
             currentClass.addConstructor(currentConstructor);
         } else {
-            if(currentClass.containsMethod((Method) currentMethodOrConstructor)){
+            Method currentMethod = (Method) currentMethodOrConstructor;
+            if(currentClass.containsMethod(currentMethod)){
                 throw new ReusedMethodInClassException(currentMethodOrConstructor.getName(),currentClass.getName(), currentMethodOrConstructor.getArity());
             }
-            currentClass.addMethod((Method) currentMethodOrConstructor);
+            currentMethod.setClassDeclaredIn(currentClass);
+            currentClass.addMethod(currentMethod);
         }
     }
 
@@ -187,5 +189,22 @@ public class SymbolTableImpl implements SymbolTable {
     @Override
     public void setCurrentBlock(BlockNode currentBlock) {
         this.currentBlock = currentBlock;
+    }
+
+    @Override
+    public void setCurrentMethodOrConstructor(Callable methodOrConstructor) {
+        currentMethodOrConstructor=methodOrConstructor;
+    }
+
+    @Override
+    public void setCurrentClass(Class currentClass) {
+        this.currentClass=currentClass;
+    }
+
+    @Override
+    public void statementChecks() throws SemanticException {
+        for(Class c : getTable()){
+            c.statementChecks();
+        }
     }
 }

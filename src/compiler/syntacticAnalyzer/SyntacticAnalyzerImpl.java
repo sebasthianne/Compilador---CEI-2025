@@ -160,9 +160,9 @@ public class SyntacticAnalyzerImpl implements SyntacticAnalyzer {
         symbolTable.addConstructor(new Constructor(currentToken));
         match("idClase");
         formalArgumentsNonTerminal();
-        Constructor m = (Constructor) symbolTable.getCurrentMethodOrConstructor();
+        Constructor c = (Constructor) symbolTable.getCurrentMethodOrConstructor();
         CallableBodyBlockNode methodOrConstructorBody = new CallableBodyBlockNode();
-        m.setBody(methodOrConstructorBody);
+        c.setBody(methodOrConstructorBody);
         Injector.getInjector().getSymbolTable().setCurrentBlock(methodOrConstructorBody);
         blockNonTerminal(methodOrConstructorBody);
         symbolTable.insertCurrentMethodOrConstructorInTable();

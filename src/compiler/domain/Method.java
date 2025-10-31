@@ -1,5 +1,6 @@
 package compiler.domain;
 
+import compiler.semanticAnalyzer.SymbolTable;
 import compiler.semanticAnalyzer.semanticExceptions.AbstractMethodInConcreteClassException;
 import compiler.semanticAnalyzer.semanticExceptions.AbstractMethodWithoutEmptyBodyException;
 import compiler.semanticAnalyzer.semanticExceptions.ConcreteMethodWithNoBodyException;
@@ -10,11 +11,14 @@ import injector.Injector;
 public class Method extends Callable{
     private final Type returnType;
     private final Token modifier;
+    private boolean isStatementChecked;
+    private Class classDeclaredIn;
 
     public Method(Token name, Token modifier, Type returnType) {
         super(name);
         this.returnType=returnType;
         this.modifier=modifier;
+        isStatementChecked=false;
     }
 
     public boolean isAbstract(){
@@ -43,7 +47,22 @@ public class Method extends Callable{
         }
     }
 
+    @Override
+    public void checkBody() throws SemanticException {
+            Injector.getInjector().getSymbolTable().setCurrentClass(classDeclaredIn);
+            super.checkBody();
+            isStatementChecked = true;
+    }
+
     public Type getReturnType() {
         return returnType;
+    }
+
+    public void setClassDeclaredIn(Class classDeclaredIn) {
+        this.classDeclaredIn = classDeclaredIn;
+    }
+
+    public boolean isStatementChecked() {
+        return isStatementChecked;
     }
 }

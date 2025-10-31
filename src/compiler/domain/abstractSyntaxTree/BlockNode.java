@@ -21,7 +21,7 @@ public abstract class BlockNode extends StatementNode {
 
     @Override
     public void checkNode() throws SemanticException {
-        Injector.getInjector().getSymbolTable().setCurrentBlock(this);
+        setBlockAsCurrent();
         for (StatementNode s : statementsTable){
             s.checkNode();
             if(s instanceof ExpressionNode && !(s instanceof AssignmentNode || s instanceof MethodCallNode || s instanceof ConstructorCallNode)) throw new SemanticException(s.getSemicolonToken()) {
@@ -30,7 +30,12 @@ public abstract class BlockNode extends StatementNode {
                     return "";
                 }
             };
+            setBlockAsCurrent();
         }
+    }
+
+    private void setBlockAsCurrent() {
+        Injector.getInjector().getSymbolTable().setCurrentBlock(this);
     }
 
     public Type resolveName(Token name) throws SemanticException{

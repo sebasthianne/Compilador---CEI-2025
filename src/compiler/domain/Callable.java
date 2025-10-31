@@ -48,8 +48,9 @@ public class Callable {
         return arity;
     }
 
-    public CallableBodyBlockNode getBody() {
-        return body;
+    public void checkBody() throws SemanticException{
+        Injector.getInjector().getSymbolTable().setCurrentMethodOrConstructor(this);
+        body.checkNode();
     }
 
     public void setBody(CallableBodyBlockNode body) {
