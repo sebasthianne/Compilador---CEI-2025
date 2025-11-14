@@ -25,6 +25,7 @@ public abstract class BlockNode extends StatementNode {
     public void checkNode() throws SemanticException {
         setBlockAsCurrent();
         for (StatementNode s : statementsTable){
+            s.setInExpression(false);
             s.checkNode();
             if(s instanceof ExpressionNode e && !(s instanceof AssignmentNode || e.isCall())) throw new NonValidStatementExpression(s);
             setBlockAsCurrent();

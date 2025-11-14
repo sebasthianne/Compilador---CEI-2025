@@ -1,14 +1,18 @@
 package compiler.semanticAnalyzer.semanticExceptions;
 
+import compiler.domain.Token;
 import compiler.domain.Type;
 
 public class IfCheckNotBooleanException extends SemanticException {
-    public IfCheckNotBooleanException(Type ifCheckExpressionReturnType) {
-        super(ifCheckExpressionReturnType.getTypeName());
+    private final Token checkTypeName;
+
+    public IfCheckNotBooleanException(Token whileToken, Type ifCheckExpressionReturnType) {
+        super(whileToken);
+        checkTypeName = ifCheckExpressionReturnType.getTypeName();
     }
 
     @Override
     public String getDetailedErrorMessage() {
-        return "En la línea "+getErrorToken().lineNumber()+" en el contexto de la expresión del chequeo de una sentencia if se recibe algo del tipo "+getErrorToken().lexeme()+" en vez de un booleano";
+        return "En la línea "+getErrorToken().lineNumber()+" se declara una sentencia if, pero en la expresión de su chequeo es del tipo "+checkTypeName.lexeme()+" en vez de boolean";
     }
 }

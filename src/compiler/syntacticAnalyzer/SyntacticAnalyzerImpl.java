@@ -333,30 +333,32 @@ public class SyntacticAnalyzerImpl implements SyntacticAnalyzer {
     }
 
     private IfStatementNode ifNonTerminal() throws SyntacticException, LexicalException, IOException {
+        Token ifToken = currentToken;
         match("palabraReservadaif");
         match("abreParéntesis");
         ExpressionNode checkExpression = expressionNonTerminal();
         match("cierraParéntesis");
         StatementNode ifBody = statementNonTerminal();
-        return optionalElseNonTerminal(checkExpression, ifBody);
+        return optionalElseNonTerminal(checkExpression, ifBody, ifToken);
     }
 
-    private IfStatementNode optionalElseNonTerminal(ExpressionNode checkExpression, StatementNode ifBody) throws SyntacticException, LexicalException, IOException {
+    private IfStatementNode optionalElseNonTerminal(ExpressionNode checkExpression, StatementNode ifBody, Token ifToken) throws SyntacticException, LexicalException, IOException {
         if (currentToken.name().equals("palabraReservadaelse")) {
             match("palabraReservadaelse");
             StatementNode elseBody = statementNonTerminal();
-            return new IfElseStatementNode(checkExpression,ifBody,elseBody);
+            return new IfElseStatementNode(checkExpression,ifBody,ifToken,elseBody);
         }
-        else return new IfStatementNode(checkExpression,ifBody);
+        else return new IfStatementNode(checkExpression,ifBody,ifToken);
     }
 
     private WhileStatementNode whileNonTerminal() throws SyntacticException, LexicalException, IOException {
+        Token whileToken = currentToken;
         match("palabraReservadawhile");
         match("abreParéntesis");
         ExpressionNode condition = expressionNonTerminal();
         match("cierraParéntesis");
         StatementNode body = statementNonTerminal();
-        return new WhileStatementNode(condition,body);
+        return new WhileStatementNode(condition,body,whileToken);
     }
 
     private ExpressionNode expressionNonTerminal() throws SyntacticException, LexicalException, IOException {
@@ -621,13 +623,10 @@ public class SyntacticAnalyzerImpl implements SyntacticAnalyzer {
     }
 
     private ChainedReferenceNode chainedVariableOrMethodNonTerminal() throws SyntacticException, LexicalException, IOException {
-        Token pointToken = currentToken;
         match("punto");
         Token name = currentToken;
         match("idMetVar");
-        ChainedReferenceNode chainedReference = (ChainedReferenceNode) optionalActualArgumentsNonTerminal(name,true);
-        chainedReference.setPointToken(pointToken);
-        return chainedReference;
+        return (ChainedReferenceNode) optionalActualArgumentsNonTerminal(name,true);
     }
 
 }

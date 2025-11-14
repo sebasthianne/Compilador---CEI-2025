@@ -5,6 +5,8 @@ import compiler.domain.Method;
 import compiler.domain.Token;
 import compiler.domain.Type;
 import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
+import compiler.semanticAnalyzer.semanticExceptions.StaticMethodCallClassNotFoundException;
+import compiler.semanticAnalyzer.semanticExceptions.VoidMethodCallInsideExpressionException;
 import injector.Injector;
 
 public class StaticMethodCallNode extends PrimaryNode {
@@ -28,7 +30,9 @@ public class StaticMethodCallNode extends PrimaryNode {
         Method method = foundClass.resolveMethod(calledMethodName, parameterList.size());
         parameterList.checkNode();
         parameterList.checkParameterMatch(method);
-        return method.getReturnType();
+        Type returnType = method.getReturnType();
+        if(returnType == null && isInExpression()) throw new VoidMethodCallInsideExpressionException(calledMethodName);
+        return returnType;
     }
 
 
@@ -42,14 +46,4 @@ public class StaticMethodCallNode extends PrimaryNode {
         return true;
     }
 
-    private static class StaticMethodCallClassNotFoundException extends SemanticException {
-        public StaticMethodCallClassNotFoundException(Token calledMethodClassName) {
-            super(calledMethodClassName);
-        }
-
-        @Override
-        public String getDetailedErrorMessage() {
-            return "";
-        }
-    }
 }

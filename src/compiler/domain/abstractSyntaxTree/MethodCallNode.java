@@ -5,6 +5,7 @@ import compiler.domain.Token;
 import compiler.domain.Type;
 import compiler.semanticAnalyzer.semanticExceptions.CalledInstanceMethodInsideOfStaticMethodException;
 import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
+import compiler.semanticAnalyzer.semanticExceptions.VoidMethodCallInsideExpressionException;
 import injector.Injector;
 
 public class MethodCallNode extends PrimaryNode {
@@ -27,7 +28,9 @@ public class MethodCallNode extends PrimaryNode {
         }
         parameterList.checkNode();
         parameterList.checkParameterMatch(method);
-        return method.getReturnType();
+        Type returnType = method.getReturnType();
+        if(returnType == null && isInExpression()) throw new VoidMethodCallInsideExpressionException(calledMethodName);
+        return returnType;
     }
 
 

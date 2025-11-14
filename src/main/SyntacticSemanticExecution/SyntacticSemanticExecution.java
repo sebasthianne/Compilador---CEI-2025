@@ -14,6 +14,7 @@ import static main.errorHandlers.ErrorHandlers.*;
 public class SyntacticSemanticExecution {
 
     public static void executeSyntacticSemanticAnalysis(SyntacticAnalyzer sLex) throws IOException {
+        Injector.getInjector().flushSymbolTable();
         boolean errorOccurred = false;
         try {
             SymbolTable symbolTable= Injector.getInjector().getSymbolTable();
@@ -35,7 +36,6 @@ public class SyntacticSemanticExecution {
             System.out.println();
             System.out.println("[SinErrores]");
         }
-        Injector.getInjector().flushSymbolTable();
     }
 
 }

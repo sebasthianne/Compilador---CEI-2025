@@ -5,6 +5,7 @@ public abstract class ReferenceNode extends BasicExpressionNode {
 
     public void setChainedReference(ChainedReferenceNode chainedReference) {
         this.chainedReference = chainedReference;
+        if(!isInExpression()) this.chainedReference.setInExpression(false);
     }
 
     @Override

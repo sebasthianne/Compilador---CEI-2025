@@ -25,11 +25,11 @@ public class ReturnStatementNode extends StatementNode {
         Type methodReturnType = currentMethodOrConstructor.getReturnType();
         if (expressionToReturn != null) {
             Type returnType = expressionToReturn.checkExpression();
-            if (methodReturnType == null) throw new ReturnedValueInVoidMethodException(returnType,Injector.getInjector().getSymbolTable().getCurrentClass().getName(),Injector.getInjector().getSymbolTable().getCurrentMethodOrConstructor().getName());
+            if (methodReturnType == null) throw new ReturnedValueInVoidMethodException(returnToken,returnType,Injector.getInjector().getSymbolTable().getCurrentClass().getName(),Injector.getInjector().getSymbolTable().getCurrentMethodOrConstructor().getName());
             if (!returnType.conformsTo(methodReturnType))
-                throw new ReturnTypeMismatchException(returnType,methodReturnType.getTypeName());
+                throw new ReturnTypeMismatchException(returnToken,returnType,methodReturnType.getTypeName());
         } else {
-            if (methodReturnType != null) throw new EmptyReturnInNonVoidMethodException(methodReturnType,Injector.getInjector().getSymbolTable().getCurrentClass().getName(), Injector.getInjector().getSymbolTable().getCurrentMethodOrConstructor().getName());
+            if (methodReturnType != null) throw new EmptyReturnInNonVoidMethodException(returnToken,methodReturnType,Injector.getInjector().getSymbolTable().getCurrentClass().getName(), Injector.getInjector().getSymbolTable().getCurrentMethodOrConstructor().getName());
         }
     }
 

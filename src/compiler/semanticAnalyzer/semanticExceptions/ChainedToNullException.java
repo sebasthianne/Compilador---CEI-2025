@@ -3,8 +3,8 @@ package compiler.semanticAnalyzer.semanticExceptions;
 import compiler.domain.Token;
 
 public class ChainedToNullException extends SemanticException {
-    public ChainedToNullException(Token pointToken1) {
-        super(pointToken1);
+    public ChainedToNullException(Token chainedToken) {
+        super(chainedToken);
     }
 
     @Override

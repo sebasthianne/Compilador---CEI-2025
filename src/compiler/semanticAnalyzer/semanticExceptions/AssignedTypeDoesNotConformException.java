@@ -14,6 +14,6 @@ public class AssignedTypeDoesNotConformException extends InCallableException {
 
     @Override
     public String getDetailedErrorMessage() {
-        return "En el método o constructor "+getMethodOrConstructorName().lexeme()+" en la clase "+getClassName().lexeme()+" en la línea "+getErrorToken().lineNumber()+" se recibió un "+getErrorToken().lexeme()+" en el contexto de una asignación cuando el tipo de la expresión "+assignedExpressionType.lexeme()+" aún no concuerda con el tipo de la variable o atributo a la que fue asignado, del tipo "+assignedToType.lexeme();
+        return "En el método o constructor "+getMethodOrConstructorName().lexeme()+" en la clase "+getClassName().lexeme()+" en la línea "+getErrorToken().lineNumber()+" ocurre un error de tipos incompatibles en el contexto de una asignación cuando a una variable de tipo "+assignedToType.lexeme()+" se le intenta asignar una expresión de tipo "+assignedExpressionType.lexeme();
     }
 }

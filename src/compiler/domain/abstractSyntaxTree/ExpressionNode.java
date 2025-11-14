@@ -4,6 +4,7 @@ import compiler.domain.Type;
 import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
 
 public abstract class ExpressionNode extends StatementNode{
+
     public abstract Type checkExpression() throws SemanticException;
 
     @Override
@@ -12,4 +13,5 @@ public abstract class ExpressionNode extends StatementNode{
     }
 
     public abstract boolean isCall();
+
 }

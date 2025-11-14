@@ -2,6 +2,7 @@ package compiler.domain.abstractSyntaxTree;
 import compiler.domain.*;
 import compiler.domain.Class;
 import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
+import compiler.semanticAnalyzer.semanticExceptions.VoidMethodCallInsideExpressionException;
 import injector.Injector;
 
 public class ChainedMethodCallNode extends ChainedReferenceNode {
@@ -15,13 +16,15 @@ public class ChainedMethodCallNode extends ChainedReferenceNode {
 
     @Override
     public Type checkChainedReference(Type chainedTo) throws SemanticException {
-        checkTypeChainable(chainedTo);
+        checkTypeChainable(chainedTo,calledMethodName);
         Class chainedClass = Injector.getInjector().getSymbolTable().getClass(chainedTo.getTypeName());
         Method method = chainedClass.resolveMethod(calledMethodName, parameterList.size());
         parameterList.checkNode();
         parameterList.checkParameterMatch(method);
-        if(chainedReference==null) return method.getReturnType();
-        else return chainedReference.checkChainedReference(method.getReturnType());
+        Type returnType = method.getReturnType();
+        if(returnType == null && isInExpression()) throw new VoidMethodCallInsideExpressionException(calledMethodName);
+        if(chainedReference==null) return returnType;
+        else return chainedReference.checkChainedReference(returnType);
     }
 
     @Override

@@ -6,17 +6,18 @@ import compiler.domain.Token;
 import compiler.domain.Type;
 import compiler.semanticAnalyzer.semanticExceptions.ChainedToNullException;
 import compiler.semanticAnalyzer.semanticExceptions.ChainedToPrimitiveException;
+import compiler.semanticAnalyzer.semanticExceptions.ChainedToVoidMethodCallException;
 import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
 
 public abstract class ChainedReferenceNode extends ReferenceNode {
-    private Token pointToken;
 
-    protected void checkTypeChainable(Type chainedTo) throws SemanticException {
+    protected void checkTypeChainable(Type chainedTo,Token chainedName) throws SemanticException {
+        if(chainedTo == null) throw new ChainedToVoidMethodCallException(chainedName);
         chainedTo.checkType();
         if(chainedTo instanceof PrimitiveType) {
-            throw new ChainedToPrimitiveException(pointToken,chainedTo.getTypeName());
+            throw new ChainedToPrimitiveException(chainedName,chainedTo.getTypeName());
         }
-        if(chainedTo instanceof NullType) throw new ChainedToNullException(pointToken);
+        if(chainedTo instanceof NullType) throw new ChainedToNullException(chainedName);
     }
 
     @Override
@@ -26,8 +27,5 @@ public abstract class ChainedReferenceNode extends ReferenceNode {
 
     public abstract Type checkChainedReference(Type chainedTo) throws SemanticException;
 
-    public void setPointToken(Token pointToken) {
-        this.pointToken = pointToken;
-    }
 
 }

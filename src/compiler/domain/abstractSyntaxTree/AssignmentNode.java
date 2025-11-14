@@ -24,8 +24,7 @@ public class AssignmentNode extends ExpressionNode {
         Type assignedToType = variableAssignedTo.checkExpression();
         Type assignedType = assignedExpression.checkExpression();
         if(!assignedType.conformsTo(assignedToType)) {
-            Token semicolonToken = this.semicolonToken;
-            throw new AssignedTypeDoesNotConformException(semicolonToken, Injector.getInjector().getSymbolTable().getCurrentClass().getName(), Injector.getInjector().getSymbolTable().getCurrentMethodOrConstructor().getName(),assignedToType.getTypeName(),assignedType.getTypeName());
+            throw new AssignedTypeDoesNotConformException(assignmentToken, Injector.getInjector().getSymbolTable().getCurrentClass().getName(), Injector.getInjector().getSymbolTable().getCurrentMethodOrConstructor().getName(),assignedToType.getTypeName(),assignedType.getTypeName());
         }
         return assignedToType;
     }

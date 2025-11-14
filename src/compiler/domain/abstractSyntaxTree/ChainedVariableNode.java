@@ -14,7 +14,7 @@ public class ChainedVariableNode extends ChainedReferenceNode {
 
     @Override
     public Type checkChainedReference(Type chainedTo) throws SemanticException {
-        checkTypeChainable(chainedTo);
+        checkTypeChainable(chainedTo,variableName);
         Class chainedClass = Injector.getInjector().getSymbolTable().getClass(chainedTo.getTypeName());
         Type typeToReturn = chainedClass.resolveAttribute(variableName);
         if(chainedReference==null) return typeToReturn;
