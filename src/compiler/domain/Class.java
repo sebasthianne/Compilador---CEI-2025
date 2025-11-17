@@ -1,5 +1,6 @@
 package compiler.domain;
 
+import compiler.domain.abstractSyntaxTree.CallableBodyBlockNode;
 import compiler.semanticAnalyzer.SymbolTable;
 import compiler.semanticAnalyzer.semanticExceptions.*;
 import injector.Injector;
@@ -148,7 +149,9 @@ public class Class{
     }
 
     private void addDefaultConstructor() {
-        addConstructor(new Constructor(name));
+        Constructor newConstructor = new Constructor(name);
+        newConstructor.setBody(new CallableBodyBlockNode());
+        addConstructor(newConstructor);
     }
 
     private boolean inheritsFromObject() {
@@ -183,7 +186,6 @@ public class Class{
 
     private void consolidateMethods(Class inheritsFrom) throws SemanticException{
         for(Method m : inheritsFrom.getMethodTable()){
-
             if(containsMethod(m)) {
                 Method method=getMethod(m.getName().lexeme(),m.getArity());
                 redefinitionChecks(m, method);
@@ -207,7 +209,7 @@ public class Class{
         if(m.getReturnType()==null){
             if(method.getReturnType()!=null) throw new ReturnTypeMismatchInMethodRedefinition(method.getName(),name);
         } else  if(method.getReturnType()==null) throw new ReturnTypeMismatchInMethodRedefinition(method.getName(),name);
-                else if (!m.getReturnType().getTypeName().lexeme().equals(method.getReturnType().getTypeName().lexeme()))
+                else if (!m.getReturnType().compareType(method.getReturnType()))
                 throw new ReturnTypeMismatchInMethodRedefinition(method.getName(),name);
     }
 
@@ -217,7 +219,7 @@ public class Class{
         while(parentParameters.hasNext() && currentParameters.hasNext()){
             Parameter parentParameter = parentParameters.next();
             Parameter currentParameter = currentParameters.next();
-            if(!parentParameter.getType().getTypeName().lexeme().equals(currentParameter.getType().getTypeName().lexeme())) throw new ParameterTypeMismatchInMethodRedefinition(currentParameter.getName(),name, method.getName());
+            if(!parentParameter.getType().compareType(currentParameter.getType())) throw new ParameterTypeMismatchInMethodRedefinition(currentParameter.getName(),name, method.getName());
         }
     }
 
@@ -239,6 +241,27 @@ public class Class{
 
     private boolean isConsolidated() {
         return isConsolidated;
+    }
+
+    public Method resolveMethod(Token methodName, int arity) throws SemanticException{
+        Method method = getMethod(methodName.lexeme(),arity);
+        if(method == null) throw new MethodNotFoundException(methodName, name);
+        return method;
+    }
+
+    public Type resolveAttribute(Token attributeName) throws SemanticException{
+        Attribute attribute = getAttribute(attributeName);
+        if(attribute == null) throw new AttributeCouldNotBeResolvedException(attributeName);
+        return attribute.getType();
+    }
+
+    public void statementChecks() throws SemanticException{
+        for(Constructor c : getConstructorTable()){
+            c.checkBody();
+        }
+        for(Method m : getMethodTable()){
+            if(!m.isStatementChecked()&&!m.isAbstract()) m.checkBody();
+        }
     }
 
 }

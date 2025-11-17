@@ -16,4 +16,17 @@ public class ReferenceType extends Type {
         if(symbolTable.getClass(getTypeName())==null) throw new MissingReferenceTypeClassException(getTypeName(),symbolTable.getCurrentClass().getName());
     }
 
+    @Override
+    public boolean isBoolean() {
+        return false;
+    }
+
+    @Override
+    public boolean conformsTo(Type type) {
+        Class classOfType = Injector.getInjector().getSymbolTable().getClass(type.getTypeName());
+        Class classOfThis = Injector.getInjector().getSymbolTable().getClass(this.getTypeName());
+        return (classOfType!=null)&&(compareType(type)||classOfThis.isAncestor(type.getTypeName()));
+    }
+
+
 }

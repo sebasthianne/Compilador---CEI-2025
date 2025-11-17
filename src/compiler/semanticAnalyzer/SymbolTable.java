@@ -1,6 +1,7 @@
 package compiler.semanticAnalyzer;
 import compiler.domain.*;
 import compiler.domain.Class;
+import compiler.domain.abstractSyntaxTree.BlockNode;
 import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
 
 
@@ -15,4 +16,10 @@ public interface SymbolTable {
     void insertCurrentMethodOrConstructorInTable() throws SemanticException;
     void checkSymbolTable() throws SemanticException;
     void consolidate() throws SemanticException;
+    Constructor resolveConstructor(Token className, int arity) throws SemanticException;
+    BlockNode getCurrentBlock();
+    void setCurrentBlock(BlockNode currentBlock);
+    void setCurrentMethodOrConstructor(Callable methodOrConstructor);
+    void setCurrentClass(Class currentClass);
+    void statementChecks() throws SemanticException;
 }

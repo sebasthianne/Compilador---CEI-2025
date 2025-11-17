@@ -6,8 +6,7 @@ import input.sourcemanager.SourceManager;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import static main.syntacticExecutionAndDeclarationChecks.SyntacticExecutionAndDeclarationChecks.executeSyntacticAnalysis;
-
+import static main.SyntacticSemanticExecution.SyntacticSemanticExecution.executeSyntacticSemanticAnalysis;
 public class Main {
     private static final Injector injector = Injector.getInjector();
 
@@ -31,7 +30,7 @@ public class Main {
 
     private static void tryAnalysis(SourceManager source) {
         try {
-            executeSyntacticAnalysis(injector.getSyntacticAnalyzer(injector.getLexicalAnalyzer(source)));
+            executeSyntacticSemanticAnalysis(injector.getSyntacticAnalyzer(injector.getLexicalAnalyzer(source)));
         } catch (IOException e) {
             System.out.println("Error, ocurrió un error durante la lectura del archivo");
         } finally {

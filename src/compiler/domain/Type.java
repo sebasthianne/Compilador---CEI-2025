@@ -14,4 +14,12 @@ public abstract class Type {
     public Token getTypeName() {
         return typeName;
     }
+
+    public abstract boolean isBoolean();
+
+    public boolean compareType(Type type){
+        return type.getTypeName().lexeme().equals(typeName.lexeme());
+    }
+
+    public abstract boolean conformsTo(Type t);
 }

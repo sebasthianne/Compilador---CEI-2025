@@ -18,4 +18,8 @@ public class Attribute {
     public void checkAttribute() throws SemanticException {
         type.checkType();
     }
+
+    public Type getType() {
+        return type;
+    }
 }

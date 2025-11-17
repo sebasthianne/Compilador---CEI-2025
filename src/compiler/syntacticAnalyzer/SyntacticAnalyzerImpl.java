@@ -2,6 +2,7 @@ package compiler.syntacticAnalyzer;
 
 import compiler.domain.*;
 import compiler.domain.Class;
+import compiler.domain.abstractSyntaxTree.*;
 import compiler.lexicalAnalyzer.LexicalAnalyzer;
 import compiler.lexicalAnalyzer.lexicalExceptions.LexicalException;
 import compiler.semanticAnalyzer.SymbolTable;
@@ -114,7 +115,7 @@ public class SyntacticAnalyzerImpl implements SyntacticAnalyzer {
     private void attributeOrMethodNonTerminal() throws SyntacticException, LexicalException, IOException, SemanticException {
         Token modifier= null;
         Type type = null;
-        Token name = null;
+        Token name;
         if (isModifier(currentToken)) {
             modifier = modifierNonTerminal();
             type = methodTypeNonTerminal();
@@ -159,7 +160,11 @@ public class SyntacticAnalyzerImpl implements SyntacticAnalyzer {
         symbolTable.addConstructor(new Constructor(currentToken));
         match("idClase");
         formalArgumentsNonTerminal();
-        blockNonTerminal();
+        Constructor c = (Constructor) symbolTable.getCurrentMethodOrConstructor();
+        CallableBodyBlockNode methodOrConstructorBody = new CallableBodyBlockNode();
+        c.setBody(methodOrConstructorBody);
+        Injector.getInjector().getSymbolTable().setCurrentBlock(methodOrConstructorBody);
+        blockNonTerminal(methodOrConstructorBody);
         symbolTable.insertCurrentMethodOrConstructorInTable();
     }
 
@@ -234,31 +239,37 @@ public class SyntacticAnalyzerImpl implements SyntacticAnalyzer {
 
     private void optionalBlockNonTerminal() throws SyntacticException, LexicalException, IOException {
         if (currentToken.name().equals("abreLlave")) {
-            blockNonTerminal();
-        } else if (currentToken.name().equals("puntoYComa")) {
             Method m = (Method) symbolTable.getCurrentMethodOrConstructor();
-            m.setEmptyBody(true);
+            CallableBodyBlockNode methodOrConstructorBody = new CallableBodyBlockNode();
+            m.setBody(methodOrConstructorBody);
+            Injector.getInjector().getSymbolTable().setCurrentBlock(methodOrConstructorBody);
+            blockNonTerminal(methodOrConstructorBody);
+        } else if (currentToken.name().equals("puntoYComa")) {
             match("puntoYComa");
         } else
             throw new UnexpectedSymbolInContextException("{ o ;", currentToken, "Un método requiere un bloque como cuerpo o punto y coma");
     }
 
-    private void blockNonTerminal() throws SyntacticException, LexicalException, IOException {
+    private void blockNonTerminal(BlockNode block) throws SyntacticException, LexicalException, IOException {
         match("abreLlave");
-        statementListNonTerminal();
+        statementListNonTerminal(block);
         match("cierraLlave");
     }
 
-    private void statementListNonTerminal() throws SyntacticException, LexicalException, IOException {
+    private void statementListNonTerminal(BlockNode block) throws SyntacticException, LexicalException, IOException {
         if (isStatementFirst(currentToken)) {
-            statementNonTerminal();
-            statementListNonTerminal();
+            StatementNode newStatement = statementNonTerminal();
+            Injector.getInjector().getSymbolTable().setCurrentBlock(block);
+            if(newStatement != null) block.addStatement(newStatement);
+            statementListNonTerminal(block);
         }
     }
 
-    private void statementNonTerminal() throws SyntacticException, LexicalException, IOException {
+    private StatementNode statementNonTerminal() throws SyntacticException, LexicalException, IOException {
+        StatementNode returnStatement=null;
         if (isExpressionFirst(currentToken)) {
-            assignmentOrCallNonTerminal();
+            returnStatement = assignmentOrCallNonTerminal();
+            returnStatement.setSemicolonToken(currentToken);
             match("puntoYComa");
         } else {
             switch (currentToken.name()) {
@@ -266,155 +277,188 @@ public class SyntacticAnalyzerImpl implements SyntacticAnalyzer {
                     match("puntoYComa");
                     break;
                 case "palabraReservadavar":
-                    localVariableNonTerminal();
+                    returnStatement = localVariableNonTerminal();
+                    returnStatement.setSemicolonToken(currentToken);
                     match("puntoYComa");
                     break;
                 case "palabraReservadareturn":
-                    returnNonTerminal();
+                    returnStatement = returnNonTerminal();
+                    returnStatement.setSemicolonToken(currentToken);
                     match("puntoYComa");
                     break;
                 case "palabraReservadaif":
-                    ifNonTerminal();
+                    returnStatement = ifNonTerminal();
                     break;
                 case "palabraReservadawhile":
-                    whileNonTerminal();
+                    returnStatement = whileNonTerminal();
                     break;
                 case "abreLlave":
-                    blockNonTerminal();
+                    SymbolTable symbolTable = Injector.getInjector().getSymbolTable();
+                    BlockNode parentBlock = symbolTable.getCurrentBlock();
+                    NestedBlockNode newNestedBlock = new NestedBlockNode(parentBlock);
+                    symbolTable.setCurrentBlock(newNestedBlock);
+                    blockNonTerminal(newNestedBlock);
+                    returnStatement =  symbolTable.getCurrentBlock();
                     break;
                 default:
                     throw new UnexpectedSymbolInContextException("while, if, return, var, {, ; o primero de operando", currentToken, "Dentro de un bloque o como cuerpo de una expresión while if o else se espera una sentencia");
             }
         }
+        return returnStatement;
     }
 
-    private void assignmentOrCallNonTerminal() throws SyntacticException, LexicalException, IOException {
-        expressionNonTerminal();
+    private ExpressionNode assignmentOrCallNonTerminal() throws SyntacticException, LexicalException, IOException {
+        return expressionNonTerminal();
     }
 
-    private void localVariableNonTerminal() throws SyntacticException, LexicalException, IOException {
+    private LocalVariableDeclarationNode localVariableNonTerminal() throws SyntacticException, LexicalException, IOException {
         match("palabraReservadavar");
+        Token variableName = currentToken;
         match("idMetVar");
+        Token assignmentToken = currentToken;
         match("asignación");
-        composedExpressionNonTerminal();
+        ExpressionNode assignedExpression= composedExpressionNonTerminal();
+        return new LocalVariableDeclarationNode(variableName,assignedExpression,assignmentToken);
     }
 
-    private void returnNonTerminal() throws SyntacticException, LexicalException, IOException {
+    private ReturnStatementNode returnNonTerminal() throws SyntacticException, LexicalException, IOException {
+        ReturnStatementNode returnStatement = new ReturnStatementNode(currentToken);
         match("palabraReservadareturn");
-        optionalExpressionNonTerminal();
+        optionalExpressionNonTerminal(returnStatement);
+        return returnStatement;
     }
 
-    private void optionalExpressionNonTerminal() throws SyntacticException, LexicalException, IOException {
-        if (isExpressionFirst(currentToken)) expressionNonTerminal();
+    private void optionalExpressionNonTerminal(ReturnStatementNode returnStatement) throws SyntacticException, LexicalException, IOException {
+        if (isExpressionFirst(currentToken)) returnStatement.setExpressionToReturn(expressionNonTerminal());
     }
 
-    private void ifNonTerminal() throws SyntacticException, LexicalException, IOException {
+    private IfStatementNode ifNonTerminal() throws SyntacticException, LexicalException, IOException {
+        Token ifToken = currentToken;
         match("palabraReservadaif");
         match("abreParéntesis");
-        expressionNonTerminal();
+        ExpressionNode checkExpression = expressionNonTerminal();
         match("cierraParéntesis");
-        statementNonTerminal();
-        optionalElseNonTerminal();
+        StatementNode ifBody = statementNonTerminal();
+        return optionalElseNonTerminal(checkExpression, ifBody, ifToken);
     }
 
-    private void optionalElseNonTerminal() throws SyntacticException, LexicalException, IOException {
+    private IfStatementNode optionalElseNonTerminal(ExpressionNode checkExpression, StatementNode ifBody, Token ifToken) throws SyntacticException, LexicalException, IOException {
         if (currentToken.name().equals("palabraReservadaelse")) {
             match("palabraReservadaelse");
-            statementNonTerminal();
+            StatementNode elseBody = statementNonTerminal();
+            return new IfElseStatementNode(checkExpression,ifBody,ifToken,elseBody);
         }
+        else return new IfStatementNode(checkExpression,ifBody,ifToken);
     }
 
-    private void whileNonTerminal() throws SyntacticException, LexicalException, IOException {
+    private WhileStatementNode whileNonTerminal() throws SyntacticException, LexicalException, IOException {
+        Token whileToken = currentToken;
         match("palabraReservadawhile");
         match("abreParéntesis");
-        expressionNonTerminal();
+        ExpressionNode condition = expressionNonTerminal();
         match("cierraParéntesis");
-        statementNonTerminal();
+        StatementNode body = statementNonTerminal();
+        return new WhileStatementNode(condition,body,whileToken);
     }
 
-    private void expressionNonTerminal() throws SyntacticException, LexicalException, IOException {
-        composedExpressionNonTerminal();
-        optionalAssignmentNonTerminal();
+    private ExpressionNode expressionNonTerminal() throws SyntacticException, LexicalException, IOException {
+        ComposedExpressionNode expression = composedExpressionNonTerminal();
+        return optionalAssignmentNonTerminal(expression);
     }
 
-    private void optionalAssignmentNonTerminal() throws SyntacticException, LexicalException, IOException {
+    private ExpressionNode optionalAssignmentNonTerminal(ComposedExpressionNode leftExpression) throws SyntacticException, LexicalException, IOException {
         if (isAssignmentFirst(currentToken)) {
-            assignmentOperatorNonTerminal();
-            composedExpressionNonTerminal();
+            Token assignmentToken = assignmentOperatorNonTerminal();
+            ComposedExpressionNode rightExpression = composedExpressionNonTerminal();
+            return new AssignmentNode(leftExpression,rightExpression,assignmentToken);
         }
+        return leftExpression;
     }
 
-    private void assignmentOperatorNonTerminal() throws SyntacticException, LexicalException, IOException {
+    private Token assignmentOperatorNonTerminal() throws SyntacticException, LexicalException, IOException {
         if (currentToken.name().equals("asignación")) {
+            Token asignmentToken = currentToken;
             match("asignación");
+            return asignmentToken;
         } else throw new UnexpectedSymbolInContextException("=", currentToken, "");
     }
 
-    private void composedExpressionNonTerminal() throws SyntacticException, LexicalException, IOException {
-        basicExpressionNonTerminal();
-        moreBasicExpressionsNonTerminal();
+    private ComposedExpressionNode composedExpressionNonTerminal() throws SyntacticException, LexicalException, IOException {
+        BasicExpressionNode basicExpression = basicExpressionNonTerminal();
+        return moreBasicExpressionsNonTerminal(basicExpression);
     }
 
-    private void moreBasicExpressionsNonTerminal() throws SyntacticException, LexicalException, IOException {
+    private ComposedExpressionNode moreBasicExpressionsNonTerminal(BasicExpressionNode leftExpression) throws SyntacticException, LexicalException, IOException {
         if (isBinaryOperator(currentToken)) {
-            binaryOperatorNonTerminal();
-            basicExpressionNonTerminal();
-            moreBasicExpressionsNonTerminal();
+            Token operator = currentToken;
+            OperatorType operatorType = binaryOperatorNonTerminal();
+            BasicExpressionNode rightExpressionFirstTerm = basicExpressionNonTerminal();
+            ComposedExpressionNode rightExpression = moreBasicExpressionsNonTerminal(rightExpressionFirstTerm);
+            return switch (operatorType) {
+                case BOOLEAN_TO_BOOLEAN -> new BooleanToBooleanExpressionNode(operator,leftExpression,rightExpression);
+                case ANY_TO_BOOLEAN -> new AnyToBooleanExpressionNode(operator,leftExpression,rightExpression);
+                case INT_TO_BOOLEAN -> new IntToBooleanExpressionNode(operator,leftExpression,rightExpression);
+                case INT_TO_INT -> new IntToIntExpressionNode(operator,leftExpression,rightExpression);
+            };
         }
+        return leftExpression;
     }
 
-    private void binaryOperatorNonTerminal() throws SyntacticException, LexicalException, IOException {
+    private OperatorType binaryOperatorNonTerminal() throws SyntacticException, LexicalException, IOException {
         switch (currentToken.name()) {
             case "or":
                 match("or");
-                break;
+                return OperatorType.BOOLEAN_TO_BOOLEAN;
             case "and":
                 match("and");
-                break;
+                return OperatorType.BOOLEAN_TO_BOOLEAN;
             case "igual":
                 match("igual");
-                break;
+                return OperatorType.ANY_TO_BOOLEAN;
             case "desigual":
                 match("desigual");
-                break;
+                return OperatorType.ANY_TO_BOOLEAN;
             case "menor":
                 match("menor");
-                break;
+               return OperatorType.INT_TO_BOOLEAN;
             case "mayor":
                 match("mayor");
-                break;
+                return OperatorType.INT_TO_BOOLEAN;
             case "menorOIgual":
                 match("menorOIgual");
-                break;
+                return OperatorType.INT_TO_BOOLEAN;
             case "mayorOIgual":
                 match("mayorOIgual");
-                break;
+                return OperatorType.INT_TO_BOOLEAN;
             case "suma":
                 match("suma");
-                break;
+                return OperatorType.INT_TO_INT;
             case "resta":
                 match("resta");
-                break;
+                return OperatorType.INT_TO_INT;
             case "por":
                 match("por");
-                break;
+                return OperatorType.INT_TO_INT;
             case "dividido":
                 match("dividido");
-                break;
+                return OperatorType.INT_TO_INT;
             case "modulo":
                 match("modulo");
-                break;
+                return OperatorType.INT_TO_INT;
             default:
                 throw new UnexpectedSymbolInContextException("operador binario", currentToken, "");
         }
     }
 
-    private void basicExpressionNonTerminal() throws SyntacticException, LexicalException, IOException {
+    private BasicExpressionNode basicExpressionNonTerminal() throws SyntacticException, LexicalException, IOException {
         if (isUnaryOperator(currentToken)) {
+            Token operator = currentToken;
             unaryOperatorNonTerminal();
-            operandNonTerminal();
+            BasicExpressionNode operand = operandNonTerminal();
+            if(operator.name().equals("not")) return new BooleanUnaryOperatorExpressionNode(operator,operand);
+            else return new IntUnaryOperatorExpressionNode(operator,operand);
         } else if (isOperandFirst(currentToken)) {
-            operandNonTerminal();
+            return operandNonTerminal();
         } else
             throw new UnexpectedSymbolInContextException("operador unario o primero de operando", currentToken, "Dentro de una declaración de variable, asignación, o expresión como sentencia, una expresión básica debe comenzar con un operador unario u operando");
     }
@@ -441,127 +485,148 @@ public class SyntacticAnalyzerImpl implements SyntacticAnalyzer {
         }
     }
 
-    private void operandNonTerminal() throws SyntacticException, LexicalException, IOException {
-        if (isPrimitiveLiteral(currentToken)) primitiveNonTerminal();
-        else if (isReferencePrimaryFirst(currentToken)) referenceNonTerminal();
+    private BasicExpressionNode operandNonTerminal() throws SyntacticException, LexicalException, IOException {
+        if (isPrimitiveLiteral(currentToken)) return primitiveNonTerminal();
+        else if (isReferencePrimaryFirst(currentToken)) return referenceNonTerminal();
         else throw new UnexpectedSymbolInContextException("tipo primitivo o primero de referencia", currentToken, "");
     }
 
-    private void primitiveNonTerminal() throws SyntacticException, LexicalException, IOException {
+    private PrimitiveLiteralNode primitiveNonTerminal() throws SyntacticException, LexicalException, IOException {
+        PrimitiveLiteralNode literal;
         switch (currentToken.name()) {
             case "charLiteral":
+                literal = new CharLiteralNode(currentToken);
                 match("charLiteral");
                 break;
             case "intLiteral":
+                literal = new IntLiteralNode(currentToken);
                 match("intLiteral");
                 break;
             case "palabraReservadanull":
+                literal = new NullLiteralNode(currentToken);
                 match("palabraReservadanull");
                 break;
             case "palabraReservadatrue":
+                literal = new BooleanLiteralNode(currentToken);
                 match("palabraReservadatrue");
                 break;
             case "palabraReservadafalse":
+                literal = new BooleanLiteralNode(currentToken);
                 match("palabraReservadafalse");
                 break;
             default:
                 throw new UnexpectedSymbolInContextException("true, false, null, literal entero, literal caracter", currentToken, "");
         }
+        return literal;
     }
 
-    private void referenceNonTerminal() throws SyntacticException, LexicalException, IOException {
-        primaryNonTerminal();
-        chainedReferenceNonTerminal();
+    private ReferenceNode referenceNonTerminal() throws SyntacticException, LexicalException, IOException {
+        PrimaryNode primary = primaryNonTerminal();
+        return chainedReferenceNonTerminal(primary);
     }
 
-    private void chainedReferenceNonTerminal() throws SyntacticException, LexicalException, IOException {
+    private ReferenceNode chainedReferenceNonTerminal(ReferenceNode referencedObject) throws SyntacticException, LexicalException, IOException {
         if (currentToken.name().equals("punto")) {
-            chainedVariableOrMethodNonTerminal();
-            chainedReferenceNonTerminal();
+            ChainedReferenceNode chainedReference = chainedVariableOrMethodNonTerminal();
+            referencedObject.setChainedReference(chainedReference);
+            chainedReferenceNonTerminal(chainedReference);
         }
+        return referencedObject;
     }
 
-    private void primaryNonTerminal() throws SyntacticException, LexicalException, IOException {
+    private PrimaryNode primaryNonTerminal() throws SyntacticException, LexicalException, IOException {
         switch (currentToken.name()) {
             case "palabraReservadathis":
+                ThisNode thisNode = new ThisNode(currentToken);
                 match("palabraReservadathis");
-                break;
+                return thisNode;
             case "stringLiteral":
                 match("stringLiteral");
-                break;
+                return new StringLiteralNode();
             case "idMetVar":
-                variableAccessOrMethodCallNonTerminal();
-                break;
+                return variableAccessOrMethodCallNonTerminal();
             case "palabraReservadanew":
-                constructorCallNonTerminal();
-                break;
+                return constructorCallNonTerminal();
             case "idClase":
-                staticMethodCallNonTerminal();
-                break;
+                return staticMethodCallNonTerminal();
             case "abreParéntesis":
-                parenthesizedExpressionNonTerminal();
-                break;
+                return parenthesizedExpressionNonTerminal();
             default:
                 throw new UnexpectedSymbolInContextException("this, new, (, id de clase, id de método o variable, o literal string", currentToken, "");
         }
     }
 
-    private void variableAccessOrMethodCallNonTerminal() throws SyntacticException, LexicalException, IOException {
+    private PrimaryNode variableAccessOrMethodCallNonTerminal() throws SyntacticException, LexicalException, IOException {
+        Token name = currentToken;
         match("idMetVar");
-        optionalActualArgumentsNonTerminal();
+        return (PrimaryNode) optionalActualArgumentsNonTerminal(name,false);
     }
 
-    private void constructorCallNonTerminal() throws SyntacticException, LexicalException, IOException {
+    private ConstructorCallNode constructorCallNonTerminal() throws SyntacticException, LexicalException, IOException {
         match("palabraReservadanew");
+        Token constructorName = currentToken;
         match("idClase");
-        actualArgumentsNonTerminal();
+        ParameterListNode parameterListNode = actualArgumentsNonTerminal(constructorName);
+        return new ConstructorCallNode(constructorName,parameterListNode);
     }
 
-    private void parenthesizedExpressionNonTerminal() throws SyntacticException, LexicalException, IOException {
+    private ParenthesizedExpressionNode parenthesizedExpressionNonTerminal() throws SyntacticException, LexicalException, IOException {
         match("abreParéntesis");
-        expressionNonTerminal();
+        ExpressionNode subExpression = expressionNonTerminal();
         match("cierraParéntesis");
+        return new ParenthesizedExpressionNode(subExpression);
     }
 
-    private void staticMethodCallNonTerminal() throws SyntacticException, LexicalException, IOException {
+    private StaticMethodCallNode staticMethodCallNonTerminal() throws SyntacticException, LexicalException, IOException {
+        Token className = currentToken;
         match("idClase");
         match("punto");
+        Token methodName = currentToken;
         match("idMetVar");
-        actualArgumentsNonTerminal();
+        ParameterListNode parameterList = actualArgumentsNonTerminal(methodName);
+        return new StaticMethodCallNode(methodName,className,parameterList);
     }
 
-    private void optionalActualArgumentsNonTerminal() throws SyntacticException, LexicalException, IOException {
-        if (currentToken.name().equals("abreParéntesis")) actualArgumentsNonTerminal();
+    private ReferenceNode optionalActualArgumentsNonTerminal(Token name,boolean isChained) throws SyntacticException, LexicalException, IOException {
+        if (currentToken.name().equals("abreParéntesis")) {
+            ParameterListNode parameterList = actualArgumentsNonTerminal(name);
+            if (isChained) return new ChainedMethodCallNode(name,parameterList);
+            else return new MethodCallNode(name,parameterList);
+        } else if(isChained) return new ChainedVariableNode(name);
+               else return new VariableNode(name);
     }
 
-    private void actualArgumentsNonTerminal() throws SyntacticException, LexicalException, IOException {
+    private ParameterListNode actualArgumentsNonTerminal(Token callableName) throws SyntacticException, LexicalException, IOException {
+        ParameterListNode parameterList = new ParameterListNode(callableName);
         match("abreParéntesis");
-        optionalExpressionListNonTerminal();
+        optionalExpressionListNonTerminal(parameterList);
         match("cierraParéntesis");
+        return parameterList;
     }
 
-    private void optionalExpressionListNonTerminal() throws SyntacticException, LexicalException, IOException {
+    private void optionalExpressionListNonTerminal(ParameterListNode parameterList) throws SyntacticException, LexicalException, IOException {
         if (isExpressionFirst(currentToken)) {
-            expressionListNonTerminal();
+            expressionListNonTerminal(parameterList);
         }
     }
 
-    private void expressionListNonTerminal() throws SyntacticException, LexicalException, IOException {
-        expressionNonTerminal();
-        moreExpressionsNonTerminal();
+    private void expressionListNonTerminal(ParameterListNode parameterList) throws SyntacticException, LexicalException, IOException {
+        parameterList.addParameter(expressionNonTerminal());
+        moreExpressionsNonTerminal(parameterList);
     }
 
-    private void moreExpressionsNonTerminal() throws SyntacticException, LexicalException, IOException {
+    private void moreExpressionsNonTerminal(ParameterListNode parameterList) throws SyntacticException, LexicalException, IOException {
         if (currentToken.name().equals("coma")) {
             match("coma");
-            expressionListNonTerminal();
+            expressionListNonTerminal(parameterList);
         }
     }
 
-    private void chainedVariableOrMethodNonTerminal() throws SyntacticException, LexicalException, IOException {
+    private ChainedReferenceNode chainedVariableOrMethodNonTerminal() throws SyntacticException, LexicalException, IOException {
         match("punto");
+        Token name = currentToken;
         match("idMetVar");
-        optionalActualArgumentsNonTerminal();
+        return (ChainedReferenceNode) optionalActualArgumentsNonTerminal(name,true);
     }
 
 }
