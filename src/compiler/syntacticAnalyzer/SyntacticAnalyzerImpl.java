@@ -541,8 +541,9 @@ public class SyntacticAnalyzerImpl implements SyntacticAnalyzer {
                 match("palabraReservadathis");
                 return thisNode;
             case "stringLiteral":
+                Token stringLiteral = currentToken;
                 match("stringLiteral");
-                return new StringLiteralNode();
+                return new StringLiteralNode(stringLiteral);
             case "idMetVar":
                 return variableAccessOrMethodCallNonTerminal();
             case "palabraReservadanew":

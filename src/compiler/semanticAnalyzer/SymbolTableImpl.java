@@ -14,10 +14,14 @@ public class SymbolTableImpl implements SymbolTable {
     private Callable currentMethodOrConstructor;
     private boolean currentCallableIsConstructor;
     private BlockNode currentBlock;
+    private int stringCounter;
+    private int charCounter;
 
     public SymbolTableImpl(){
         classTable= new HashMap<>(9973);
         addPredefinedClasses();
+        stringCounter = 0;
+        charCounter = 0;
     }
 
     private void addPredefinedClasses() {
@@ -201,6 +205,26 @@ public class SymbolTableImpl implements SymbolTable {
         for(Class c : getTable()){
             c.statementChecks();
         }
+    }
+
+    @Override
+    public void incrementStringCounter() {
+        stringCounter++;
+    }
+
+    @Override
+    public int getStringCounter() {
+        return stringCounter;
+    }
+
+    @Override
+    public void incrementCharCounter() {
+        charCounter++;
+    }
+
+    @Override
+    public int getCharCounter() {
+        return charCounter;
     }
 
 }

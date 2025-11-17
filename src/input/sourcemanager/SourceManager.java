@@ -18,4 +18,6 @@ public interface SourceManager {
     String getCurrentLine();
 
     public static final char END_OF_FILE = (char) 26;
+
+    public static void generate(String s){}
 }

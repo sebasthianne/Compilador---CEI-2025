@@ -22,4 +22,8 @@ public interface SymbolTable {
     void setCurrentMethodOrConstructor(Callable methodOrConstructor);
     void setCurrentClass(Class currentClass);
     void statementChecks() throws SemanticException;
+    void incrementStringCounter();
+    int getStringCounter();
+    void incrementCharCounter();
+    int getCharCounter();
 }
