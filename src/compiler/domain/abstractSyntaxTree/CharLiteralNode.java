@@ -7,7 +7,7 @@ import compiler.domain.Type;
 import compiler.semanticAnalyzer.SymbolTable;
 import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
 import injector.Injector;
-import input.sourcemanager.SourceManager;
+import inout.sourcemanager.SourceManager;
 
 public class CharLiteralNode extends PrimitiveLiteralNode {
     private final Literal charLiteral;
@@ -31,9 +31,10 @@ public class CharLiteralNode extends PrimitiveLiteralNode {
         SymbolTable symbolTable = Injector.getInjector().getSymbolTable();
         String charName = "char" + symbolTable.getCharCounter();
         symbolTable.incrementCharCounter();
-        SourceManager.generate(".DATA");
-        SourceManager.generate(charName + ": DW '" + charLiteral.getLiteralValue().lexeme() + "'");
-        SourceManager.generate(".CODE");
-        SourceManager.generate("PUSH "+charName);
+        SourceManager source = Injector.getInjector().getSource();
+        source.generate(".DATA");
+        source.generate(charName + ": DW '" + charLiteral.getLiteralValue().lexeme() + "'");
+        source.generate(".CODE");
+        source.generate("PUSH "+charName);
     }
 }

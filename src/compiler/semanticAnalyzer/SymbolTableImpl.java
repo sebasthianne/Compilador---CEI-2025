@@ -227,4 +227,9 @@ public class SymbolTableImpl implements SymbolTable {
         return charCounter;
     }
 
+    @Override
+    public void generate() {
+
+    }
+
 }

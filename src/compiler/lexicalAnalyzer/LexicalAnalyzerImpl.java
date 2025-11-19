@@ -2,7 +2,7 @@ package compiler.lexicalAnalyzer;
 
 import compiler.domain.Token;
 import compiler.lexicalAnalyzer.lexicalExceptions.*;
-import input.sourcemanager.SourceManager;
+import inout.sourcemanager.SourceManager;
 
 import java.io.IOException;
 import java.util.Arrays;

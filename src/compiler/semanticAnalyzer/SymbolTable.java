@@ -26,4 +26,5 @@ public interface SymbolTable {
     int getStringCounter();
     void incrementCharCounter();
     int getCharCounter();
+    void generate();
 }

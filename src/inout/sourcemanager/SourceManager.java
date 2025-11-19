@@ -1,4 +1,4 @@
-package input.sourcemanager;
+package inout.sourcemanager;
 //Author: Juan Dingevan
 
 import java.io.FileNotFoundException;
@@ -19,5 +19,11 @@ public interface SourceManager {
 
     public static final char END_OF_FILE = (char) 26;
 
-    public static void generate(String s){}
+    void generate(String s);
+
+    void setOutputFilePath(String outputFilePath);
+
+    void createOutputFile() throws IOException;
+
+    String getOutputFilePath();
 }

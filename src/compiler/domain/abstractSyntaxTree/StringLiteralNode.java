@@ -6,7 +6,7 @@ import compiler.domain.Token;
 import compiler.domain.Type;
 import compiler.semanticAnalyzer.SymbolTable;
 import injector.Injector;
-import input.sourcemanager.SourceManager;
+import inout.sourcemanager.SourceManager;
 
 public class StringLiteralNode extends PrimaryNode {
     public final Literal stringLiteral;
@@ -35,10 +35,11 @@ public class StringLiteralNode extends PrimaryNode {
         SymbolTable symbolTable = Injector.getInjector().getSymbolTable();
         String stringName = "string" + symbolTable.getStringCounter();
         symbolTable.incrementStringCounter();
-        SourceManager.generate(".DATA");
-        SourceManager.generate(stringName + ": DW \"" + stringLiteral.getLiteralValue().lexeme() + "\", 0");
-        SourceManager.generate(".CODE");
-        SourceManager.generate("PUSH "+stringName);
+        SourceManager source = Injector.getInjector().getSource();
+        source.generate(".DATA");
+        source.generate(stringName + ": DW \"" + stringLiteral.getLiteralValue().lexeme() + "\", 0");
+        source.generate(".CODE");
+        source.generate("PUSH "+stringName);
     }
 
 }

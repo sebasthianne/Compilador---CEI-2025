@@ -3,7 +3,7 @@ package main.errorHandlers;
 import compiler.lexicalAnalyzer.lexicalExceptions.LexicalException;
 import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
 import compiler.syntacticAnalyzer.syntacticExceptions.SyntacticException;
-import input.sourcemanager.SourceManager;
+import inout.sourcemanager.SourceManager;
 
 public class ErrorHandlers {
     public static void handleLexicalException(LexicalException exception) {

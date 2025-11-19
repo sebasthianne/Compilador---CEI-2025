@@ -5,7 +5,8 @@ import compiler.domain.PrimitiveType;
 import compiler.domain.Token;
 import compiler.domain.Type;
 import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
-import input.sourcemanager.SourceManager;
+import injector.Injector;
+import inout.sourcemanager.SourceManager;
 
 public class IntLiteralNode extends PrimitiveLiteralNode {
     private final Literal intLiteral;
@@ -26,6 +27,6 @@ public class IntLiteralNode extends PrimitiveLiteralNode {
 
     @Override
     public void generate() {
-        SourceManager.generate("PUSH "+intLiteral.getLiteralValue().lexeme());
+        Injector.getInjector().getSource().generate("PUSH "+intLiteral.getLiteralValue().lexeme());
     }
 }

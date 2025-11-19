@@ -6,8 +6,8 @@ import compiler.semanticAnalyzer.SymbolTable;
 import compiler.semanticAnalyzer.SymbolTableImpl;
 import compiler.syntacticAnalyzer.SyntacticAnalyzer;
 import compiler.syntacticAnalyzer.SyntacticAnalyzerImpl;
-import input.sourcemanager.SourceManager;
-import input.sourcemanager.SourceManagerImpl;
+import inout.sourcemanager.SourceManager;
+import inout.sourcemanager.SourceManagerImpl;
 
 import java.io.IOException;
 
@@ -16,6 +16,8 @@ public class Injector {
     private static Injector injector;
 
     private SymbolTable symbolTable;
+
+    private SourceManager sourceManager;
 
     private Injector() {
     }
@@ -47,7 +49,8 @@ public class Injector {
     }
 
     public SourceManager getSource() {
-        return new SourceManagerImpl();
+        if(sourceManager==null) sourceManager = new SourceManagerImpl();
+        return sourceManager;
     }
 
 }
