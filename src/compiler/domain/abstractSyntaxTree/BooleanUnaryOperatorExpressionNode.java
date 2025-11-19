@@ -7,12 +7,9 @@ import compiler.semanticAnalyzer.semanticExceptions.NonBooleanExpressionWithBool
 import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
 
 public class BooleanUnaryOperatorExpressionNode extends UnaryOperatorExpressionNode {
-    private final Token operator;
-    private final BasicExpressionNode expression;
 
     public BooleanUnaryOperatorExpressionNode(Token operator, BasicExpressionNode expression) {
-        this.operator = operator;
-        this.expression = expression;
+        super(operator, expression);
     }
 
     @Override
@@ -22,8 +19,4 @@ public class BooleanUnaryOperatorExpressionNode extends UnaryOperatorExpressionN
         return typeToReturn;
     }
 
-    @Override
-    public boolean isCall() {
-        return false;
-    }
 }

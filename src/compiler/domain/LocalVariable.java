@@ -1,25 +1,10 @@
 package compiler.domain;
 
-import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
 
-public class LocalVariable {
-    private final Token name;
-    private final Type type;
+public class LocalVariable extends Variable {
 
     public LocalVariable(Token name, Type type) {
-        this.name = name;
-        this.type=type;
+        super(name, type);
     }
 
-    public Token getName() {
-        return name;
-    }
-
-    public Type getType(){
-        return type;
-    }
-
-    public void checkLocalVariable() throws SemanticException {
-        type.checkType();
-    }
 }

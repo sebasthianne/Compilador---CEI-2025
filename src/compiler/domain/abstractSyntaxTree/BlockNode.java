@@ -2,7 +2,7 @@ package compiler.domain.abstractSyntaxTree;
 
 import compiler.domain.LocalVariable;
 import compiler.domain.Token;
-import compiler.domain.Type;
+import compiler.domain.Variable;
 import compiler.semanticAnalyzer.semanticExceptions.NonValidStatementExpression;
 import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
 import compiler.semanticAnalyzer.semanticExceptions.VariableAlreadyDeclaredInBlockException;
@@ -36,10 +36,10 @@ public abstract class BlockNode extends StatementNode {
         Injector.getInjector().getSymbolTable().setCurrentBlock(this);
     }
 
-    public Type resolveName(Token name) throws SemanticException{
+    public Variable resolveName(Token name) throws SemanticException{
         LocalVariable localVariable = resolveNameLocal(name);
         if(localVariable==null) return resolveNameExternal(name);
-        else return localVariable.getType();
+        else return localVariable;
     }
 
     public void putLocalVariable(LocalVariable localVariable){
@@ -62,6 +62,6 @@ public abstract class BlockNode extends StatementNode {
         statementsTable.add(statement);
     }
 
-    protected abstract Type resolveNameExternal(Token name) throws SemanticException;
+    protected abstract Variable resolveNameExternal(Token name) throws SemanticException;
 
 }

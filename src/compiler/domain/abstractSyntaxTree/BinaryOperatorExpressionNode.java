@@ -1,6 +1,8 @@
 package compiler.domain.abstractSyntaxTree;
 
+import compiler.GenerationUtils;
 import compiler.domain.Token;
+import injector.Injector;
 
 public abstract class BinaryOperatorExpressionNode extends ComposedExpressionNode {
     private final Token operator;
@@ -30,4 +32,10 @@ public abstract class BinaryOperatorExpressionNode extends ComposedExpressionNod
         return rightExpression;
     }
 
+    @Override
+    public void generate() {
+        leftExpression.generate();
+        rightExpression.generate();
+        Injector.getInjector().getSource().generate(GenerationUtils.getBinaryOperation(operator));
+    }
 }

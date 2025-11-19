@@ -1,18 +1,17 @@
 package compiler.domain.abstractSyntaxTree;
 
+import compiler.GenerationUtils;
 import compiler.domain.PrimitiveType;
 import compiler.domain.Token;
 import compiler.domain.Type;
 import compiler.semanticAnalyzer.semanticExceptions.IntUnaryNotIntOperatorException;
 import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
+import injector.Injector;
 
-public class IntUnaryOperatorExpressionNode extends UnaryOperatorExpressionNode {
-    private final Token operator;
-    private final BasicExpressionNode expression;
+public class IntUnaryOperatorExpressionNode extends UnaryOperatorExpressionNode { ;
 
     public IntUnaryOperatorExpressionNode(Token operator, BasicExpressionNode expression) {
-        this.operator = operator;
-        this.expression = expression;
+        super(operator,expression);
     }
 
     @Override
@@ -26,8 +25,10 @@ public class IntUnaryOperatorExpressionNode extends UnaryOperatorExpressionNode 
     }
 
     @Override
-    public boolean isCall() {
-        return false;
+    public void generate() {
+        if(GenerationUtils.getUnaryOperation(operator).equals("ADD")||GenerationUtils.getUnaryOperation(operator).equals("SUB")){
+            Injector.getInjector().getSource().generate("PUSH 1");
+        }
+        super.generate();
     }
-
 }

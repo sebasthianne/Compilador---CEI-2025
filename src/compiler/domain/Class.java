@@ -249,10 +249,10 @@ public class Class{
         return method;
     }
 
-    public Type resolveAttribute(Token attributeName) throws SemanticException{
+    public Variable resolveAttribute(Token attributeName) throws SemanticException{
         Attribute attribute = getAttribute(attributeName);
         if(attribute == null) throw new AttributeCouldNotBeResolvedException(attributeName);
-        return attribute.getType();
+        return attribute;
     }
 
     public void statementChecks() throws SemanticException{

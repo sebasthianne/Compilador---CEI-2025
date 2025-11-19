@@ -79,7 +79,7 @@ public class SourceManagerImpl implements SourceManager {
 
     @Override
     public void generate(String s) {
-        generatedCodeLines.add(s);
+        if(!s.isEmpty())generatedCodeLines.add(s);
     }
 
     @Override

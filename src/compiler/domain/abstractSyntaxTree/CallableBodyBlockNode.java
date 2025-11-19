@@ -9,10 +9,10 @@ import injector.Injector;
 
 public class CallableBodyBlockNode extends BlockNode {
     @Override
-    public Type resolveNameExternal(Token name) throws SemanticException {
+    public Variable resolveNameExternal(Token name) throws SemanticException {
         Callable currentMethodOrConstructor = Injector.getInjector().getSymbolTable().getCurrentMethodOrConstructor();
         Parameter parameter = currentMethodOrConstructor.getParameter(name);
-        if(parameter != null) return parameter.getType();
+        if(parameter != null) return parameter;
         else {
             if(currentMethodOrConstructor instanceof Method method && method.isStatic()) throw new AttributeCouldNotBeResolvedException(name);
             Class currentClass = Injector.getInjector().getSymbolTable().getCurrentClass();

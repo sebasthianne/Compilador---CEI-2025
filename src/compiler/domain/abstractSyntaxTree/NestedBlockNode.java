@@ -2,7 +2,7 @@ package compiler.domain.abstractSyntaxTree;
 
 
 import compiler.domain.Token;
-import compiler.domain.Type;
+import compiler.domain.Variable;
 import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
 
 public class NestedBlockNode extends BlockNode {
@@ -15,7 +15,7 @@ public class NestedBlockNode extends BlockNode {
 
 
     @Override
-    public Type resolveNameExternal(Token name) throws SemanticException {
+    public Variable resolveNameExternal(Token name) throws SemanticException {
         return parentBlock.resolveName(name);
     }
 
