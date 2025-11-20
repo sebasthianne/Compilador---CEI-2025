@@ -18,15 +18,16 @@ public class SymbolTableImpl implements SymbolTable {
     private boolean currentCallableIsConstructor;
     private BlockNode currentBlock;
     private int stringCounter;
-    private int charCounter;
     private Method mainMethod;
+    private int ifStatementCounter;
+    private int whileStatementCounter;
 
     public SymbolTableImpl(){
         classTable= new HashMap<>(9973);
         addPredefinedClasses();
         stringCounter = 0;
-        charCounter = 0;
         mainMethod = null;
+        ifStatementCounter = 0;
     }
 
     private void addPredefinedClasses() {
@@ -228,15 +229,6 @@ public class SymbolTableImpl implements SymbolTable {
         return stringCounter;
     }
 
-    @Override
-    public void incrementCharCounter() {
-        charCounter++;
-    }
-
-    @Override
-    public int getCharCounter() {
-        return charCounter;
-    }
 
     @Override
     public void generate() {
@@ -245,7 +237,10 @@ public class SymbolTableImpl implements SymbolTable {
         generateSimpleMalloc();
 
         for(Class c : getTable()){
-            if(!c.isCodeGenerated()) c.generate();
+            if(!c.isCodeGenerated()) {
+                setCurrentClass(c);
+                c.generate();
+            }
         }
 
         generateObject();
@@ -402,5 +397,25 @@ public class SymbolTableImpl implements SymbolTable {
         source.generate("PRNLN");
         source.generate("STOREFP");
         source.generate("RET 1");
+    }
+
+    @Override
+    public int getIfStatementCounter() {
+        return ifStatementCounter;
+    }
+
+    @Override
+    public void incrementIfStatementCount(){
+        ifStatementCounter++;
+    }
+
+    @Override
+    public int getWhileStatementCounter() {
+        return whileStatementCounter;
+    }
+
+    @Override
+    public void incrementWhileStatementCounter() {
+        whileStatementCounter++;
     }
 }

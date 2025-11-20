@@ -24,7 +24,11 @@ public interface SymbolTable {
     void statementChecks() throws SemanticException;
     void incrementStringCounter();
     int getStringCounter();
-    void incrementCharCounter();
-    int getCharCounter();
     void generate();
+    int getIfStatementCounter();
+    void incrementIfStatementCount();
+
+    int getWhileStatementCounter();
+
+    void incrementWhileStatementCounter();
 }

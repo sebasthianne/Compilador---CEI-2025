@@ -4,6 +4,7 @@ import compiler.domain.NullType;
 import compiler.domain.Token;
 import compiler.domain.Type;
 import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
+import injector.Injector;
 
 public class NullLiteralNode extends PrimitiveLiteralNode {
     private final Token nullToken;
@@ -21,5 +22,10 @@ public class NullLiteralNode extends PrimitiveLiteralNode {
     @Override
     public boolean isCall() {
         return false;
+    }
+
+    @Override
+    public void generate() {
+        Injector.getInjector().getSource().generate("PUSH 0");
     }
 }

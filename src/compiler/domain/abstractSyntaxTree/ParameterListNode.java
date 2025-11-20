@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class ParameterListNode extends ASTNode {
+public class ParameterListNode {
     private final List<ExpressionNode> parameterList;
     private final Token callableName;
     private List<Type> parameterTypeList;
@@ -32,7 +32,6 @@ public class ParameterListNode extends ASTNode {
         return parameterList.size();
     }
 
-    @Override
     public void checkNode() throws SemanticException {
         parameterTypeList= new ArrayList<>();
         for(ExpressionNode expressionNode : parameterList){

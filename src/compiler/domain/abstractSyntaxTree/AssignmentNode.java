@@ -22,6 +22,7 @@ public class AssignmentNode extends ExpressionNode {
     public Type checkExpression() throws SemanticException {
         if(!variableAssignedTo.isAssignable()) throw new AssigningToNonAssignableException(assignmentToken);
         Type assignedToType = variableAssignedTo.checkExpression();
+        variableAssignedTo.setLeftSideOfAssignment();
         Type assignedType = assignedExpression.checkExpression();
         if(!assignedType.conformsTo(assignedToType)) {
             throw new AssignedTypeDoesNotConformException(assignmentToken, Injector.getInjector().getSymbolTable().getCurrentClass().getName(), Injector.getInjector().getSymbolTable().getCurrentMethodOrConstructor().getName(),assignedToType.getTypeName(),assignedType.getTypeName());
@@ -34,4 +35,9 @@ public class AssignmentNode extends ExpressionNode {
         return false;
     }
 
+    @Override
+    public void generate() {
+        assignedExpression.generate();
+        variableAssignedTo.generate();
+    }
 }

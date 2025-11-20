@@ -6,6 +6,7 @@ import compiler.domain.Type;
 import compiler.domain.Variable;
 import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
 import injector.Injector;
+import inout.sourcemanager.SourceManager;
 
 public class ChainedVariableNode extends ChainedReferenceNode {
     private final Token variableName;
@@ -36,7 +37,14 @@ public class ChainedVariableNode extends ChainedReferenceNode {
         return false;
     }
 
-    public boolean isNameResolved(){
-        return variable!=null;
+
+    @Override
+    public void generateWithoutReference() {
+        SourceManager source = Injector.getInjector().getSource();
+        if(!isLeftSideOfAssignment) source.generate("LOADREF "+variable.getOffset());
+        else {
+            source.generate("SWAP");
+            source.generate("STOREREF "+variable.getOffset());
+        }
     }
 }

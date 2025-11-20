@@ -1,8 +1,10 @@
 package compiler.domain;
 
+import compiler.GenerationUtils;
 import compiler.semanticAnalyzer.semanticExceptions.AbstractClassHasConstructorException;
 import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
 import injector.Injector;
+
 
 public class Constructor extends Callable{
 
@@ -16,5 +18,15 @@ public class Constructor extends Callable{
         for(Parameter p:getParameterList()){
             p.checkParameter();
         }
+    }
+
+    @Override
+    public int getCurrentParameterOffset() {
+        return currentParameterOffset+4;
+    }
+
+    @Override
+    protected String label() {
+        return GenerationUtils.getConstructorLabel(this);
     }
 }

@@ -20,6 +20,22 @@ public abstract class ReferenceNode extends BasicExpressionNode {
         else return isAssignableWithoutReference();
     }
 
+    @Override
+    public void setLeftSideOfAssignment() {
+        if(chainedReference!=null) chainedReference.setLeftSideOfAssignment();
+        else isLeftSideOfAssignment = true;
+    }
+
+    @Override
+    public final void generate() {
+        generateWithoutReference();
+        if(chainedReference!=null) chainedReference.generate();
+    }
+
+    public void generateWithoutReference(){
+
+    }
+
     public abstract boolean isAssignableWithoutReference();
 
     public abstract boolean isCallWithoutReference();

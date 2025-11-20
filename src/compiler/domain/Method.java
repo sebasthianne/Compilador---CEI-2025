@@ -1,5 +1,6 @@
 package compiler.domain;
 
+import compiler.GenerationUtils;
 import compiler.semanticAnalyzer.semanticExceptions.AbstractMethodInConcreteClassException;
 import compiler.semanticAnalyzer.semanticExceptions.AbstractMethodWithoutEmptyBodyException;
 import compiler.semanticAnalyzer.semanticExceptions.ConcreteMethodWithNoBodyException;
@@ -67,5 +68,23 @@ public class Method extends Callable{
 
     public Class getClassDeclaredIn() {
         return classDeclaredIn;
+    }
+
+    @Override
+    public int getCurrentParameterOffset() {
+        int baseParameterOffset = currentParameterOffset;
+        if(isStatic()) return baseParameterOffset+3;
+        else return baseParameterOffset+4;
+    }
+
+    @Override
+    public void generate() {
+        if(isAbstract()) Injector.getInjector().getSource().generate("NOP");
+        else super.generate();
+    }
+
+    @Override
+    protected String label() {
+        return GenerationUtils.getMethodLabel(this);
     }
 }

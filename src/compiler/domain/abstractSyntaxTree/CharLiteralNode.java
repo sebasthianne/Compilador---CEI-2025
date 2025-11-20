@@ -4,7 +4,6 @@ import compiler.domain.Literal;
 import compiler.domain.PrimitiveType;
 import compiler.domain.Token;
 import compiler.domain.Type;
-import compiler.semanticAnalyzer.SymbolTable;
 import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
 import injector.Injector;
 import inout.sourcemanager.SourceManager;
@@ -28,8 +27,6 @@ public class CharLiteralNode extends PrimitiveLiteralNode {
 
     @Override
     public void generate() {
-        SymbolTable symbolTable = Injector.getInjector().getSymbolTable();
-        symbolTable.incrementCharCounter();
         SourceManager source = Injector.getInjector().getSource();
         source.generate("PUSH '"+charLiteral.getLiteralValue().lexeme()+"'");
     }

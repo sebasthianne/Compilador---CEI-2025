@@ -1,8 +1,10 @@
 package compiler.domain.abstractSyntaxTree;
 
+import compiler.GenerationUtils;
 import compiler.domain.*;
 import compiler.semanticAnalyzer.semanticExceptions.*;
 import injector.Injector;
+import inout.sourcemanager.SourceManager;
 
 
 public class ReturnStatementNode extends StatementNode {
@@ -37,4 +39,16 @@ public class ReturnStatementNode extends StatementNode {
         this.expressionToReturn = expressionToReturn;
     }
 
+    @Override
+    public void generate() {
+        SourceManager source = Injector.getInjector().getSource();
+        if(expressionToReturn!=null){
+            expressionToReturn.generate();
+            Callable currentMethodOrConstructor = Injector.getInjector().getSymbolTable().getCurrentMethodOrConstructor();
+            source.generate("STORE "+ currentMethodOrConstructor.getCurrentParameterOffset());
+            source.generate("STOREFP");
+            source.generate(GenerationUtils.getReturnInstruction(currentMethodOrConstructor));
+        }
+
+    }
 }

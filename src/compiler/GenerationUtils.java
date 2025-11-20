@@ -1,7 +1,6 @@
 package compiler;
 
 import compiler.domain.Callable;
-import compiler.domain.Class;
 import compiler.domain.Constructor;
 import compiler.domain.Method;
 import compiler.domain.Token;
@@ -45,5 +44,13 @@ public class GenerationUtils {
     public static String getConstructorLabel(Constructor constructor){
         return "lblConstructor$"+constructor.getArity()+"@"+constructor.getName().lexeme();
     }
+
+    public static String getReturnInstruction(Callable methodOrConstructor){
+        int returnValue = methodOrConstructor.getArity();
+        if(methodOrConstructor instanceof Constructor || (methodOrConstructor instanceof Method method && !method.isStatic()))
+            returnValue++;
+        return "RET "+returnValue;
+    }
+
 
 }

@@ -64,4 +64,10 @@ public abstract class BlockNode extends StatementNode {
 
     protected abstract Variable resolveNameExternal(Token name) throws SemanticException;
 
+    @Override
+    public void generate() {
+        for(StatementNode s:statementsTable){
+            s.generate();
+        }
+    }
 }

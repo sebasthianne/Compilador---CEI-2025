@@ -1,20 +1,23 @@
 package compiler.domain;
 
+import compiler.GenerationUtils;
 import compiler.domain.abstractSyntaxTree.CallableBodyBlockNode;
 import compiler.semanticAnalyzer.semanticExceptions.ReusedParameterException;
 import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
 import injector.Injector;
+import inout.sourcemanager.SourceManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Callable {
+public abstract class Callable {
     private final Token name;
     private final List<Parameter> parameterList;
     private int arity;
     private CallableBodyBlockNode body;
-    private int parameterVariableCount;
+    private int variableCount;
     private int currentVariableOffset;
+    protected int currentParameterOffset;
     protected Integer offset;
 
 
@@ -22,8 +25,8 @@ public class Callable {
         this.name = name;
         parameterList= new ArrayList<>(50);
         arity=0;
-        parameterVariableCount=0;
-        currentVariableOffset=4;
+        variableCount =0;
+        currentVariableOffset=0;
         offset = null;
     }
 
@@ -45,9 +48,8 @@ public class Callable {
     public void addParameter(Parameter parameter) throws SemanticException {
         for(Parameter p : parameterList){
             if(p.getName().lexeme().equals(parameter.getName().lexeme())) throw new ReusedParameterException(parameter.getName(), Injector.getInjector().getSymbolTable().getCurrentClass().getName(),name);
-            p.setOffset(currentVariableOffset);
-            currentVariableOffset++;
-            parameterVariableCount++;
+            p.setOffset(getCurrentParameterOffset());
+            currentParameterOffset++;
         }
         parameterList.add(parameter);
         arity++;
@@ -71,11 +73,11 @@ public class Callable {
     }
 
     public void incrementVariableCount(){
-        parameterVariableCount++;
+        variableCount++;
     }
 
-    public void incrementCurrentVariableOffset(){
-        currentVariableOffset++;
+    public void decrementCurrentVariableOffset(){
+        currentVariableOffset--;
     }
 
     public boolean isOffsetCalculated(){
@@ -89,5 +91,36 @@ public class Callable {
     public void setOffset(int offset) {
         this.offset = offset;
     }
+
+    public abstract int getCurrentParameterOffset();
+
+    public void generate(){
+        generateReturnAndLink();
+        SourceManager source = Injector.getInjector().getSource();
+        if(variableCount>0) source.generate("RMEM "+variableCount);
+        body.generate();
+        source.generate("FMEM "+variableCount);
+        generateDefaultReturn();
+    }
+
+    private void generateDefaultReturn() {
+        SourceManager source = Injector.getInjector().getSource();
+        source.generate("STOREFP");
+        source.generate(GenerationUtils.getReturnInstruction(this));
+    }
+
+    private void generateReturnAndLink() {
+        SourceManager source = Injector.getInjector().getSource();
+        source.generate(label()+": LOADFP");
+        source.generate("LOADSP");
+        source.generate("STOREFP");
+    }
+
+    protected abstract String label();
+
+    public int getCurrentVariableOffset() {
+        return currentVariableOffset;
+    }
+
 
 }

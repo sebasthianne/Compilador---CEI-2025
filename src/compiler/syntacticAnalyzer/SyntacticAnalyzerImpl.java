@@ -318,7 +318,6 @@ public class SyntacticAnalyzerImpl implements SyntacticAnalyzer {
         Token assignmentToken = currentToken;
         match("asignación");
         ExpressionNode assignedExpression= composedExpressionNonTerminal();
-        symbolTable.getCurrentMethodOrConstructor().incrementVariableCount();
         return new LocalVariableDeclarationNode(variableName,assignedExpression,assignmentToken);
     }
 

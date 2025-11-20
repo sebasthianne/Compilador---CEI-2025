@@ -1,8 +1,7 @@
 package compiler.domain.abstractSyntaxTree;
 
-import compiler.domain.LocalVariable;
-import compiler.domain.Token;
-import compiler.domain.Type;
+import compiler.domain.*;
+import compiler.semanticAnalyzer.SymbolTable;
 import compiler.semanticAnalyzer.semanticExceptions.DeclaredVariableIsNullTypeException;
 import compiler.semanticAnalyzer.semanticExceptions.SemanticException;
 import injector.Injector;
@@ -13,6 +12,7 @@ public class LocalVariableDeclarationNode extends StatementNode {
     private final Token declaredVariableName;
     private final ExpressionNode assignedExpression;
     private final Token assignmentToken;
+    private LocalVariable localVariable;
 
     public LocalVariableDeclarationNode(Token declaredVariableName, ExpressionNode assignedExpression, Token assignmentToken) {
         this.declaredVariableName = declaredVariableName;
@@ -22,11 +22,22 @@ public class LocalVariableDeclarationNode extends StatementNode {
 
     @Override
     public void checkNode() throws SemanticException {
-        BlockNode currentBlock = Injector.getInjector().getSymbolTable().getCurrentBlock();
+        SymbolTable symbolTable = Injector.getInjector().getSymbolTable();
+        BlockNode currentBlock = symbolTable.getCurrentBlock();
         Type expressionType = assignedExpression.checkExpression();
         if(expressionType instanceof NullType) throw new DeclaredVariableIsNullTypeException(assignmentToken);
         currentBlock.declarationChecks(declaredVariableName);
-        currentBlock.putLocalVariable(new LocalVariable(declaredVariableName,expressionType));
+        localVariable = new LocalVariable(declaredVariableName, expressionType);
+        Callable currentMethodOrConstructor = symbolTable.getCurrentMethodOrConstructor();
+        localVariable.setOffset(currentMethodOrConstructor.getCurrentVariableOffset());
+        currentMethodOrConstructor.decrementCurrentVariableOffset();
+        currentBlock.putLocalVariable(localVariable);
+        currentMethodOrConstructor.incrementVariableCount();
     }
 
+    @Override
+    public void generate() {
+        assignedExpression.generate();
+        Injector.getInjector().getSource().generate("STORE "+localVariable.getOffset());
+    }
 }

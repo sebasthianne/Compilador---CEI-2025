@@ -237,11 +237,19 @@ public class Class{
     }
 
     private void consolidateAttributes(Class inheritsFrom) throws SemanticException{
+        int alreadyUsedOffsets=1;
         for(Attribute a : inheritsFrom.getAttributeTable()){
             Attribute attribute=getAttribute(a.getName());
             if(attribute!=null) throw new RedefinedAttributeException(attribute.getName(),name);
             else{
                 addAttribute(a);
+                alreadyUsedOffsets++;
+            }
+        }
+        for(Attribute a : getAttributeTable()){
+            if(!a.isOffsetCalculated()){
+                a.setOffset(alreadyUsedOffsets);
+                alreadyUsedOffsets++;
             }
         }
     }
@@ -279,10 +287,17 @@ public class Class{
 
     public void generate(){
         SourceManager source = Injector.getInjector().getSource();
+        SymbolTable symbolTable = Injector.getInjector().getSymbolTable();
         source.generate(".DATA");
         generateVirtualTable();
-
-
+        for(Constructor c : getConstructorTable()){
+            symbolTable.setCurrentMethodOrConstructor(c);
+            c.generate();
+        }
+        for (Method m : getMethodTable()){
+            symbolTable.setCurrentMethodOrConstructor(m);
+            m.generate();
+        }
         setCodeGenerated(true);
     }
 
@@ -319,4 +334,6 @@ public class Class{
         }
         return true;
     }
+
+
 }
