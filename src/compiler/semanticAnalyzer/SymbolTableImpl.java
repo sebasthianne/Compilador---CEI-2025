@@ -5,6 +5,8 @@ import compiler.domain.Class;
 import compiler.domain.abstractSyntaxTree.BlockNode;
 import compiler.domain.abstractSyntaxTree.CallableBodyBlockNode;
 import compiler.semanticAnalyzer.semanticExceptions.*;
+import injector.Injector;
+import inout.sourcemanager.SourceManager;
 
 import java.util.HashMap;
 
@@ -16,12 +18,14 @@ public class SymbolTableImpl implements SymbolTable {
     private BlockNode currentBlock;
     private int stringCounter;
     private int charCounter;
+    private Method mainMethod;
 
     public SymbolTableImpl(){
         classTable= new HashMap<>(9973);
         addPredefinedClasses();
         stringCounter = 0;
         charCounter = 0;
+        mainMethod = null;
     }
 
     private void addPredefinedClasses() {
@@ -34,6 +38,7 @@ public class SymbolTableImpl implements SymbolTable {
         try {
             addClass(new Class(new Token("idClase","System",-1),null));
             getCurrentClass().setInheritsFrom(new Token("idClase","Object",-1));
+            getCurrentClass().setCodeGenerated(true);
             addMethod(new Method(new Token("idMetVar","read",-1),new Token("palabraReservadastatic","static",-1),new PrimitiveType(new Token("palabraReservadaint","int",-1))));
             getCurrentMethodOrConstructor().setBody(new CallableBodyBlockNode());
             insertCurrentMethodOrConstructorInTable();
@@ -81,6 +86,7 @@ public class SymbolTableImpl implements SymbolTable {
         try {
             addClass(new Class(new Token("idClase","String",-1),null));
             getCurrentClass().setInheritsFrom(new Token("idClase","Object",-1));
+            getCurrentClass().setCodeGenerated(true);
         } catch (SemanticException e) {
             System.out.println("Está excepción nunca debería ocurrir acá");
         }
@@ -89,6 +95,7 @@ public class SymbolTableImpl implements SymbolTable {
     private void createObject() {
         try {
             addClass(new Class(new Token("idClase","Object",-1),null));
+            getCurrentClass().setCodeGenerated(true);
             addMethod(new Method(new Token("idMetVar","debugPrint",-1),new Token("palabraReservadastatic","static",-1),null));
             getCurrentMethodOrConstructor().addParameter(new Parameter(new Token("idMetVar","i",-1),new PrimitiveType(new Token("palabraReservadaint","int",-1))));
             getCurrentMethodOrConstructor().setBody(new CallableBodyBlockNode());
@@ -150,6 +157,9 @@ public class SymbolTableImpl implements SymbolTable {
             Method currentMethod = (Method) currentMethodOrConstructor;
             if(currentClass.containsMethod(currentMethod)){
                 throw new ReusedMethodInClassException(currentMethodOrConstructor.getName(),currentClass.getName(), currentMethodOrConstructor.getArity());
+            }
+            if(mainMethod==null&&currentMethod.isStatic()&&currentMethod.getReturnType()==null&&currentMethod.getArity()==0&&currentMethod.getName().lexeme().equals("main")){
+                mainMethod = currentMethod;
             }
             currentMethod.setClassDeclaredIn(currentClass);
             currentClass.addMethod(currentMethod);
@@ -230,6 +240,156 @@ public class SymbolTableImpl implements SymbolTable {
     @Override
     public void generate() {
 
+        generateSimpleHeapInit();
+        generateSimpleMalloc();
+
+        for(Class c : getTable()){
+            if(!c.isCodeGenerated()) c.generate();
+        }
+
+        generateObject();
+        generateString();
+        generateSystem();
     }
 
+    private void generateSimpleMalloc() {
+        SourceManager source = Injector.getInjector().getSource();
+        source.generate("simple_malloc: LOADFP");
+        source.generate("LOADSP");
+        source.generate("STOREFP");
+        source.generate("LOADHL");
+        source.generate("DUP");
+        source.generate("PUSH 1");
+        source.generate("ADD");
+        source.generate("STORE 4");
+        source.generate("LOAD 3");
+        source.generate("STOREHL");
+        source.generate("STOREFP");
+        source.generate("RET 1");
+    }
+
+    private void generateSimpleHeapInit() {
+        Injector.getInjector().getSource().generate("simple_heap_init: RET 0");
+    }
+
+    private void generateObject() {
+        SourceManager source = Injector.getInjector().getSource();
+        source.generate(".DATA");
+        source.generate("lblVTObject: NOP");
+        source.generate(".CODE");
+        source.generate("lblConstructor@Object: LOADFP");
+        source.generate("LOADSP");
+        source.generate("STOREFP");
+        source.generate("FMEM 0");
+        source.generate("STOREFP");
+        source.generate("RET 1");
+        source.generate("lblMetdebugPrint@Object: LOADFP");
+        source.generate("LOADSP");
+        source.generate("STOREFP");
+        source.generate("LOAD 3");
+        source.generate("IPRINT");
+        source.generate("STOREFP");
+        source.generate("RET 1");
+    }
+
+    private void generateString() {
+        SourceManager source = Injector.getInjector().getSource();
+        source.generate(".DATA");
+        source.generate("lblVTString: NOP");
+        source.generate(".CODE");
+        source.generate("lblConstructor@String: LOADFP");
+        source.generate("LOADSP");
+        source.generate("STOREFP");
+        source.generate("FMEM 0");
+        source.generate("STOREFP");
+        source.generate("RET 1");
+    }
+
+    private void generateSystem() {
+        SourceManager source = Injector.getInjector().getSource();
+        source.generate(".DATA");
+        source.generate("lblVTSystem: NOP");
+        source.generate(".CODE");
+        source.generate("lblConstructor@System: LOADFP");
+        source.generate( "LOADSP");
+        source.generate("STOREFP");
+        source.generate("FMEM 0");
+        source.generate("STOREFP");
+        source.generate("RET 1");
+        source.generate("lblMetprintC@System: LOADFP");
+        source.generate("LOADSP");
+        source.generate("STOREFP");
+        source.generate("LOAD 3");
+        source.generate("CPRINT");
+        source.generate("STOREFP");
+        source.generate("RET 1");
+        source.generate("lblMetprintS@System: LOADFP");
+        source.generate("LOADSP");
+        source.generate("STOREFP");
+        source.generate("LOAD 3");
+        source.generate("SPRINT");
+        source.generate("STOREFP");
+        source.generate("RET 1");
+        source.generate("lblMetprintln@System: LOADFP");
+        source.generate("LOADSP");
+        source.generate("STOREFP");
+        source.generate("PRNLN");
+        source.generate("STOREFP");
+        source.generate("RET 0");
+        source.generate("lblMetprintCln@System: LOADFP");
+        source.generate("LOADSP");
+        source.generate("STOREFP");
+        source.generate("LOAD 3");
+        source.generate("CPRINT");
+        source.generate("PRNLN");
+        source.generate("STOREFP");
+        source.generate("RET 1");
+        source.generate("lblMetprintSln@System: LOADFP");
+        source.generate("LOADSP");
+        source.generate("STOREFP");
+        source.generate("LOAD 3");
+        source.generate("SPRINT");
+        source.generate("PRNLN");
+        source.generate("STOREFP");
+        source.generate("RET 1");
+        source.generate("lblMetread@System: LOADFP");
+        source.generate("LOADSP");
+        source.generate("STOREFP");
+        source.generate("READ");
+        source.generate("PUSH 48");
+        source.generate("SUB");
+        source.generate("STORE 3");
+        source.generate("STOREFP");
+        source.generate("RET 0");
+        source.generate("lblMetprintB@System: LOADFP");
+        source.generate("LOADSP");
+        source.generate("STOREFP");
+        source.generate("LOAD 3");
+        source.generate("BPRINT");
+        source.generate("STOREFP");
+        source.generate("RET 1");
+        source.generate("lblMetprintIln@System: LOADFP");
+        source.generate("LOADSP");
+        source.generate("STOREFP");
+        source.generate("LOAD 3");
+        source.generate("IPRINT");
+        source.generate("PRNLN");
+        source.generate("STOREFP");
+        source.generate("RET 1");
+        source.generate("lblMetprintI@System: LOADFP");
+        source.generate("LOADSP");
+        source.generate("STOREFP");
+        source.generate("LOAD 3");
+        source.generate("IPRINT");
+        source.generate("STOREFP");
+        source.generate("RET 1");
+        source.generate("lblMetprintBln@System: LOADFP");
+        source.generate("LOADSP");
+        source.generate("STOREFP");
+        source.generate("LOAD 3");
+        source.generate("BPRINT");
+        source.generate("PRNLN");
+        source.generate("STOREFP");
+        source.generate("RET 1");
+    }
 }

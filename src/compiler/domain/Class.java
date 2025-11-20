@@ -16,6 +16,7 @@ public class Class{
     private final HashMap<String,Method> methodTable;
     private final HashMap<String, Attribute> attributeTable;
     private boolean isConsolidated;
+    private boolean codeGenerated;
 
     public Class(Token name, Token modifier) {
         this.name = name;
@@ -25,6 +26,7 @@ public class Class{
         methodTable= new HashMap<>(997);
         attributeTable = new HashMap<>(997);
         isConsolidated= false;
+        codeGenerated = false;
     }
 
     public Token getName() {
@@ -264,4 +266,16 @@ public class Class{
         }
     }
 
+    public void generate(){
+
+        setCodeGenerated(true);
+    }
+
+    public boolean isCodeGenerated() {
+        return codeGenerated;
+    }
+
+    public void setCodeGenerated(boolean codeGenerated) {
+        this.codeGenerated = codeGenerated;
+    }
 }
