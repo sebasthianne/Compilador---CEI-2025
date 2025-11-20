@@ -1,5 +1,6 @@
 package compiler.semanticAnalyzer;
 
+import compiler.GenerationUtils;
 import compiler.domain.*;
 import compiler.domain.Class;
 import compiler.domain.abstractSyntaxTree.BlockNode;
@@ -239,7 +240,7 @@ public class SymbolTableImpl implements SymbolTable {
 
     @Override
     public void generate() {
-
+        generateProgramStart();
         generateSimpleHeapInit();
         generateSimpleMalloc();
 
@@ -250,6 +251,16 @@ public class SymbolTableImpl implements SymbolTable {
         generateObject();
         generateString();
         generateSystem();
+    }
+
+    private void generateProgramStart() {
+        SourceManager source = Injector.getInjector().getSource();
+        source.generate(".CODE");
+        source.generate("PUSH simple_heap_init");
+        source.generate("CALL");
+        source.generate("PUSH "+ GenerationUtils.getMethodLabel(mainMethod));
+        source.generate("CALL");
+        source.generate("HALT");
     }
 
     private void generateSimpleMalloc() {

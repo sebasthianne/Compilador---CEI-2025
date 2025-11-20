@@ -1,6 +1,11 @@
 package compiler;
 
+import compiler.domain.Callable;
+import compiler.domain.Class;
+import compiler.domain.Constructor;
+import compiler.domain.Method;
 import compiler.domain.Token;
+
 
 public class GenerationUtils {
 
@@ -32,4 +37,13 @@ public class GenerationUtils {
             default -> "";
         };
     }
+
+    public static String getMethodLabel(Method method){
+        return "lblMet"+method.getName().lexeme()+"$"+method.getArity()+"@"+method.getClassDeclaredIn().getName().lexeme();
+    }
+
+    public static String getConstructorLabel(Constructor constructor){
+        return "lblConstructor$"+constructor.getArity()+"@"+constructor.getName().lexeme();
+    }
+
 }

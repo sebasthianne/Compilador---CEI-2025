@@ -1,6 +1,5 @@
 package compiler.domain;
 
-import compiler.semanticAnalyzer.SymbolTable;
 import compiler.semanticAnalyzer.semanticExceptions.AbstractMethodInConcreteClassException;
 import compiler.semanticAnalyzer.semanticExceptions.AbstractMethodWithoutEmptyBodyException;
 import compiler.semanticAnalyzer.semanticExceptions.ConcreteMethodWithNoBodyException;
@@ -64,5 +63,9 @@ public class Method extends Callable{
 
     public boolean isStatementChecked() {
         return isStatementChecked;
+    }
+
+    public Class getClassDeclaredIn() {
+        return classDeclaredIn;
     }
 }

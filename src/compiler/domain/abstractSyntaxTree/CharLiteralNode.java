@@ -29,12 +29,8 @@ public class CharLiteralNode extends PrimitiveLiteralNode {
     @Override
     public void generate() {
         SymbolTable symbolTable = Injector.getInjector().getSymbolTable();
-        String charName = "char" + symbolTable.getCharCounter();
         symbolTable.incrementCharCounter();
         SourceManager source = Injector.getInjector().getSource();
-        source.generate(".DATA");
-        source.generate(charName + ": DW '" + charLiteral.getLiteralValue().lexeme() + "'");
-        source.generate(".CODE");
-        source.generate("PUSH "+charName);
+        source.generate("PUSH '"+charLiteral.getLiteralValue().lexeme()+"'");
     }
 }

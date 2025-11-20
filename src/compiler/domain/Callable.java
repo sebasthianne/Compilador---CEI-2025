@@ -15,6 +15,7 @@ public class Callable {
     private CallableBodyBlockNode body;
     private int parameterVariableCount;
     private int currentVariableOffset;
+    protected Integer offset;
 
 
     public Callable(Token name) {
@@ -22,7 +23,8 @@ public class Callable {
         parameterList= new ArrayList<>(50);
         arity=0;
         parameterVariableCount=0;
-        currentVariableOffset=0;
+        currentVariableOffset=4;
+        offset = null;
     }
 
     public Token getName() {
@@ -43,7 +45,7 @@ public class Callable {
     public void addParameter(Parameter parameter) throws SemanticException {
         for(Parameter p : parameterList){
             if(p.getName().lexeme().equals(parameter.getName().lexeme())) throw new ReusedParameterException(parameter.getName(), Injector.getInjector().getSymbolTable().getCurrentClass().getName(),name);
-            p.setOffset(currentVariableOffset+3);
+            p.setOffset(currentVariableOffset);
             currentVariableOffset++;
             parameterVariableCount++;
         }
@@ -74,6 +76,18 @@ public class Callable {
 
     public void incrementCurrentVariableOffset(){
         currentVariableOffset++;
+    }
+
+    public boolean isOffsetCalculated(){
+        return offset!=null;
+    }
+
+    public int getOffset() {
+        return offset;
+    }
+
+    public void setOffset(int offset) {
+        this.offset = offset;
     }
 
 }
