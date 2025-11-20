@@ -5,6 +5,7 @@ import compiler.domain.abstractSyntaxTree.CallableBodyBlockNode;
 import compiler.semanticAnalyzer.SymbolTable;
 import compiler.semanticAnalyzer.semanticExceptions.*;
 import injector.Injector;
+import inout.sourcemanager.SourceManager;
 
 import java.util.*;
 
@@ -187,24 +188,23 @@ public class Class{
     }
 
     private void consolidateMethods(Class inheritsFrom) throws SemanticException{
-        Set<Integer> alreadyUsedOffsets = new HashSet<>();
+        int currentOffset = 0;
         for(Method m : inheritsFrom.getMethodTable()){
             if(containsMethod(m)) {
+                int originalMethodOffset = m.getOffset();
                 Method method=getMethod(m.getName().lexeme(),m.getArity());
                 redefinitionChecks(m, method);
-                int originalMethodOffset = m.getOffset();
                 method.setOffset(originalMethodOffset);
-                alreadyUsedOffsets.add(originalMethodOffset);
             } else{
                 if(m.isAbstract()&&!isAbstract()) throw new AbstractMethodNotRedefinedException(name,m.getName());
                 addMethod(m);
             }
+            if(!m.isStatic()) currentOffset++;
         }
-        int i=0;
         for(Method m : getMethodTable()){
             if(!m.isOffsetCalculated()&&!m.isStatic()) {
-                if (!alreadyUsedOffsets.contains(i)) m.setOffset(i);
-                i++;
+                m.setOffset(currentOffset);
+                currentOffset++;
             }
         }
     }
@@ -278,22 +278,29 @@ public class Class{
     }
 
     public void generate(){
+        SourceManager source = Injector.getInjector().getSource();
+        source.generate(".DATA");
         generateVirtualTable();
+
 
         setCodeGenerated(true);
     }
 
     private void generateVirtualTable() {
-        StringBuilder generatedCode = new StringBuilder("lblVT" + name.lexeme() + ": DW ");
-        List<Method> methodsToAdd = new ArrayList<>();
-        for(Method m : getMethodTable()){
-            if(!m.isStatic()) methodsToAdd.add(m);
-        }
-        methodsToAdd.sort(Comparator.comparingInt(Method::getOffset));
-        Iterator<Method> it = methodsToAdd.iterator();
-        while (it.hasNext()){
-            generatedCode.append(GenerationUtils.getMethodLabel(it.next()));
-            if(it.hasNext()) generatedCode.append(",");
+        StringBuilder generatedCode = new StringBuilder("lblVT" + name.lexeme() + ": ");
+        if(allMethodsAreStatic()) generatedCode.append("NOP");
+        else {
+            generatedCode.append("DW ");
+            List<Method> methodsToAdd = new ArrayList<>();
+            for (Method m : getMethodTable()) {
+                if (!m.isStatic()) methodsToAdd.add(m);
+            }
+            methodsToAdd.sort(Comparator.comparingInt(Method::getOffset));
+            Iterator<Method> it = methodsToAdd.iterator();
+            while (it.hasNext()) {
+                generatedCode.append(GenerationUtils.getMethodLabel(it.next()));
+                if (it.hasNext()) generatedCode.append(",");
+            }
         }
         Injector.getInjector().getSource().generate(generatedCode.toString());
     }
@@ -304,5 +311,12 @@ public class Class{
 
     public void setCodeGenerated(boolean codeGenerated) {
         this.codeGenerated = codeGenerated;
+    }
+
+    public boolean allMethodsAreStatic(){
+        for (Method m : getMethodTable()){
+            if(!m.isStatic()) return false;
+        }
+        return true;
     }
 }
