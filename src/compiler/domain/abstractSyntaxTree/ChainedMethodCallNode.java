@@ -47,9 +47,13 @@ public class ChainedMethodCallNode extends ChainedReferenceNode {
 
     @Override
     public void generateWithoutReference() {
+        SourceManager source = Injector.getInjector().getSource();
+        if(method.getReturnType()!=null){
+            source.generate("RMEM 1");
+            source.generate("SWAP");
+        }
         parameterList.setInConstructorOrDynamicMethod(true);
         parameterList.generate();
-        SourceManager source = Injector.getInjector().getSource();
         source.generate("DUP");
         source.generate("LOADREF 0");
         source.generate("LOADREF "+method.getOffset());

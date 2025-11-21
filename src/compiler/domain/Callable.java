@@ -48,9 +48,9 @@ public abstract class Callable {
     public void addParameter(Parameter parameter) throws SemanticException {
         for(Parameter p : parameterList){
             if(p.getName().lexeme().equals(parameter.getName().lexeme())) throw new ReusedParameterException(parameter.getName(), Injector.getInjector().getSymbolTable().getCurrentClass().getName(),name);
-            p.setOffset(getCurrentParameterOffset());
-            currentParameterOffset++;
         }
+        parameter.setOffset(getCurrentParameterOffset());
+        currentParameterOffset++;
         parameterList.add(parameter);
         arity++;
     }

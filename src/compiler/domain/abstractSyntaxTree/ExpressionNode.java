@@ -14,7 +14,4 @@ public abstract class ExpressionNode extends StatementNode{
 
     public abstract boolean isCall();
 
-    public boolean isVoidMethodCall(){
-        return false;
-    }
 }

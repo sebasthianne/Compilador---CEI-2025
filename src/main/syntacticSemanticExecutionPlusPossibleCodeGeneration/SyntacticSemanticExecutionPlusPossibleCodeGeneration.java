@@ -15,7 +15,6 @@ import static main.errorHandlers.ErrorHandlers.*;
 public class SyntacticSemanticExecutionPlusPossibleCodeGeneration {
 
     public static void executeSyntacticSemanticAnalysisPlusPossibleCodeGeneration(SyntacticAnalyzer sLex) throws IOException {
-        Injector.getInjector().flushSymbolTable();
         boolean errorOccurred = false;
         try {
             SymbolTable symbolTable= Injector.getInjector().getSymbolTable();
@@ -31,18 +30,25 @@ public class SyntacticSemanticExecutionPlusPossibleCodeGeneration {
         } catch (LexicalException e) {
             errorOccurred = true;
             handleLexicalException(e);
+            Injector.getInjector().flushSymbolTable();
         } catch (SyntacticException e) {
             errorOccurred = true;
             handleSyntacticException(e);
+            Injector.getInjector().flushSymbolTable();
         } catch (SemanticException e) {
             errorOccurred =true;
             handleSemanticException(e);
+            Injector.getInjector().flushSymbolTable();
+        } catch (RuntimeException e) {
+            Injector.getInjector().flushSymbolTable();
+            throw e;
         }
         if (!errorOccurred) {
             System.out.println();
             System.out.println("Compilación Exitosa");
             System.out.println();
             System.out.println("[SinErrores]");
+            Injector.getInjector().flushSymbolTable();
         }
     }
 

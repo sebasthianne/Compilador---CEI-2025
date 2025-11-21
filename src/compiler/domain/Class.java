@@ -290,13 +290,14 @@ public class Class{
         SymbolTable symbolTable = Injector.getInjector().getSymbolTable();
         source.generate(".DATA");
         generateVirtualTable();
+        source.generate(".CODE");
         for(Constructor c : getConstructorTable()){
             symbolTable.setCurrentMethodOrConstructor(c);
             c.generate();
         }
         for (Method m : getMethodTable()){
             symbolTable.setCurrentMethodOrConstructor(m);
-            m.generate();
+            if(m.getClassDeclaredIn().getName().lexeme().equals(name.lexeme())) m.generate();
         }
         setCodeGenerated(true);
     }

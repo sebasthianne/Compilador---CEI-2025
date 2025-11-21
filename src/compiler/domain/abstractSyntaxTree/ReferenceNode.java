@@ -5,7 +5,6 @@ public abstract class ReferenceNode extends BasicExpressionNode {
 
     public void setChainedReference(ChainedReferenceNode chainedReference) {
         this.chainedReference = chainedReference;
-        if(!isInExpression()) this.chainedReference.setInExpression(false);
     }
 
     @Override
@@ -20,12 +19,17 @@ public abstract class ReferenceNode extends BasicExpressionNode {
         else return isAssignableWithoutReference();
     }
 
-    @Override
     public boolean isVoidMethodCall() {
         if(chainedReference!=null) return chainedReference.isVoidMethodCall();
         else return isVoidMethodCallWithoutReference();
     }
 
+
+    @Override
+    public void setInExpression(boolean inExpression) {
+        if(chainedReference!=null) chainedReference.setInExpression(inExpression);
+        else super.setInExpression(inExpression);
+    }
 
     @Override
     public void setLeftSideOfAssignment() {

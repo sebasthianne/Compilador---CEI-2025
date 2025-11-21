@@ -57,8 +57,12 @@ public class StaticMethodCallNode extends PrimaryNode {
 
     @Override
     public void generateWithoutReference() {
-        parameterList.generate();
         SourceManager source = Injector.getInjector().getSource();
+        if(method.getReturnType()!=null){
+        source.generate("RMEM 1");
+        source.generate("SWAP");
+        }
+        parameterList.generate();
         source.generate("PUSH "+GenerationUtils.getMethodLabel(method));
         source.generate("CALL");
     }

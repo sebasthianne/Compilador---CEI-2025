@@ -1,5 +1,6 @@
 package compiler.domain.abstractSyntaxTree;
 
+import compiler.GenerationUtils;
 import compiler.domain.Method;
 import compiler.domain.Token;
 import compiler.domain.Type;
@@ -55,13 +56,23 @@ public class MethodCallNode extends PrimaryNode {
     @Override
     public void generateWithoutReference() {
         SourceManager source = Injector.getInjector().getSource();
-        source.generate("LOAD 3");
-        parameterList.setInConstructorOrDynamicMethod(true);
-        parameterList.generate();
-        source.generate("DUP");
-        source.generate("LOADREF 0");
-        source.generate("LOADREF "+method.getOffset());
-        source.generate("CALL");
+        if(method.getReturnType()!=null){
+            source.generate("RMEM 1");
+            source.generate("SWAP");
+        }
+        if(!method.isStatic()) {
+            source.generate("LOAD 3");
+            parameterList.setInConstructorOrDynamicMethod(true);
+            parameterList.generate();
+            source.generate("DUP");
+            source.generate("LOADREF 0");
+            source.generate("LOADREF " + method.getOffset());
+            source.generate("CALL");
+        } else {
+            parameterList.generate();
+            source.generate("PUSH "+ GenerationUtils.getMethodLabel(method));
+            source.generate("CALL");
+        }
     }
 
 }

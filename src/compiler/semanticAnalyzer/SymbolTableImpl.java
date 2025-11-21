@@ -26,7 +26,6 @@ public class SymbolTableImpl implements SymbolTable {
         classTable= new HashMap<>(9973);
         addPredefinedClasses();
         stringCounter = 0;
-        mainMethod = null;
         ifStatementCounter = 0;
     }
 
@@ -160,6 +159,7 @@ public class SymbolTableImpl implements SymbolTable {
             if(currentClass.containsMethod(currentMethod)){
                 throw new ReusedMethodInClassException(currentMethodOrConstructor.getName(),currentClass.getName(), currentMethodOrConstructor.getArity());
             }
+
             if(mainMethod==null&&currentMethod.isStatic()&&currentMethod.getReturnType()==null&&currentMethod.getArity()==0&&currentMethod.getName().lexeme().equals("main")){
                 mainMethod = currentMethod;
             }
@@ -269,6 +269,7 @@ public class SymbolTableImpl implements SymbolTable {
         source.generate("ADD");
         source.generate("STORE 4");
         source.generate("LOAD 3");
+        source.generate("ADD");
         source.generate("STOREHL");
         source.generate("STOREFP");
         source.generate("RET 1");

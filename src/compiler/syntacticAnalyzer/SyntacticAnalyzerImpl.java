@@ -43,6 +43,7 @@ public class SyntacticAnalyzerImpl implements SyntacticAnalyzer {
     private void initialNonTerminal() throws SyntacticException, LexicalException, IOException, SemanticException {
         classListNonTerminal();
         match("endOfFile");
+        symbolTable.addClass(null);
     }
 
     private void classListNonTerminal() throws SyntacticException, LexicalException, IOException, SemanticException {

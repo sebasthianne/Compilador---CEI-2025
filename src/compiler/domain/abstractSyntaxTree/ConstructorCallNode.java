@@ -33,7 +33,7 @@ public class ConstructorCallNode extends PrimaryNode {
         SourceManager source = Injector.getInjector().getSource();
         Class constructorClass = Injector.getInjector().getSymbolTable().getClass(constructor.getName());
         source.generate("RMEM 1");
-        source.generate("PUSH "+constructorClass.getAttributeCount());
+        source.generate("PUSH "+(constructorClass.getAttributeCount()+1));
         source.generate("PUSH simple_malloc");
         source.generate("CALL");
         source.generate("DUP");

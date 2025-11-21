@@ -7,4 +7,5 @@ public abstract class ComposedExpressionNode extends ExpressionNode {
     public void setLeftSideOfAssignment() {
         isLeftSideOfAssignment = true;
     }
+
 }
