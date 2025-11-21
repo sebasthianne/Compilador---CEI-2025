@@ -25,6 +25,11 @@ public class NullLiteralNode extends PrimitiveLiteralNode {
     }
 
     @Override
+    public boolean isVoidMethodCall() {
+        return false;
+    }
+
+    @Override
     public void generate() {
         Injector.getInjector().getSource().generate("PUSH 0");
     }

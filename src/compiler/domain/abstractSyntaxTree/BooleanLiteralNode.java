@@ -26,6 +26,11 @@ public class BooleanLiteralNode extends PrimitiveLiteralNode {
     }
 
     @Override
+    public boolean isVoidMethodCall() {
+        return false;
+    }
+
+    @Override
     public void generate() {
         SourceManager source = Injector.getInjector().getSource();
         if(booleanLiteral.getLiteralValue().lexeme().equals("true")) source.generate("PUSH 1");

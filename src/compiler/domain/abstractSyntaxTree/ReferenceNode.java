@@ -19,6 +19,7 @@ public abstract class ReferenceNode extends BasicExpressionNode {
         else return isAssignableWithoutReference();
     }
 
+    @Override
     public boolean isVoidMethodCall() {
         if(chainedReference!=null) return chainedReference.isVoidMethodCall();
         else return isVoidMethodCallWithoutReference();

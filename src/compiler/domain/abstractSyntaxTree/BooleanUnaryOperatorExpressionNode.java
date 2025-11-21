@@ -19,4 +19,9 @@ public class BooleanUnaryOperatorExpressionNode extends UnaryOperatorExpressionN
         return typeToReturn;
     }
 
+    @Override
+    public boolean isVoidMethodCall() {
+        return false;
+    }
+
 }

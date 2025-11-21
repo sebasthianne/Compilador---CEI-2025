@@ -25,6 +25,11 @@ public class IntUnaryOperatorExpressionNode extends UnaryOperatorExpressionNode 
     }
 
     @Override
+    public boolean isVoidMethodCall() {
+        return false;
+    }
+
+    @Override
     public void generate() {
         if(GenerationUtils.getUnaryOperation(operator).equals("ADD")||GenerationUtils.getUnaryOperation(operator).equals("SUB")){
             Injector.getInjector().getSource().generate("PUSH 1");

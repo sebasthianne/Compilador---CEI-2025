@@ -35,7 +35,7 @@ public class WhileStatementNode extends StatementNode {
         whileConditionExpression.generate();
         source.generate("BF endWhile"+symbolTable.getWhileStatementCounter());
         whileBody.generate();
-        if(whileBody instanceof ReferenceNode r && !r.isVoidMethodCall()) source.generate("POP");
+        if(whileBody instanceof ExpressionNode e && !e.isVoidMethodCall()) source.generate("POP");
         source.generate("JUMP beginWhile"+symbolTable.getWhileStatementCounter());
         source.generate("endWhile"+symbolTable.getWhileStatementCounter()+":");
         symbolTable.incrementWhileStatementCounter();

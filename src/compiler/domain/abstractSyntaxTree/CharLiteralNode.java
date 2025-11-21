@@ -26,6 +26,11 @@ public class CharLiteralNode extends PrimitiveLiteralNode {
     }
 
     @Override
+    public boolean isVoidMethodCall() {
+        return false;
+    }
+
+    @Override
     public void generate() {
         SourceManager source = Injector.getInjector().getSource();
         source.generate("PUSH '"+charLiteral.getLiteralValue().lexeme()+"'");

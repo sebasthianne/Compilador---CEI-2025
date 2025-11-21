@@ -36,8 +36,14 @@ public class AssignmentNode extends ExpressionNode {
     }
 
     @Override
+    public boolean isVoidMethodCall() {
+        return false;
+    }
+
+    @Override
     public void generate() {
         assignedExpression.generate();
+        Injector.getInjector().getSource().generate("DUP");
         variableAssignedTo.generate();
     }
 }

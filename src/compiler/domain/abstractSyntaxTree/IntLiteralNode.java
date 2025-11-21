@@ -26,6 +26,11 @@ public class IntLiteralNode extends PrimitiveLiteralNode {
     }
 
     @Override
+    public boolean isVoidMethodCall() {
+        return false;
+    }
+
+    @Override
     public void generate() {
         Injector.getInjector().getSource().generate("PUSH "+intLiteral.getLiteralValue().lexeme());
     }

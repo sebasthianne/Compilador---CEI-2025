@@ -31,4 +31,9 @@ public class AnyToBooleanExpressionNode extends BinaryOperatorExpressionNode {
         return false;
     }
 
+    @Override
+    public boolean isVoidMethodCall() {
+        return false;
+    }
+
 }

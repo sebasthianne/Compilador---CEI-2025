@@ -29,4 +29,9 @@ public class IntToBooleanExpressionNode extends BinaryOperatorExpressionNode {
         return false;
     }
 
+    @Override
+    public boolean isVoidMethodCall() {
+        return false;
+    }
+
 }
