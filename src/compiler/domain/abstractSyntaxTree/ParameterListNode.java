@@ -13,14 +13,17 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class ParameterListNode {
+public class ParameterListNode extends ASTNode {
     private final List<ExpressionNode> parameterList;
     private final Token callableName;
     private List<Type> parameterTypeList;
 
+    boolean inConstructorOrDynamicMethod;
+
     public ParameterListNode(Token callableName) {
         this.callableName = callableName;
-        this.parameterList = new ArrayList<>();
+        parameterList = new ArrayList<>();
+        inConstructorOrDynamicMethod = false;
     }
 
 
@@ -32,10 +35,19 @@ public class ParameterListNode {
         return parameterList.size();
     }
 
+    @Override
     public void checkNode() throws SemanticException {
         parameterTypeList= new ArrayList<>();
         for(ExpressionNode expressionNode : parameterList){
             parameterTypeList.add(expressionNode.checkExpression());
+        }
+    }
+
+    @Override
+    public void generate() {
+        for(ExpressionNode e : parameterList){
+            e.generate();
+            if(inConstructorOrDynamicMethod) Injector.getInjector().getSource().generate("SWAP");
         }
     }
 
@@ -49,6 +61,10 @@ public class ParameterListNode {
                 throw new ActualParameterDoesNotConformException(callableName, Injector.getInjector().getSymbolTable().getCurrentClass().getName(),Injector.getInjector().getSymbolTable().getCurrentMethodOrConstructor().getName(),currentFormalParameter.getName(),currentFormalParameter.getType().getTypeName(),currentActualParameterType.getTypeName());
             }
         }
+    }
+
+    public void setInConstructorOrDynamicMethod(boolean inConstructorOrDynamicMethod) {
+        this.inConstructorOrDynamicMethod = inConstructorOrDynamicMethod;
     }
 
 }

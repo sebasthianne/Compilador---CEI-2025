@@ -26,6 +26,11 @@ public class ParenthesizedExpressionNode extends PrimaryNode {
     }
 
     @Override
+    public boolean isVoidMethodCallWithoutReference() {
+        return false;
+    }
+
+    @Override
     public void generateWithoutReference() {
         subExpression.generate();
     }

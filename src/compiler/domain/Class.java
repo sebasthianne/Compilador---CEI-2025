@@ -335,5 +335,9 @@ public class Class{
         return true;
     }
 
+    public int getAttributeCount(){
+        return attributeTable.size();
+    }
+
 
 }

@@ -1,0 +1,110 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+abstract ASTNode
+abstract StatementNode
+class ParameterListNode
+
+ASTNode <|-- StatementNode
+ASTNode <|-- ParameterListNode
+
+class WhileStatementNode
+class ReturnStatementNode
+class LocalVariableDeclarationNode
+class IfStatementNode
+abstract ExpressionNode
+abstract BlockNode
+
+StatementNode <|-- WhileStatementNode
+StatementNode <|-- ReturnStatementNode
+StatementNode <|-- LocalVariableDeclarationNode
+StatementNode <|-- IfStatementNode
+StatementNode <|-- ExpressionNode
+StatementNode <|-- BlockNode
+
+class IfElseStatementNode
+
+IfStatementNode <|-- IfElseStatementNode
+
+class NestedBlockNode
+class CallableBodyBlockNode
+
+BlockNode <|-- NestedBlockNode
+BlockNode <|-- CallableBodyBlockNode
+
+class AssignmentNode
+abstract ComposedExpressionNode
+
+ExpressionNode <|-- AssignmentNode
+ExpressionNode <|-- ComposedExpressionNode
+
+abstract BinaryOperatorExpressionNode
+abstract BasicExpressionNode
+
+ComposedExpressionNode <|-- BinaryOperatorExpressionNode
+ComposedExpressionNode <|-- BasicExpressionNode
+
+class IntToIntExpressionNode
+class IntToBooleanExpressionNode
+class BooleanToBooleanExpressionNode
+class AnyToBooleanExpressionNode
+
+BinaryOperatorExpressionNode <|-- IntToIntExpressionNode
+BinaryOperatorExpressionNode <|-- IntToBooleanExpressionNode
+BinaryOperatorExpressionNode <|-- BooleanToBooleanExpressionNode
+BinaryOperatorExpressionNode <|-- AnyToBooleanExpressionNode
+
+abstract UnaryOperatorExpressionNode
+abstract PrimitiveLiteralNode
+abstract ReferenceNode
+
+BasicExpressionNode <|-- UnaryOperatorExpressionNode
+BasicExpressionNode <|-- PrimitiveLiteralNode
+BasicExpressionNode <|-- ReferenceNode
+
+class IntUnaryOperatorExpressionNode
+class BooleanUnaryOperatorExpressionNode
+
+UnaryOperatorExpressionNode <|-- IntUnaryOperatorExpressionNode
+UnaryOperatorExpressionNode <|-- BooleanUnaryOperatorExpressionNode
+
+class NullLiteralNode
+class CharLiteralNode
+class BooleanLiteralNode
+class IntLiteralNode
+
+PrimitiveLiteralNode <|-- NullLiteralNode
+PrimitiveLiteralNode <|-- CharLiteralNode
+PrimitiveLiteralNode <|-- BooleanLiteralNode
+PrimitiveLiteralNode <|-- IntLiteralNode
+
+abstract ChainedReferenceNode
+abstract PrimaryNode
+
+ReferenceNode <|-- ChainedReferenceNode
+ReferenceNode <|-- PrimaryNode
+
+class ChainedMethodCallNode
+class ChainedVariableNode
+
+ChainedReferenceNode <|-- ChainedMethodCallNode
+ChainedReferenceNode <|-- ChainedVariableNode
+
+class VariableNode
+class ThisNode
+class StringLiteralNode
+class StaticMethodCallNode
+class MethodCallNode
+class ConstructorCallNode
+class ParenthesizedExpressionNode
+
+PrimaryNode <|-- VariableNode
+PrimaryNode <|-- ThisNode
+PrimaryNode <|-- StringLiteralNode
+PrimaryNode <|-- StaticMethodCallNode
+PrimaryNode <|-- MethodCallNode
+PrimaryNode <|-- ConstructorCallNode
+PrimaryNode <|-- ParenthesizedExpressionNode
+
+
+@enduml

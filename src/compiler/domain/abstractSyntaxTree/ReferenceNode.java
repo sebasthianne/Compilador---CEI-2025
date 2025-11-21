@@ -21,6 +21,13 @@ public abstract class ReferenceNode extends BasicExpressionNode {
     }
 
     @Override
+    public boolean isVoidMethodCall() {
+        if(chainedReference!=null) return chainedReference.isVoidMethodCall();
+        else return isVoidMethodCallWithoutReference();
+    }
+
+
+    @Override
     public void setLeftSideOfAssignment() {
         if(chainedReference!=null) chainedReference.setLeftSideOfAssignment();
         else isLeftSideOfAssignment = true;
@@ -32,11 +39,12 @@ public abstract class ReferenceNode extends BasicExpressionNode {
         if(chainedReference!=null) chainedReference.generate();
     }
 
-    public void generateWithoutReference(){
-
-    }
+    public abstract void generateWithoutReference();
 
     public abstract boolean isAssignableWithoutReference();
 
     public abstract boolean isCallWithoutReference();
+
+    public abstract boolean isVoidMethodCallWithoutReference();
+
 }

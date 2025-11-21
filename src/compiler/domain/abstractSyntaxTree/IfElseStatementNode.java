@@ -28,9 +28,11 @@ public class IfElseStatementNode extends IfStatementNode {
         SymbolTable symbolTable = Injector.getInjector().getSymbolTable();
         source.generate("BF else"+ symbolTable.getIfStatementCounter());
         ifBody.generate();
+        if(ifBody instanceof ExpressionNode e && !e.isVoidMethodCall()) source.generate("POP");
         source.generate("JUMP endIF"+ symbolTable.getIfStatementCounter());
         source.generate("else"+ symbolTable.getIfStatementCounter()+":");
         elseBody.generate();
+        if(elseBody instanceof ExpressionNode e && !e.isVoidMethodCall()) source.generate("POP");
         source.generate("endIF"+symbolTable.getIfStatementCounter()+":");
         symbolTable.incrementIfStatementCount();
     }

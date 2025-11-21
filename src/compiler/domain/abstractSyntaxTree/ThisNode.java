@@ -32,6 +32,11 @@ public class ThisNode extends PrimaryNode {
     }
 
     @Override
+    public boolean isVoidMethodCallWithoutReference() {
+        return false;
+    }
+
+    @Override
     public void generateWithoutReference() {
         Injector.getInjector().getSource().generate("LOAD 3");
     }

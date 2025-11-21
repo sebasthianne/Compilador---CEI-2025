@@ -26,6 +26,7 @@ public abstract class UnaryOperatorExpressionNode extends BasicExpressionNode {
 
     @Override
     public void generate() {
+        expression.generate();
         Injector.getInjector().getSource().generate(GenerationUtils.getUnaryOperation(operator));
     }
 }

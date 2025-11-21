@@ -31,6 +31,11 @@ public class StringLiteralNode extends PrimaryNode {
     }
 
     @Override
+    public boolean isVoidMethodCallWithoutReference() {
+        return false;
+    }
+
+    @Override
     public void generateWithoutReference() {
         SymbolTable symbolTable = Injector.getInjector().getSymbolTable();
         String stringName = "string" + symbolTable.getStringCounter();

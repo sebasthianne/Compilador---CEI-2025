@@ -34,6 +34,7 @@ public class IfStatementNode extends StatementNode {
         SymbolTable symbolTable = Injector.getInjector().getSymbolTable();
         source.generate("BF endIF"+ symbolTable.getIfStatementCounter());
         ifBody.generate();
+        if(ifBody instanceof ExpressionNode e && !e.isVoidMethodCall()) source.generate("POP");
         source.generate("endIF"+symbolTable.getIfStatementCounter()+":");
         symbolTable.incrementIfStatementCount();
     }

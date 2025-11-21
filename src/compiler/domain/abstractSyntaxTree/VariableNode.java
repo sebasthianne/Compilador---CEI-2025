@@ -33,6 +33,11 @@ public class VariableNode extends PrimaryNode {
         return false;
     }
 
+    @Override
+    public boolean isVoidMethodCallWithoutReference() {
+        return false;
+    }
+
 
     @Override
     public void generateWithoutReference() {

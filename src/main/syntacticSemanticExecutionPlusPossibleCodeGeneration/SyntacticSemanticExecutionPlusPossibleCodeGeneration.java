@@ -40,6 +40,8 @@ public class SyntacticSemanticExecutionPlusPossibleCodeGeneration {
         }
         if (!errorOccurred) {
             System.out.println();
+            System.out.println("Compilación Exitosa");
+            System.out.println();
             System.out.println("[SinErrores]");
         }
     }

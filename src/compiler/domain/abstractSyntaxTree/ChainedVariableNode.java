@@ -37,6 +37,11 @@ public class ChainedVariableNode extends ChainedReferenceNode {
         return false;
     }
 
+    @Override
+    public boolean isVoidMethodCallWithoutReference() {
+        return false;
+    }
+
 
     @Override
     public void generateWithoutReference() {

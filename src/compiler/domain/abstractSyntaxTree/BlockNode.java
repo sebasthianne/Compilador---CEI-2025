@@ -68,6 +68,7 @@ public abstract class BlockNode extends StatementNode {
     public void generate() {
         for(StatementNode s:statementsTable){
             s.generate();
+            if(s instanceof ExpressionNode e && !e.isVoidMethodCall()) Injector.getInjector().getSource().generate("POP");
         }
     }
 }
